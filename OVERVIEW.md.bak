@@ -1,0 +1,320 @@
+# Marketplace API — Project Overview
+
+This document provides a complete and detailed overview of the application's directory structure, the full routes outline from `routes/api.php`, and the latest automated test execution results.
+
+---
+
+## 1. Complete Folder Structure
+
+```
+src/
+├── app/
+│   ├── Enums/
+│   │   └── CancelReason.php
+│   ├── Exceptions/
+│   │   ├── AccountDeactivatedException.php
+│   │   ├── InsufficientBalanceException.php
+│   │   ├── InsufficientStockException.php
+│   │   ├── InvalidCredentialsException.php
+│   │   ├── InvalidStatusTransitionException.php
+│   │   ├── MarketplaceException.php
+│   │   ├── OrderInTransitException.php
+│   │   ├── ProductUnavailableException.php
+│   │   └── UserDeleteBlockedException.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Controller.php
+│   │   │   └── Api/
+│   │   │       ├── Admin/
+│   │   │       │   ├── OrderController.php
+│   │   │       │   └── UserController.php
+│   │   │       ├── Customer/
+│   │   │       │   ├── AddressController.php
+│   │   │       │   └── OrderController.php
+│   │   │       ├── Seller/
+│   │   │       │   ├── OrderController.php
+│   │   │       │   ├── ProductController.php
+│   │   │       │   └── SellerProfileController.php
+│   │   │       ├── User/
+│   │   │       │   ├── ProfileController.php
+│   │   │       │   └── WalletController.php
+│   │   │       ├── AuthController.php
+│   │   │       └── ProductController.php
+│   │   ├── Middleware/
+│   │   │   ├── EnsureRole.php
+│   │   │   ├── EnsureUserIsActive.php
+│   │   │   └── SecurityHeaders.php
+│   │   └── Requests/
+│   │       ├── Address/
+│   │       │   ├── StoreAddressRequest.php
+│   │       │   └── UpdateAddressRequest.php
+│   │       ├── Auth/
+│   │       │   ├── LoginRequest.php
+│   │       │   └── RegisterRequest.php
+│   │       ├── Order/
+│   │       │   ├── PlaceOrderRequest.php
+│   │       │   └── UpdateOrderStatusRequest.php
+│   │       ├── Product/
+│   │       │   ├── StoreProductRequest.php
+│   │       │   └── UpdateProductRequest.php
+│   │       └── Wallet/
+│   │           └── TopupRequest.php
+│   ├── Models/
+│   │   ├── Address.php
+│   │   ├── Order.php
+│   │   ├── OrderItem.php
+│   │   ├── Product.php
+│   │   ├── SellerProfile.php
+│   │   ├── User.php
+│   │   ├── Wallet.php
+│   │   └── WalletTransaction.php
+│   ├── Policies/
+│   │   ├── AddressPolicy.php
+│   │   ├── OrderPolicy.php
+│   │   └── ProductPolicy.php
+│   ├── Providers/
+│   │   └── AppServiceProvider.php
+│   └── Services/
+│       └── OrderService.php
+├── database/
+│   ├── migrations/
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 2026_01_01_000010_create_seller_profiles_table.php
+│   │   ├── 2026_01_01_000020_create_addresses_table.php
+│   │   ├── 2026_01_01_000030_create_products_table.php
+│   │   ├── 2026_01_01_000040_create_orders_table.php
+│   │   ├── 2026_01_01_000050_create_order_items_table.php
+│   │   ├── 2026_01_01_000060_create_wallet_transactions_table.php
+│   │   ├── 2026_06_14_054230_create_personal_access_tokens_table.php
+│   │   └── 2026_06_14_122545_change_status_columns_to_integer.php
+│   └── seeders/
+│       └── DatabaseSeeder.php
+├── docs/
+│   ├── api/
+│   │   ├── admin/
+│   │   │   └── readme.md
+│   │   ├── customer/
+│   │   │   └── readme.md
+│   │   ├── public/
+│   │   │   └── readme.md
+│   │   ├── seller/
+│   │   │   └── readme.md
+│   │   └── user/
+│   │       └── readme.md
+│   └── marketplace.dbml
+├── routes/
+│   ├── api.php
+│   ├── console.php
+│   └── web.php
+└── tests/
+    ├── TestCase.php
+    ├── Feature/
+    │   ├── Admin/
+    │   │   ├── OrdersTest.php
+    │   │   └── UsersTest.php
+    │   ├── Customer/
+    │   │   ├── AddressTest.php
+    │   │   └── OrdersTest.php
+    │   ├── Public/
+    │   │   ├── AuthTest.php
+    │   │   └── ProductsTest.php
+    │   ├── Seller/
+    │   │   ├── OrdersTest.php
+    │   │   └── ProductsTest.php
+    │   ├── User/
+    │   │   ├── ProfileTest.php
+    │   │   └── WalletTest.php
+    │   └── ExampleTest.php
+    └── Unit/
+        └── ExampleTest.php
+```
+
+---
+
+## 2. API Routes Outline (`routes/api.php`)
+
+Below is the routing layout configured in the application:
+
+```php
+// ── Public routes (no auth) ────────────────────────────────────────────────
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login',    [AuthController::class, 'login']);
+
+Route::get('/products',      [ProductController::class, 'index']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
+
+// ── Authenticated routes (any role) ────────────────────────────────────────
+Route::middleware(['auth:sanctum', 'active'])->group(function () {
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::get('/auth/me',      [AuthController::class, 'me']);
+
+    // ── Wallets & Profile (Shared Customer/Seller) ─────────────────────────
+    Route::middleware('role:customer,seller')->prefix('user')->group(function () {
+        Route::get('/wallets',                  [WalletController::class, 'index']);
+        Route::post('/wallets',                 [WalletController::class, 'store']);
+        Route::get('/wallets/{wallet}',         [WalletController::class, 'show']);
+        Route::post('/wallets/{wallet}/topup',  [WalletController::class, 'topup']);
+        Route::post('/wallets/{wallet}/default', [WalletController::class, 'setDefault']);
+        Route::put('/profile',                  [ProfileController::class, 'update']);
+    });
+
+    // ── Customer ──────────────────────────────────────────────────────────
+    Route::middleware('role:customer')->prefix('customer')->group(function () {
+
+        // Addresses
+        Route::get('/addresses',                    [AddressController::class, 'index']);
+        Route::post('/addresses',                   [AddressController::class, 'store']);
+        Route::get('/addresses/{address}',          [AddressController::class, 'show']);
+        Route::put('/addresses/{address}',          [AddressController::class, 'update']);
+        Route::delete('/addresses/{address}',       [AddressController::class, 'destroy']);
+        Route::patch('/addresses/{address}/default',[AddressController::class, 'setDefault']);
+
+        // Orders
+        Route::post('/orders',              [CustomerOrderController::class, 'store']);
+        Route::get('/orders',               [CustomerOrderController::class, 'index']);
+        Route::get('/orders/{order}',       [CustomerOrderController::class, 'show']);
+        Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel']);
+        Route::post('/orders/{order}/confirm', [CustomerOrderController::class, 'confirm']);
+    });
+
+    // ── Seller ────────────────────────────────────────────────────────────
+    Route::middleware('role:seller')->prefix('seller')->group(function () {
+ 
+        // Profile
+        Route::put('/profile',            [SellerProfileController::class, 'update']);
+ 
+        // Products
+        Route::get('/products',           [SellerProductController::class, 'index']);
+        Route::post('/products',          [SellerProductController::class, 'store']);
+        Route::get('/products/{product}', [SellerProductController::class, 'show']);
+        Route::put('/products/{product}', [SellerProductController::class, 'update']);
+        Route::delete('/products/{product}', [SellerProductController::class, 'destroy']);
+        Route::patch('/products/{product}/activate', [SellerProductController::class, 'activate']);
+        Route::patch('/products/{product}/deactivate', [SellerProductController::class, 'deactivate']);
+
+        // Orders
+        Route::get('/orders',              [SellerOrderController::class, 'index']);
+        Route::get('/orders/{order}',      [SellerOrderController::class, 'show']);
+        Route::patch('/orders/{order}/status', [SellerOrderController::class, 'updateStatus']);
+        Route::patch('/orders/{order}/cancel', [SellerOrderController::class, 'cancel']);
+    });
+
+    // ── Admin ─────────────────────────────────────────────────────────────
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+
+        // Users
+        Route::get('/users',                    [AdminUserController::class, 'index']);
+        Route::get('/users/{user}',             [AdminUserController::class, 'show']);
+        Route::patch('/users/{user}/activate',  [AdminUserController::class, 'activate']);
+        Route::patch('/users/{user}/deactivate',[AdminUserController::class, 'deactivate']);
+        Route::delete('/users/{user}',          [AdminUserController::class, 'destroy']);
+
+        // Orders
+        Route::get('/orders',               [AdminOrderController::class, 'index']);
+        Route::get('/orders/{order}',       [AdminOrderController::class, 'show']);
+    });
+});
+```
+
+---
+
+## 3. Test Results
+
+Below are the results of running `php artisan test` inside the Docker `app` container:
+
+```bash
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true
+
+   PASS  Tests\Feature\Admin\OrdersTest
+  ✓ admin can list all orders                                            7.87s  
+  ✓ admin can view order details                                         0.15s  
+  ✓ admin cannot override order status                                   0.20s  
+
+   PASS  Tests\Feature\Admin\UsersTest
+  ✓ admin can list all users                                             0.18s  
+  ✓ admin can view user details                                          0.15s  
+  ✓ admin can deactivate user and revoke tokens                          0.17s  
+  ✓ admin can activate user                                              0.15s  
+  ✓ admin cannot delete user with active orders                          0.43s  
+  ✓ admin can delete user without active orders                          0.15s  
+
+   PASS  Tests\Feature\Customer\AddressTest
+  ✓ customer can list own addresses                                      0.16s  
+  ✓ customer can create address                                          0.22s  
+  ✓ customer cannot view other users address idor                        0.23s  
+  ✓ customer can set default address                                     0.15s  
+
+   PASS  Tests\Feature\Customer\OrdersTest
+  ✓ place batch order via wallet success                                 0.57s  
+  ✓ place batch order via cod success                                    0.16s  
+  ✓ place order invalid payment method validation failure                0.24s  
+  ✓ place order missing wallet id validation failure                     0.17s  
+  ✓ place order negative quantity validation failure                     0.17s  
+  ✓ cannot place order using other users address idor                    0.17s  
+  ✓ cannot place order using other users wallet idor                     0.17s  
+  ✓ insufficient wallet balance failure                                  0.19s  
+  ✓ cannot place order for deactivated product                           0.16s  
+  ✓ cancel pending wallet order refunds correctly                        0.17s  
+  ✓ cancel reason validation rules                                       0.18s  
+  ✓ cancel delivered order refunds correctly                             0.16s  
+  ✓ cancel blocked when order in transit                                 0.17s  
+  ✓ confirm releases funds to seller successfully                        0.17s  
+  ✓ cannot confirm already confirmed or cancelled order                  0.18s  
+  ✓ stock deducted automatically when order item is created              0.15s  
+  ✓ stock restored automatically when order is cancelled                 0.15s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                        0.56s  
+
+   PASS  Tests\Feature\Public\AuthTest
+  ✓ customer registration success                                        0.35s  
+  ✓ seller registration success                                          0.15s  
+  ✓ registration validation failures                                     0.18s  
+  ✓ cannot register duplicate email                                      0.16s  
+  ✓ login success                                                        0.19s  
+  ✓ login deactivated account fail                                       0.17s  
+  ✓ login invalid credentials fail                                       0.37s  
+  ✓ logout success                                                       0.15s  
+  ✓ me profile unauthorized rejection                                    0.15s  
+  ✓ me profile success                                                   0.15s  
+  ✓ cannot register admin role                                           0.16s  
+
+   PASS  Tests\Feature\Public\ProductsTest
+  ✓ list products only shows active                                      0.19s  
+  ✓ get single product success                                           0.15s  
+  ✓ get inactive product returns 404                                     0.16s  
+
+   PASS  Tests\Feature\Seller\OrdersTest
+  ✓ seller can list own orders only                                      0.18s  
+  ✓ seller cannot view or update other sellers orders                    0.16s  
+  ✓ seller can advance order status step by step                         0.15s  
+  ✓ seller cannot move status backward or skip invalid steps             0.16s  
+  ✓ seller can cancel order via status endpoint                          0.16s  
+  ✓ seller can cancel order via cancel endpoint                          0.16s  
+  ✓ seller cannot cancel shipped delivered or confirmed orders           0.17s  
+  ✓ seller cannot confirm order directly                                 0.18s  
+  ✓ seller cannot see customer email in order response                   0.17s  
+
+   PASS  Tests\Feature\Seller\ProductsTest
+  ✓ seller can list own products                                         0.18s  
+  ✓ seller can create product with auto slug                             0.16s  
+  ✓ seller cannot view or update other sellers product                   0.16s  
+  ✓ seller can delete own product                                        0.16s  
+  ✓ seller cannot delete product with any orders                         0.15s  
+  ✓ seller can activate and deactivate own product                       0.15s  
+
+   PASS  Tests\Feature\User\WalletTest
+  ✓ customer can list wallets                                            0.16s  
+  ✓ customer can create wallet with mass assignment protection           0.15s  
+  ✓ customer can set default wallet                                      0.15s  
+  ✓ customer can topup own wallet                                        0.16s  
+  ✓ customer cannot topup other users wallet idor                        0.15s  
+  ✓ seller can list and manage wallets                                   0.16s  
+
+  Tests:    67 passed (256 assertions)
+  Duration: 27.75s
+```
