@@ -45,6 +45,10 @@ def main():
         else:
             new_key = "Models." + key
             
+        # Update the title so Stoplight Elements displays it correctly
+        if 'title' in schema:
+            schema['title'] = new_key
+            
         new_schemas[new_key] = schema
         replacements[f'"#/components/schemas/{key}"'] = f'"#/components/schemas/{new_key}"'
         

@@ -5771,7 +5771,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "Address"
+                "title": "Models.Address"
             },
             "Models.CancelReason": {
                 "type": "integer",
@@ -5783,7 +5783,7 @@
                     4,
                     5
                 ],
-                "title": "CancelReason"
+                "title": "Models.CancelReason"
             },
             "Models.Cart": {
                 "type": "object",
@@ -5819,7 +5819,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "Cart"
+                "title": "Models.Cart"
             },
             "Models.Product": {
                 "type": "object",
@@ -5890,7 +5890,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "Product"
+                "title": "Models.Product"
             },
             "Models.SellerProfile": {
                 "type": "object",
@@ -5933,7 +5933,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "SellerProfile"
+                "title": "Models.SellerProfile"
             },
             "Models.User": {
                 "type": "object",
@@ -5985,7 +5985,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "User"
+                "title": "Models.User"
             },
             "Models.Wallet": {
                 "type": "object",
@@ -6029,7 +6029,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "Wallet"
+                "title": "Models.Wallet"
             },
             "Models.WalletTransaction": {
                 "type": "object",
@@ -6087,7 +6087,7 @@
                     "description",
                     "created_at"
                 ],
-                "title": "WalletTransaction"
+                "title": "Models.WalletTransaction"
             },
             "Requests.CancelOrderRequest": {
                 "type": "object",
@@ -6106,7 +6106,7 @@
                 "required": [
                     "cancel_reason"
                 ],
-                "title": "CancelOrderRequest"
+                "title": "Requests.CancelOrderRequest"
             },
             "Requests.LoginRequest": {
                 "type": "object",
@@ -6123,7 +6123,7 @@
                     "email",
                     "password"
                 ],
-                "title": "LoginRequest"
+                "title": "Requests.LoginRequest"
             },
             "Requests.PlaceOrderRequest": {
                 "type": "object",
@@ -6171,7 +6171,7 @@
                     "payment_method",
                     "items"
                 ],
-                "title": "PlaceOrderRequest"
+                "title": "Requests.PlaceOrderRequest"
             },
             "Requests.RegisterRequest": {
                 "type": "object",
@@ -6221,7 +6221,7 @@
                     "role",
                     "password_confirmation"
                 ],
-                "title": "RegisterRequest"
+                "title": "Requests.RegisterRequest"
             },
             "Requests.StoreAddressRequest": {
                 "type": "object",
@@ -6275,7 +6275,7 @@
                     "province",
                     "postal_code"
                 ],
-                "title": "StoreAddressRequest"
+                "title": "Requests.StoreAddressRequest"
             },
             "Requests.StoreCartRequest": {
                 "type": "object",
@@ -6287,7 +6287,7 @@
                 "required": [
                     "product_id"
                 ],
-                "title": "StoreCartRequest"
+                "title": "Requests.StoreCartRequest"
             },
             "Requests.StoreProductRequest": {
                 "type": "object",
@@ -6332,7 +6332,7 @@
                     "price",
                     "stock"
                 ],
-                "title": "StoreProductRequest"
+                "title": "Requests.StoreProductRequest"
             },
             "Requests.StoreWalletRequest": {
                 "type": "object",
@@ -6345,7 +6345,7 @@
                 "required": [
                     "label"
                 ],
-                "title": "StoreWalletRequest"
+                "title": "Requests.StoreWalletRequest"
             },
             "Requests.TopupRequest": {
                 "type": "object",
@@ -6359,7 +6359,7 @@
                 "required": [
                     "amount"
                 ],
-                "title": "TopupRequest"
+                "title": "Requests.TopupRequest"
             },
             "Requests.UpdateAddressRequest": {
                 "type": "object",
@@ -6403,7 +6403,7 @@
                         "maxLength": 100
                     }
                 },
-                "title": "UpdateAddressRequest"
+                "title": "Requests.UpdateAddressRequest"
             },
             "Requests.UpdateOrderStatusRequest": {
                 "type": "object",
@@ -6422,7 +6422,7 @@
                 "required": [
                     "status"
                 ],
-                "title": "UpdateOrderStatusRequest"
+                "title": "Requests.UpdateOrderStatusRequest"
             },
             "Requests.UpdateProductRequest": {
                 "type": "object",
@@ -6462,7 +6462,7 @@
                         "maxItems": 10
                     }
                 },
-                "title": "UpdateProductRequest"
+                "title": "Requests.UpdateProductRequest"
             },
             "Requests.UpdateProfileRequest": {
                 "type": "object",
@@ -6493,7 +6493,7 @@
                     "name",
                     "email"
                 ],
-                "title": "UpdateProfileRequest"
+                "title": "Requests.UpdateProfileRequest"
             },
             "Requests.UpdateSellerProfileRequest": {
                 "type": "object",
@@ -6513,7 +6513,7 @@
                 "required": [
                     "shop_name"
                 ],
-                "title": "UpdateSellerProfileRequest"
+                "title": "Requests.UpdateSellerProfileRequest"
             },
             "Resources.OrderItemResource": {
                 "type": "object",
@@ -6568,7 +6568,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "OrderItemResource"
+                "title": "Resources.OrderItemResource"
             },
             "Resources.OrderResource": {
                 "type": "object",
@@ -6690,7 +6690,7 @@
                     "created_at",
                     "updated_at"
                 ],
-                "title": "OrderResource"
+                "title": "Resources.OrderResource"
             }
         }
     }
