@@ -435,15 +435,49 @@ The application features a comprehensive automated test suite covering all criti
 **Latest Run — post JWT Migration (2026-06-18):**
 
 ```
-   PASS  Tests\Unit\ExampleTest
+    PASS  Tests\Unit\ExampleTest
   ✓ that true is true
 
-   PASS  Tests\Feature\Admin\OrdersTest
+    PASS  Tests\Unit\ExceptionsTest
+  ✓ account deactivated exception renders correct json format
+  ✓ insufficient balance exception renders correct json format
+  ✓ insufficient stock exception renders correct json format
+  ✓ invalid credentials exception renders correct json format
+  ✓ invalid status transition exception renders correct json format
+  ✓ order in transit exception renders correct json format
+  ✓ product unavailable exception renders correct json format
+  ✓ unexpected error exception renders correct json format
+  ✓ user delete blocked exception renders correct json format
+  ✓ authentication exception renders correct json format
+  ✓ authorization exception renders correct json format
+  ✓ access denied http exception renders correct json format
+  ✓ not found http exception renders correct json format
+  ✓ model not found exception renders correct json format
+  ✓ validation exception renders correct json format
+  ✓ too many requests http exception renders correct json format
+  ✓ fallback 500 error renders unexpected error exception format
+
+    PASS  Tests\Unit\JwtTokenTest
+  ✓ expired token is rejected
+  ✓ tampered token is rejected
+  ✓ missing token is rejected
+  ✓ refresh returns new token
+  ✓ old token is blacklisted after refresh
+  ✓ new token from refresh is valid
+  ✓ refresh without token fails
+  ✓ blacklisted token cannot access protected routes
+  ✓ blacklisted token cannot be refreshed
+  ✓ double logout is safe
+  ✓ same token is valid across multiple requests
+  ✓ login response includes token metadata
+  ✓ token is bound to issuing user
+
+    PASS  Tests\Feature\Admin\OrdersTest
   ✓ admin can list all orders
   ✓ admin can view order details
   ✓ admin cannot override order status
 
-   PASS  Tests\Feature\Admin\UsersTest
+    PASS  Tests\Feature\Admin\UsersTest
   ✓ admin can list all users
   ✓ admin can view user details
   ✓ admin can deactivate user and revoke tokens
@@ -451,13 +485,13 @@ The application features a comprehensive automated test suite covering all criti
   ✓ admin cannot delete user with active orders
   ✓ admin can delete user without active orders
 
-   PASS  Tests\Feature\Customer\AddressTest
+    PASS  Tests\Feature\Customer\AddressTest
   ✓ customer can list own addresses
   ✓ customer can create address
   ✓ customer cannot view other users address idor
   ✓ customer can set default address
 
-   PASS  Tests\Feature\Customer\OrdersTest
+    PASS  Tests\Feature\Customer\OrdersTest
   ✓ place order via wallet success
   ✓ place order via cod success
   ✓ place order invalid payment method validation failure
@@ -474,26 +508,7 @@ The application features a comprehensive automated test suite covering all criti
   ✓ confirm releases funds to seller successfully
   ✓ cannot confirm already confirmed or cancelled order
 
-   PASS  Tests\Feature\ExceptionsTest
-  ✓ exception renders correct json format [account deactivated]
-  ✓ exception renders correct json format [insufficient balance]
-  ✓ exception renders correct json format [insufficient stock]
-  ✓ exception renders correct json format [invalid credentials]
-  ✓ exception renders correct json format [invalid status transition]
-  ✓ exception renders correct json format [order in transit]
-  ✓ exception renders correct json format [product unavailable]
-  ✓ exception renders correct json format [unexpected error]
-  ✓ exception renders correct json format [user delete blocked]
-  ✓ exception renders correct json format [authentication]
-  ✓ exception renders correct json format [authorization]
-  ✓ exception renders correct json format [access denied]
-  ✓ exception renders correct json format [not found http]
-  ✓ exception renders correct json format [model not found]
-  ✓ exception renders correct json format [validation exception]
-  ✓ exception renders correct json format [too many requests]
-  ✓ fallback 500 error renders unexpected error exception format
-
-   PASS  Tests\Feature\Public\AuthTest
+    PASS  Tests\Feature\Public\AuthTest
   ✓ customer registration success
   ✓ seller registration success
   ✓ registration validation failures
@@ -506,12 +521,12 @@ The application features a comprehensive automated test suite covering all criti
   ✓ me profile success
   ✓ cannot register admin role
 
-   PASS  Tests\Feature\Public\ProductsTest
+    PASS  Tests\Feature\Public\ProductsTest
   ✓ list products only shows active
   ✓ get single product success
   ✓ get inactive product returns 404
 
-   PASS  Tests\Feature\Seller\OrdersTest
+    PASS  Tests\Feature\Seller\OrdersTest
   ✓ seller can list own orders only
   ✓ seller cannot view or update other sellers orders
   ✓ seller can advance order status step by step
@@ -521,21 +536,21 @@ The application features a comprehensive automated test suite covering all criti
   ✓ seller cannot confirm order directly
   ✓ seller cannot see customer email in order response
 
-   PASS  Tests\Feature\Seller\ProductsTest
+    PASS  Tests\Feature\Seller\ProductsTest
   ✓ seller can list own products
   ✓ seller cannot view or update other sellers product
   ✓ seller can delete own product
   ✓ seller cannot delete product with any orders
   ✓ seller can activate and deactivate own product
 
-   PASS  Tests\Feature\User\ProfileTest
+    PASS  Tests\Feature\User\ProfileTest
   ✓ user can update profile successfully
   ✓ user cannot update profile role
   ✓ seller can update shop profile successfully
   ✓ customer cannot update seller profile
   ✓ seller shop name unique validation
 
-   PASS  Tests\Feature\User\WalletTest
+    PASS  Tests\Feature\User\WalletTest
   ✓ customer can list wallets
   ✓ customer can create wallet with mass assignment protection
   ✓ customer can set default wallet
@@ -543,8 +558,8 @@ The application features a comprehensive automated test suite covering all criti
   ✓ customer cannot topup other users wallet idor
   ✓ seller can list and manage wallets
 
-  Tests:    84 passed (279 assertions)
-  Duration: 37.25s
+  Tests:    97 passed (316 assertions)
+  Duration: 39.83s
 ```
 
 ### Coverage Summary
@@ -555,12 +570,13 @@ The application features a comprehensive automated test suite covering all criti
 | `Admin\UsersTest` | 6 | User CRUD, activate/deactivate, delete guards |
 | `Customer\AddressTest` | 4 | Address CRUD, IDOR protection |
 | `Customer\OrdersTest` | 15 | Full order lifecycle, payments, cancellations, IDOR |
-| `ExceptionsTest` | 17 | JSON error format for every domain exception |
-| `Public\AuthTest` | 11 | Register, login, logout, JWT refresh, profile |
+| `Public\AuthTest` | 11 | Register, login, logout, profile |
 | `Public\ProductsTest` | 3 | Public product listing and visibility |
 | `Seller\OrdersTest` | 8 | Seller order management, status transitions |
 | `Seller\ProductsTest` | 5 | Product CRUD, activate/deactivate, ownership |
 | `User\ProfileTest` | 5 | Profile update, role protection, seller shop |
 | `User\WalletTest` | 6 | Wallet CRUD, topups, IDOR protection |
+| `Unit\ExceptionsTest` | 17 | JSON error format for every domain exception |
+| `Unit\JwtTokenTest` | 13 | JWT authentication, refresh, blacklist, expiration |
 | `Unit\ExampleTest` | 1 | Unit test baseline |
-| **Total** | **84** | **279 assertions** |
+| **Total** | **97** | **316 assertions** |
