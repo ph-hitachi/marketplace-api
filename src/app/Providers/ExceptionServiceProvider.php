@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 
 // Import Exceptions
 use App\Exceptions\UnexpectedErrorException;
+use App\Exceptions\OAuthException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -18,6 +19,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 
 class ExceptionServiceProvider extends ServiceProvider
 {
@@ -46,6 +51,40 @@ class ExceptionServiceProvider extends ServiceProvider
 
         // 401 Unauthenticated
         $handler->renderable(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*') && $request->bearerToken()) {
+                try {
+                    \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
+                } catch (TokenInvalidException $e) {
+                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
+                    return response()->json([
+                        'error_code'     => $oauth->getErrorCode(),
+                        'exception_type' => class_basename($oauth),
+                        'message'        => $oauth->getMessage(),
+                    ], $oauth->getStatusCode());
+                } catch (TokenExpiredException $e) {
+                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
+                    return response()->json([
+                        'error_code'     => $oauth->getErrorCode(),
+                        'exception_type' => class_basename($oauth),
+                        'message'        => $oauth->getMessage(),
+                    ], $oauth->getStatusCode());
+                } catch (TokenBlacklistedException $e) {
+                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
+                    return response()->json([
+                        'error_code'     => $oauth->getErrorCode(),
+                        'exception_type' => class_basename($oauth),
+                        'message'        => $oauth->getMessage(),
+                    ], $oauth->getStatusCode());
+                } catch (JWTException $e) {
+                    $oauth = new OAuthException('', 'token_could_not_parse', 500);
+                    return response()->json([
+                        'error_code'     => $oauth->getErrorCode(),
+                        'exception_type' => class_basename($oauth),
+                        'message'        => $oauth->getMessage(),
+                    ], $oauth->getStatusCode());
+                }
+            }
+
             return response()->json([
                 'error_code'     => 'UNAUTHENTICATED',
                 'exception_type' => class_basename($e),
@@ -113,6 +152,43 @@ class ExceptionServiceProvider extends ServiceProvider
             ], Response::HTTP_TOO_MANY_REQUESTS);
         });
 
+        // JWT Exceptions
+        $handler->renderable(function (TokenInvalidException $e, Request $request) {
+            $oauth = new OAuthException('', 'token_could_not_verified', 401);
+            return response()->json([
+                'error_code'     => $oauth->getErrorCode(),
+                'exception_type' => class_basename($oauth),
+                'message'        => $oauth->getMessage(),
+            ], $oauth->getStatusCode());
+        });
+
+        $handler->renderable(function (TokenExpiredException $e, Request $request) {
+            $oauth = new OAuthException('', 'token_could_not_verified', 401);
+            return response()->json([
+                'error_code'     => $oauth->getErrorCode(),
+                'exception_type' => class_basename($oauth),
+                'message'        => $oauth->getMessage(),
+            ], $oauth->getStatusCode());
+        });
+
+        $handler->renderable(function (TokenBlacklistedException $e, Request $request) {
+            $oauth = new OAuthException('', 'token_could_not_verified', 401);
+            return response()->json([
+                'error_code'     => $oauth->getErrorCode(),
+                'exception_type' => class_basename($oauth),
+                'message'        => $oauth->getMessage(),
+            ], $oauth->getStatusCode());
+        });
+
+        $handler->renderable(function (JWTException $e, Request $request) {
+            $oauth = new OAuthException('', 'token_could_not_parse', 500);
+            return response()->json([
+                'error_code'     => $oauth->getErrorCode(),
+                'exception_type' => class_basename($oauth),
+                'message'        => $oauth->getMessage(),
+            ], $oauth->getStatusCode());
+        });
+
         // 500 Fallback (Uncaught Exception)
         $handler->renderable(function (\Throwable $e, Request $request) {
             if ($e instanceof UnexpectedErrorException ||
@@ -122,7 +198,8 @@ class ExceptionServiceProvider extends ServiceProvider
                 $e instanceof ValidationException ||
                 $e instanceof NotFoundHttpException ||
                 $e instanceof MethodNotAllowedHttpException ||
-                $e instanceof TooManyRequestsHttpException) {
+                $e instanceof TooManyRequestsHttpException ||
+                $e instanceof JWTException) {
                 return null;
             }
 

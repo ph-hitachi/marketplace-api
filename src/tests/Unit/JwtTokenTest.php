@@ -43,7 +43,12 @@ class JwtTokenTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/user/me');
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
+                'exception_type' => 'OAuthException',
+                'message'        => 'The token could not be verified.',
+            ]);
     }
 
     /**
@@ -57,7 +62,12 @@ class JwtTokenTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer not.a.valid.jwt.token')
             ->getJson('/api/user/me');
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
+                'exception_type' => 'OAuthException',
+                'message'        => 'The token could not be verified.',
+            ]);
     }
 
     /**
@@ -69,7 +79,11 @@ class JwtTokenTest extends TestCase
     public function test_missing_token_is_rejected(): void
     {
         $response = $this->getJson('/api/user/me');
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'error_code'     => 'UNAUTHENTICATED',
+                'exception_type' => 'AuthenticationException',
+            ]);
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -202,7 +216,12 @@ class JwtTokenTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/user/me');
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
+                'exception_type' => 'OAuthException',
+                'message'        => 'The token could not be verified.',
+            ]);
     }
 
     /**
@@ -225,7 +244,12 @@ class JwtTokenTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/refresh');
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
+                'exception_type' => 'OAuthException',
+                'message'        => 'The token could not be verified.',
+            ]);
     }
 
     /**
