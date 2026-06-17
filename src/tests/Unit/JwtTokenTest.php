@@ -47,7 +47,7 @@ class JwtTokenTest extends TestCase
             ->assertJson([
                 'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
                 'exception_type' => 'OAuthException',
-                'message'        => 'The token could not be verified.',
+                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
             ]);
     }
 
@@ -66,7 +66,7 @@ class JwtTokenTest extends TestCase
             ->assertJson([
                 'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
                 'exception_type' => 'OAuthException',
-                'message'        => 'The token could not be verified.',
+                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
             ]);
     }
 
@@ -220,7 +220,7 @@ class JwtTokenTest extends TestCase
             ->assertJson([
                 'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
                 'exception_type' => 'OAuthException',
-                'message'        => 'The token could not be verified.',
+                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
             ]);
     }
 
@@ -248,7 +248,7 @@ class JwtTokenTest extends TestCase
             ->assertJson([
                 'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
                 'exception_type' => 'OAuthException',
-                'message'        => 'The token could not be verified.',
+                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
             ]);
     }
 
