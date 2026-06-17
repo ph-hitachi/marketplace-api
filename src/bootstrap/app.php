@@ -57,23 +57,26 @@ return Application::configure(basePath: dirname(__DIR__))
         // ── 401 Unauthenticated ────────────────────────────────────────────────────
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             return response()->json([
-                'error_code' => 'UNAUTHENTICATED',
-                'message'    => 'You are not authenticated. Please provide a valid Bearer token.',
+                'error_code'     => 'UNAUTHENTICATED',
+                'exception_type' => class_basename($e),
+                'message'        => 'You are not authenticated. Please provide a valid Bearer token.',
             ], Response::HTTP_UNAUTHORIZED);
         });
 
         // ── 403 Forbidden (Policy / Gate failures) ─────────────────────────────────
         $exceptions->render(function (AuthorizationException $e, Request $request) {
             return response()->json([
-                'error_code' => 'FORBIDDEN',
-                'message'    => 'You do not have permission to perform this action.',
+                'error_code'     => 'FORBIDDEN',
+                'exception_type' => class_basename($e),
+                'message'        => 'You do not have permission to perform this action.',
             ], Response::HTTP_FORBIDDEN);
         });
 
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             return response()->json([
-                'error_code' => 'FORBIDDEN',
-                'message'    => 'You do not have permission to perform this action.',
+                'error_code'     => 'FORBIDDEN',
+                'exception_type' => class_basename($e),
+                'message'        => 'You do not have permission to perform this action.',
             ], Response::HTTP_FORBIDDEN);
         });
 
@@ -86,25 +89,28 @@ return Application::configure(basePath: dirname(__DIR__))
                 : 'The requested endpoint does not exist.';
 
             return response()->json([
-                'error_code' => 'NOT_FOUND',
-                'message'    => $message,
+                'error_code'     => 'NOT_FOUND',
+                'exception_type' => $previous ? class_basename($previous) : class_basename($e),
+                'message'        => $message,
             ], Response::HTTP_NOT_FOUND);
         });
 
         // ── 422 Validation Error ────────────────────────────────────────────────────
         $exceptions->render(function (ValidationException $e, Request $request) {
             return response()->json([
-                'error_code' => 'VALIDATION_ERROR',
-                'message'    => 'The given data was invalid.',
-                'errors'     => $e->errors(),
+                'error_code'     => 'VALIDATION_ERROR',
+                'exception_type' => class_basename($e),
+                'message'        => 'The given data was invalid.',
+                'errors'         => $e->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         });
 
         // ── 429 Too Many Requests ───────────────────────────────────────────────────
         $exceptions->render(function (TooManyRequestsHttpException $e, Request $request) {
             return response()->json([
-                'error_code' => 'TOO_MANY_REQUESTS',
-                'message'    => 'Too many requests. Please slow down and try again in a moment.',
+                'error_code'     => 'TOO_MANY_REQUESTS',
+                'exception_type' => class_basename($e),
+                'message'        => 'Too many requests. Please slow down and try again in a moment.',
             ], Response::HTTP_TOO_MANY_REQUESTS);
         });
 

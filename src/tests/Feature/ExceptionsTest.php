@@ -18,8 +18,10 @@ use Tests\TestCase;
 class ExceptionsTest extends TestCase
 {
     #[DataProvider('exceptionsProvider')]
-    public function test_exception_renders_correct_json_format(\Exception $exception, int $expectedStatus, string $expectedErrorCode, string $expectedType)
+    public function test_exception_renders_correct_json_format(\Closure $exceptionFactory, int $expectedStatus, string $expectedErrorCode, string $expectedType, ?string $expectedMessage = null)
     {
+        $exception = $exceptionFactory();
+
         // Define a temporary route that throws the given exception
         Route::get('/api/test-exception', function () use ($exception) {
             throw $exception;
@@ -32,7 +34,7 @@ class ExceptionsTest extends TestCase
                  ->assertJson([
                      'error_code'     => $expectedErrorCode,
                      'exception_type' => $expectedType,
-                     'message'        => $exception->getMessage(),
+                     'message'        => $expectedMessage ?? $exception->getMessage(),
                  ]);
     }
 
@@ -57,59 +59,101 @@ class ExceptionsTest extends TestCase
     {
         return [
             'AccountDeactivatedException' => [
-                new AccountDeactivatedException(),
+                fn() => new AccountDeactivatedException(),
                 403,
                 'ACCOUNT_DEACTIVATED',
                 'AccountDeactivatedException'
             ],
             'InsufficientBalanceException' => [
-                new InsufficientBalanceException(),
+                fn() => new InsufficientBalanceException(),
                 422,
                 'INSUFFICIENT_BALANCE',
                 'InsufficientBalanceException'
             ],
             'InsufficientStockException' => [
-                new InsufficientStockException('Test Product', 5),
+                fn() => new InsufficientStockException('Test Product', 5),
                 422,
                 'INSUFFICIENT_STOCK',
                 'InsufficientStockException'
             ],
             'InvalidCredentialsException' => [
-                new InvalidCredentialsException(),
+                fn() => new InvalidCredentialsException(),
                 401,
                 'INVALID_CREDENTIALS',
                 'InvalidCredentialsException'
             ],
             'InvalidStatusTransitionException' => [
-                new InvalidStatusTransitionException('pending', 'delivered'),
+                fn() => new InvalidStatusTransitionException('pending', 'delivered'),
                 422,
                 'INVALID_STATUS_TRANSITION',
                 'InvalidStatusTransitionException'
             ],
             'OrderInTransitException' => [
-                new OrderInTransitException(),
+                fn() => new OrderInTransitException(),
                 422,
                 'ORDER_IN_TRANSIT',
                 'OrderInTransitException'
             ],
             'ProductUnavailableException' => [
-                new ProductUnavailableException(1),
+                fn() => new ProductUnavailableException(1),
                 422,
                 'PRODUCT_UNAVAILABLE',
                 'ProductUnavailableException'
             ],
             'UnexpectedErrorException' => [
-                new UnexpectedErrorException('Custom unexpected error'),
+                fn() => new UnexpectedErrorException('Custom unexpected error'),
                 500,
                 'SERVER_ERROR',
                 'UnexpectedErrorException'
             ],
             'UserDeleteBlockedException' => [
-                new UserDeleteBlockedException(),
+                fn() => new UserDeleteBlockedException(),
                 422,
                 'DELETE_BLOCKED',
                 'UserDeleteBlockedException'
             ],
+            'AuthenticationException' => [
+                fn() => new \Illuminate\Auth\AuthenticationException(),
+                401,
+                'UNAUTHENTICATED',
+                'AuthenticationException',
+                'You are not authenticated. Please provide a valid Bearer token.'
+            ],
+            'AuthorizationException' => [
+                fn() => new \Illuminate\Auth\Access\AuthorizationException(),
+                403,
+                'FORBIDDEN',
+                'AccessDeniedHttpException',
+                'You do not have permission to perform this action.'
+            ],
+            'AccessDeniedHttpException' => [
+                fn() => new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException(),
+                403,
+                'FORBIDDEN',
+                'AccessDeniedHttpException',
+                'You do not have permission to perform this action.'
+            ],
+            'NotFoundHttpException' => [
+                fn() => new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(),
+                404,
+                'NOT_FOUND',
+                'NotFoundHttpException',
+                'The requested endpoint does not exist.'
+            ],
+            'ValidationException' => [
+                fn() => new \Illuminate\Validation\ValidationException(\Illuminate\Support\Facades\Validator::make([], ['field' => 'required'])),
+                422,
+                'VALIDATION_ERROR',
+                'ValidationException',
+                'The given data was invalid.'
+            ],
+            'TooManyRequestsHttpException' => [
+                fn() => new \Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException(),
+                429,
+                'TOO_MANY_REQUESTS',
+                'TooManyRequestsHttpException',
+                'Too many requests. Please slow down and try again in a moment.'
+            ]
         ];
     }
 }
