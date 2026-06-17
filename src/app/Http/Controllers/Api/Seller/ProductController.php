@@ -65,36 +65,36 @@ class ProductController extends Controller
     /**
      * Delete product.
      */
-    public function destroy(Request $request, Product $product): JsonResponse
+    public function destroy(Request $request, Product $product): \Illuminate\Http\Response
     {
         $this->authorize('delete', $product);
 
         $product->delete();
 
-        return response()->json(['message' => 'Product deleted.']);
+        return response()->noContent();
     }
 
     /**
      * Activate product.
      */
-    public function activate(Request $request, Product $product): JsonResponse
+    public function activate(Request $request, Product $product): \Illuminate\Http\Response
     {
         $this->authorize('update', $product);
 
         $product->update(['is_active' => true]);
 
-        return response()->json(['message' => 'Product activated successfully', 'product' => $product]);
+        return response()->noContent();
     }
 
     /**
      * Deactivate product.
      */
-    public function deactivate(Request $request, Product $product): JsonResponse
+    public function deactivate(Request $request, Product $product): \Illuminate\Http\Response
     {
         $this->authorize('update', $product);
 
         $product->update(['is_active' => false]);
 
-        return response()->json(['message' => 'Product deactivated successfully', 'product' => $product]);
+        return response()->noContent();
     }
 }

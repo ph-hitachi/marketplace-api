@@ -68,13 +68,13 @@ class AddressController extends Controller
     /**
      * Delete address.
      */
-    public function destroy(Request $request, Address $address): JsonResponse
+    public function destroy(Request $request, Address $address): \Illuminate\Http\Response
     {
         $this->authorize('delete', $address);
 
         $address->delete();
 
-        return response()->json(['message' => 'Address deleted.']);
+        return response()->noContent();
     }
 
     /**

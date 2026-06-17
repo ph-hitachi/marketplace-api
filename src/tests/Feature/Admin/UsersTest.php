@@ -54,7 +54,7 @@ class UsersTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/admin/users/{$this->customer->id}/deactivate");
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         // Verify deactivated in DB
         $this->assertFalse((bool) $this->customer->fresh()->is_active);
@@ -76,7 +76,7 @@ class UsersTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/admin/users/{$this->customer->id}/activate");
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertTrue((bool) $this->customer->fresh()->is_active);
     }
 
@@ -126,7 +126,7 @@ class UsersTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->deleteJson("/api/admin/users/{$this->customer->id}");
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $this->customer->id]);
     }
 }

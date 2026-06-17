@@ -2,8 +2,7 @@
     "openapi": "3.1.0",
     "info": {
         "title": "Marketplace API",
-        "version": "0.0.1",
-        "description": "# API Overview\r\n\r\nWelcome to the Marketplace API documentation.\r\n\r\n## 1. Complete Folder Structure\r\n\r\n```text\r\nsrc/\r\n\u251c\u2500\u2500 app/\r\n\u2502   \u251c\u2500\u2500 Enums/\r\n\u2502   \u2502   \u2514\u2500\u2500 CancelReason.php\r\n\u2502   \u251c\u2500\u2500 Exceptions/\r\n\u2502   \u2502   \u251c\u2500\u2500 AccountDeactivatedException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 InsufficientBalanceException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 InsufficientStockException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 InvalidCredentialsException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 InvalidStatusTransitionException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 OrderInTransitException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 ProductUnavailableException.php\r\n\u2502   \u2502   \u251c\u2500\u2500 UnexpectedErrorException.php\r\n\u2502   \u2502   \u2514\u2500\u2500 UserDeleteBlockedException.php\r\n\u2502   \u251c\u2500\u2500 Http/\r\n\u2502   \u2502   \u251c\u2500\u2500 Controllers/\r\n\u2502   \u2502   \u2502   \u251c\u2500\u2500 Controller.php\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 Api/\r\n\u2502   \u2502   \u2502       \u251c\u2500\u2500 Admin/\r\n\u2502   \u2502   \u2502       \u2502   \u251c\u2500\u2500 OrderController.php\r\n\u2502   \u2502   \u2502       \u2502   \u2514\u2500\u2500 UserController.php\r\n\u2502   \u2502   \u2502       \u251c\u2500\u2500 Customer/\r\n\u2502   \u2502   \u2502       \u2502   \u251c\u2500\u2500 AddressController.php\r\n\u2502   \u2502   \u2502       \u2502   \u2514\u2500\u2500 OrderController.php\r\n\u2502   \u2502   \u2502       \u251c\u2500\u2500 Seller/\r\n\u2502   \u2502   \u2502       \u2502   \u251c\u2500\u2500 OrderController.php\r\n\u2502   \u2502   \u2502       \u2502   \u251c\u2500\u2500 ProductController.php\r\n\u2502   \u2502   \u2502       \u2502   \u2514\u2500\u2500 SellerProfileController.php\r\n\u2502   \u2502   \u2502       \u251c\u2500\u2500 User/\r\n\u2502   \u2502   \u2502       \u2502   \u251c\u2500\u2500 ProfileController.php\r\n\u2502   \u2502   \u2502       \u2502   \u2514\u2500\u2500 WalletController.php\r\n\u2502   \u2502   \u2502       \u251c\u2500\u2500 AuthController.php\r\n\u2502   \u2502   \u2502       \u2514\u2500\u2500 ProductController.php\r\n\u2502   \u2502   \u251c\u2500\u2500 Middleware/\r\n\u2502   \u2502   \u2502   \u251c\u2500\u2500 EnsureRole.php\r\n\u2502   \u2502   \u2502   \u251c\u2500\u2500 EnsureUserIsActive.php\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 SecurityHeaders.php\r\n\u2502   \u2502   \u2514\u2500\u2500 Requests/\r\n\u2502   \u2502       \u251c\u2500\u2500 Address/\r\n\u2502   \u2502       \u2502   \u251c\u2500\u2500 StoreAddressRequest.php\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 UpdateAddressRequest.php\r\n\u2502   \u2502       \u251c\u2500\u2500 Auth/\r\n\u2502   \u2502       \u2502   \u251c\u2500\u2500 LoginRequest.php\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 RegisterRequest.php\r\n\u2502   \u2502       \u251c\u2500\u2500 Order/\r\n\u2502   \u2502       \u2502   \u251c\u2500\u2500 CancelOrderRequest.php\r\n\u2502   \u2502       \u2502   \u251c\u2500\u2500 PlaceOrderRequest.php\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 UpdateOrderStatusRequest.php\r\n\u2502   \u2502       \u251c\u2500\u2500 Product/\r\n\u2502   \u2502       \u2502   \u251c\u2500\u2500 StoreProductRequest.php\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 UpdateProductRequest.php\r\n\u2502   \u2502       \u251c\u2500\u2500 Seller/\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 UpdateSellerProfileRequest.php\r\n\u2502   \u2502       \u251c\u2500\u2500 User/\r\n\u2502   \u2502       \u2502   \u2514\u2500\u2500 UpdateProfileRequest.php\r\n\u2502   \u2502       \u2514\u2500\u2500 Wallet/\r\n\u2502   \u2502           \u251c\u2500\u2500 StoreWalletRequest.php\r\n\u2502   \u2502           \u2514\u2500\u2500 TopupRequest.php\r\n\u2502   \u251c\u2500\u2500 Models/\r\n\u2502   \u2502   \u251c\u2500\u2500 Address.php\r\n\u2502   \u2502   \u251c\u2500\u2500 Order.php\r\n\u2502   \u2502   \u251c\u2500\u2500 Product.php\r\n\u2502   \u2502   \u251c\u2500\u2500 SellerProfile.php\r\n\u2502   \u2502   \u251c\u2500\u2500 User.php\r\n\u2502   \u2502   \u251c\u2500\u2500 Wallet.php\r\n\u2502   \u2502   \u2514\u2500\u2500 WalletTransaction.php\r\n\u2502   \u251c\u2500\u2500 Policies/\r\n\u2502   \u2502   \u251c\u2500\u2500 AddressPolicy.php\r\n\u2502   \u2502   \u251c\u2500\u2500 OrderPolicy.php\r\n\u2502   \u2502   \u251c\u2500\u2500 ProductPolicy.php\r\n\u2502   \u2502   \u251c\u2500\u2500 SellerProfilePolicy.php\r\n\u2502   \u2502   \u251c\u2500\u2500 UserPolicy.php\r\n\u2502   \u2502   \u2514\u2500\u2500 WalletPolicy.php\r\n\u2502   \u251c\u2500\u2500 Providers/\r\n\u2502   \u2502   \u2514\u2500\u2500 AppServiceProvider.php\r\n\u2502   \u2514\u2500\u2500 Services/\r\n\u2502       \u251c\u2500\u2500 OrderPaymentService.php\r\n\u2502       \u251c\u2500\u2500 OrderService.php\r\n\u2502       \u2514\u2500\u2500 ProductStockService.php\r\n\u251c\u2500\u2500 database/\r\n\u2502   \u251c\u2500\u2500 migrations/\r\n\u2502   \u2502   \u251c\u2500\u2500 0001_01_01_000000_create_users_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 0001_01_01_000001_create_cache_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 0001_01_01_000002_create_jobs_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 2026_01_01_000010_create_seller_profiles_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 2026_01_01_000020_create_addresses_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 2026_01_01_000030_create_products_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 2026_01_01_000040_create_orders_table.php\r\n\u2502   \u2502   \u251c\u2500\u2500 2026_01_01_000060_create_wallet_transactions_table.php\r\n\u2502   \u2502   \u2514\u2500\u2500 2026_06_14_054230_create_personal_access_tokens_table.php\r\n\u2502   \u2514\u2500\u2500 seeders/\r\n\u2502       \u2514\u2500\u2500 DatabaseSeeder.php\r\n\u251c\u2500\u2500 docs/\r\n\u2502   \u251c\u2500\u2500 api/\r\n\u2502   \u2502   \u251c\u2500\u2500 admin/\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 readme.md\r\n\u2502   \u2502   \u251c\u2500\u2500 customer/\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 readme.md\r\n\u2502   \u2502   \u251c\u2500\u2500 public/\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 readme.md\r\n\u2502   \u2502   \u251c\u2500\u2500 seller/\r\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 readme.md\r\n\u2502   \u2502   \u2514\u2500\u2500 user/\r\n\u2502   \u2502       \u2514\u2500\u2500 readme.md\r\n\u2502   \u2514\u2500\u2500 marketplace.dbml\r\n\u251c\u2500\u2500 routes/\r\n\u2502   \u251c\u2500\u2500 api.php\r\n\u2502   \u251c\u2500\u2500 console.php\r\n\u2502   \u2514\u2500\u2500 web.php\r\n\u2514\u2500\u2500 tests/\r\n    \u251c\u2500\u2500 TestCase.php\r\n    \u251c\u2500\u2500 Feature/\r\n    \u2502   \u251c\u2500\u2500 Admin/\r\n    \u2502   \u2502   \u251c\u2500\u2500 OrdersTest.php\r\n    \u2502   \u2502   \u2514\u2500\u2500 UsersTest.php\r\n    \u2502   \u251c\u2500\u2500 Customer/\r\n    \u2502   \u2502   \u251c\u2500\u2500 AddressTest.php\r\n    \u2502   \u2502   \u2514\u2500\u2500 OrdersTest.php\r\n    \u2502   \u251c\u2500\u2500 Public/\r\n    \u2502   \u2502   \u251c\u2500\u2500 AuthTest.php\r\n    \u2502   \u2502   \u2514\u2500\u2500 ProductsTest.php\r\n    \u2502   \u251c\u2500\u2500 Seller/\r\n    \u2502   \u2502   \u251c\u2500\u2500 OrdersTest.php\r\n    \u2502   \u2502   \u2514\u2500\u2500 ProductsTest.php\r\n    \u2502   \u251c\u2500\u2500 User/\r\n    \u2502   \u2502   \u251c\u2500\u2500 ProfileTest.php\r\n    \u2502   \u2502   \u2514\u2500\u2500 WalletTest.php\r\n    \u2502   \u2514\u2500\u2500 ExampleTest.php\r\n    \u2514\u2500\u2500 Unit/\r\n        \u2514\u2500\u2500 ExampleTest.php\r\n```\r\n\r\n---\r\n\r\n## 2. API Routes Outline (`routes/api.php`)\r\n\r\nBelow is the routing layout configured in the application:\r\n\r\n```php\r\n// \u2500\u2500 Public routes (no auth) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\nRoute::post('/auth/register', [AuthController::class, 'register']);\r\nRoute::post('/auth/login',    [AuthController::class, 'login']);\r\n\r\nRoute::get('/products',      [ProductController::class, 'index']);\r\nRoute::get('/products/{id}', [ProductController::class, 'show']);\r\n\r\n// \u2500\u2500 Authenticated routes (any role) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\nRoute::middleware(['auth:sanctum', 'active'])->group(function () {\r\n\r\n    Route::post('/auth/logout', [AuthController::class, 'logout']);\r\n    Route::get('/auth/me',      [AuthController::class, 'me']);\r\n\r\n    // \u2500\u2500 Wallets & Profile (Shared Customer/Seller) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n    Route::middleware('role:customer,seller')->prefix('user')->group(function () {\r\n        Route::get('/wallets',                  [WalletController::class, 'index']);\r\n        Route::post('/wallets',                 [WalletController::class, 'store']);\r\n        Route::get('/wallets/{wallet}',         [WalletController::class, 'show']);\r\n        Route::post('/wallets/{wallet}/topup',  [WalletController::class, 'topup']);\r\n        Route::post('/wallets/{wallet}/default', [WalletController::class, 'setDefault']);\r\n        Route::put('/profile',                  [UserProfileController::class, 'update']);\r\n    });\r\n\r\n    // \u2500\u2500 Customer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n    Route::middleware('role:customer')->prefix('customer')->group(function () {\r\n\r\n        // Addresses\r\n        Route::get('/addresses',                    [AddressController::class, 'index']);\r\n        Route::post('/addresses',                   [AddressController::class, 'store']);\r\n        Route::get('/addresses/{address}',          [AddressController::class, 'show']);\r\n        Route::put('/addresses/{address}',          [AddressController::class, 'update']);\r\n        Route::delete('/addresses/{address}',       [AddressController::class, 'destroy']);\r\n        Route::patch('/addresses/{address}/default',[AddressController::class, 'setDefault']);\r\n\r\n        // Orders\r\n        Route::post('/orders',              [CustomerOrderController::class, 'store']);\r\n        Route::get('/orders',               [CustomerOrderController::class, 'index']);\r\n        Route::get('/orders/{order}',       [CustomerOrderController::class, 'show']);\r\n        Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel']);\r\n        Route::post('/orders/{order}/confirm', [CustomerOrderController::class, 'confirm']);\r\n    });\r\n\r\n    // \u2500\u2500 Seller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n    Route::middleware('role:seller')->prefix('seller')->group(function () {\r\n \r\n        // Profile\r\n        Route::put('/profile',            [SellerProfileController::class, 'update']);\r\n \r\n        // Products\r\n        Route::get('/products',           [SellerProductController::class, 'index']);\r\n        Route::post('/products',          [SellerProductController::class, 'store']);\r\n        Route::get('/products/{product}', [SellerProductController::class, 'show']);\r\n        Route::put('/products/{product}', [SellerProductController::class, 'update']);\r\n        Route::delete('/products/{product}', [SellerProductController::class, 'destroy']);\r\n        Route::patch('/products/{product}/activate', [SellerProductController::class, 'activate']);\r\n        Route::patch('/products/{product}/deactivate', [SellerProductController::class, 'deactivate']);\r\n\r\n        // Orders\r\n        Route::get('/orders',              [SellerOrderController::class, 'index']);\r\n        Route::get('/orders/{order}',      [SellerOrderController::class, 'show']);\r\n        Route::patch('/orders/{order}/status', [SellerOrderController::class, 'updateStatus']);\r\n        Route::patch('/orders/{order}/cancel', [SellerOrderController::class, 'cancel']);\r\n    });\r\n\r\n    // \u2500\u2500 Admin \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n    Route::middleware('role:admin')->prefix('admin')->group(function () {\r\n\r\n        // Users\r\n        Route::get('/users',                    [AdminUserController::class, 'index']);\r\n        Route::get('/users/{user}',             [AdminUserController::class, 'show']);\r\n        Route::patch('/users/{user}/activate',  [AdminUserController::class, 'activate']);\r\n        Route::patch('/users/{user}/deactivate',[AdminUserController::class, 'deactivate']);\r\n        Route::delete('/users/{user}',          [AdminUserController::class, 'destroy']);\r\n\r\n        // Orders\r\n        Route::get('/orders',               [AdminOrderController::class, 'index']);\r\n        Route::get('/orders/{order}',       [AdminOrderController::class, 'show']);\r\n    });\r\n});\r\n```\r\n\r\n---\r\n\r\n---\r\n\r\n## 3. Standard HTTP Response Codes\r\n\r\nWhile domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.\r\n\r\n### Success Responses\r\n\r\nSuccess responses are typically documented on a per-endpoint basis, but adhere to these global conventions:\r\n\r\n| HTTP Status | Description |\r\n|---|---|\r\n| `200 OK` | The request succeeded. Used for `GET` (fetching records), `PUT`/`PATCH` (updating records), and standard actions. |\r\n| `201 Created` | The request succeeded and a new resource was created. Used exclusively for `POST` requests that result in database creation. |\r\n| `204 No Content` | The request succeeded, but there is no body to return. Used primarily for `DELETE` requests where the resource is successfully removed. |\r\n\r\n---\r\n\r\n## 4. Global Error Responses\r\n\r\nThe API uses a standardized error format for all exceptions. The `app.php` bootstrap configuration enforces the following global error codes:\r\n\r\n| Error Code | HTTP Status | Exception Type | Description |\r\n|---|---|---|---|\r\n| `UNAUTHENTICATED` | `401 Unauthorized` | `AuthenticationException` | You are not authenticated. Please provide a valid Bearer token. |\r\n| `FORBIDDEN` | `403 Forbidden` | `AuthorizationException`, `AccessDeniedHttpException` | You do not have permission to perform this action. |\r\n| `NOT_FOUND` | `404 Not Found` | `NotFoundHttpException`, `ModelNotFoundException` | The requested resource or endpoint does not exist. |\r\n| `METHOD_NOT_ALLOWED` | `405 Method Not Allowed` | `MethodNotAllowedHttpException` | Invalid HTTP method. |\r\n| `CONFLICT` | `409 Conflict` | `InvalidStatusTransitionException`, `OrderInTransitException`, `UserDeleteBlockedException` | Business logic conflict preventing the action (e.g., already active). |\r\n| `VALIDATION_ERROR` | `422 Unprocessable Entity` | `ValidationException` | The given data was invalid. Check the `errors` object for details. |\r\n| `TOO_MANY_REQUESTS` | `429 Too Many Requests` | `TooManyRequestsHttpException` | Too many requests. Please slow down. |\r\n| (Various Domain Codes) | `400` or `422` | `UnexpectedErrorException` | Business logic errors (e.g. `INSUFFICIENT_BALANCE`, `PRODUCT_UNAVAILABLE`). |\r\n| `INTERNAL_ERROR` | `500 Internal Server Error` | `Throwable` | Unhandled server errors. |\r\n\r\n### Global Error JSON Format\r\n\r\nWhen a global error (like 401, 403, 404, 429, or 500) occurs, the API returns a structured JSON response matching the domain exception format:\r\n\r\n```json\r\n{\r\n    \"error_code\": \"UNAUTHENTICATED\",\r\n    \"exception_type\": \"AuthenticationException\",\r\n    \"message\": \"Unauthenticated.\"\r\n}\r\n```\r\n\r\n### Example Error Response\r\n\r\n```json\r\n{\r\n    \"error_code\": \"VALIDATION_ERROR\",\r\n    \"message\": \"The given data was invalid.\",\r\n    \"errors\": {\r\n        \"payment_method\": [\r\n            \"The selected payment method is invalid.\"\r\n        ]\r\n    }\r\n}\r\n```\r\n\r\n### Domain-Specific Error Codes\r\n\r\nIn addition to the standard HTTP errors, the API throws custom business logic exceptions. These return a consistent JSON payload containing the specific `error_code` and a human-readable `message`.\r\n\r\n| Exception Class | HTTP Status | Error Code (`error_code`) | Typical Cause |\r\n|---|---|---|---|\r\n| `AccountDeactivatedException` | `403` | `ACCOUNT_DEACTIVATED` | Attempting to login or perform actions with a deactivated account. |\r\n| `InsufficientBalanceException` | `422` | `INSUFFICIENT_BALANCE` | Placing an order when the wallet balance is too low. |\r\n| `InsufficientStockException` | `422` | `INSUFFICIENT_STOCK` | Placing an order for a quantity that exceeds available inventory. |\r\n| `InvalidCredentialsException` | `401` | `INVALID_CREDENTIALS` | Providing an incorrect password during login. |\r\n| `InvalidStatusTransitionException` | `409` | `INVALID_STATUS_TRANSITION` | Attempting to move an order to an illogical state (e.g., pending to delivered). |\r\n| `OrderInTransitException` | `409` | `ORDER_IN_TRANSIT` | Attempting to cancel an order that has already been shipped. |\r\n| `ProductUnavailableException` | `422` | `PRODUCT_UNAVAILABLE` | Attempting to purchase a product that is inactive or deleted. |\r\n| `UserDeleteBlockedException` | `409` | `DELETE_BLOCKED` | Attempting to delete a user that has active orders tied to it. |\r\n| `UnexpectedErrorException` | `500` | `SERVER_ERROR` | A generic fallback for unhandled domain errors. |\r\n\r\n### Domain Error JSON Format\r\n\r\nWhen a domain exception is thrown, the API returns a structured JSON response:\r\n\r\n```json\r\n{\r\n    \"error_code\": \"INSUFFICIENT_BALANCE\",\r\n    \"exception_type\": \"InsufficientBalanceException\",\r\n    \"message\": \"Your wallet does not have enough balance to complete this transaction.\"\r\n}\r\n```\r\n\r\n---\r\n\r\n## 4. Rate Limiting & Security Policies\r\n\r\nThe Marketplace API is built with high security standards. Every response includes strict security headers and global rate limits to protect both customer data and system integrity.\r\n\r\n### API Rate Limiting\r\n\r\nThe API applies a strict rate limit of **60 requests per minute** per IP Address or Authenticated User ID. \r\nWhen the limit is reached, the API returns a `429 Too Many Requests` status code (`TOO_MANY_REQUESTS` global error code).\r\n\r\nResponse headers included on every request to track your limit:\r\n- `X-RateLimit-Limit`: Maximum requests allowed per minute (60)\r\n- `X-RateLimit-Remaining`: Number of requests remaining in the current minute\r\n- `Retry-After`: (On a 429 response) Seconds to wait before making another request\r\n\r\n### HTTP Security Headers\r\n\r\nTo protect clients and prevent web deception attacks (like clickjacking, MIME-sniffing, or stale cache sniffing), the following HTTP headers are injected into **every** API response:\r\n\r\n| Header | Value | Purpose |\r\n|---|---|---|\r\n| `X-Content-Type-Options` | `nosniff` | Prevents the browser from misinterpreting the content type. |\r\n| `X-Frame-Options` | `DENY` | Prevents clickjacking by blocking the API from being embedded in an iframe. |\r\n| `X-XSS-Protection` | `1; mode=block` | Enables strict cross-site scripting (XSS) filtering. |\r\n| `Referrer-Policy` | `no-referrer` | Ensures no referrer information is leaked to third parties. |\r\n| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none';` | Advanced CSP restricting all active content execution. Explicitly setting `script-src 'none'` guarantees that even if a malicious SVG file is retrieved and rendered, it cannot execute embedded JavaScript. |\r\n| `Cache-Control` | `no-store, max-age=0, must-revalidate` | Dynamic caching policy ensuring sensitive financial data is never cached by proxies or browsers. |\r\n"
+        "version": "0.0.1"
     },
     "servers": [
         {
@@ -30,7 +29,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OrderResource"
+                                                "$ref": "#/components/schemas/Resources.OrderResource"
                                             }
                                         }
                                     },
@@ -104,7 +103,7 @@
                                     "type": "object",
                                     "properties": {
                                         "order": {
-                                            "$ref": "#/components/schemas/OrderResource"
+                                            "$ref": "#/components/schemas/Resources.OrderResource"
                                         }
                                     },
                                     "required": [
@@ -204,7 +203,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/User"
+                                                "$ref": "#/components/schemas/Models.User"
                                             }
                                         },
                                         "first_page_url": {
@@ -376,7 +375,7 @@
                                     "type": "object",
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/Models.User"
                                         }
                                     },
                                     "required": [
@@ -471,24 +470,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "User deleted."
-                                        }
-                                    },
-                                    "required": [
-                                        "message"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "500": {
                         "description": "INTERNAL_ERROR Error\n\nINTERNAL_ERROR Error",
@@ -638,28 +621,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "User activated."
-                                        },
-                                        "user": {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    },
-                                    "required": [
-                                        "message",
-                                        "user"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "404": {
                         "description": "NOT_FOUND Error",
@@ -731,7 +694,7 @@
         "/admin/users/{user}/deactivate": {
             "patch": {
                 "operationId": "user.deactivate",
-                "summary": "Deactivate user",
+                "summary": "Deactivate user and revoke all tokens",
                 "tags": [
                     "Admin/Users",
                     "User"
@@ -748,24 +711,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "User deactivated and all tokens revoked."
-                                        }
-                                    },
-                                    "required": [
-                                        "message"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "404": {
                         "description": "NOT_FOUND Error",
@@ -846,7 +793,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/RegisterRequest"
+                                "$ref": "#/components/schemas/Requests.RegisterRequest"
                             }
                         }
                     }
@@ -864,7 +811,7 @@
                                             "const": "Registration successful."
                                         },
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/Models.User"
                                         },
                                         "access_token": {
                                             "type": "string"
@@ -931,7 +878,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/LoginRequest"
+                                "$ref": "#/components/schemas/Requests.LoginRequest"
                             }
                         }
                     }
@@ -1136,7 +1083,7 @@
                                     "type": "object",
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/Models.User"
                                         }
                                     },
                                     "required": [
@@ -1200,7 +1147,7 @@
                                         "addresses": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Address"
+                                                "$ref": "#/components/schemas/Models.Address"
                                             }
                                         }
                                     },
@@ -1257,7 +1204,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreAddressRequest"
+                                "$ref": "#/components/schemas/Requests.StoreAddressRequest"
                             }
                         }
                     }
@@ -1271,7 +1218,7 @@
                                     "type": "object",
                                     "properties": {
                                         "address": {
-                                            "$ref": "#/components/schemas/Address"
+                                            "$ref": "#/components/schemas/Models.Address"
                                         }
                                     },
                                     "required": [
@@ -1376,7 +1323,7 @@
                                     "type": "object",
                                     "properties": {
                                         "address": {
-                                            "$ref": "#/components/schemas/Address"
+                                            "$ref": "#/components/schemas/Models.Address"
                                         }
                                     },
                                     "required": [
@@ -1506,7 +1453,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateAddressRequest"
+                                "$ref": "#/components/schemas/Requests.UpdateAddressRequest"
                             }
                         }
                     }
@@ -1520,7 +1467,7 @@
                                     "type": "object",
                                     "properties": {
                                         "address": {
-                                            "$ref": "#/components/schemas/Address"
+                                            "$ref": "#/components/schemas/Models.Address"
                                         }
                                     },
                                     "required": [
@@ -1679,24 +1626,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "Address deleted."
-                                        }
-                                    },
-                                    "required": [
-                                        "message"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "403": {
                         "description": "FORBIDDEN Error",
@@ -1861,7 +1792,7 @@
                                             "const": "Default address updated."
                                         },
                                         "address": {
-                                            "$ref": "#/components/schemas/Address"
+                                            "$ref": "#/components/schemas/Models.Address"
                                         }
                                     },
                                     "required": [
@@ -1987,7 +1918,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Cart"
+                                        "$ref": "#/components/schemas/Models.Cart"
                                     }
                                 }
                             }
@@ -2071,7 +2002,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreCartRequest"
+                                "$ref": "#/components/schemas/Requests.StoreCartRequest"
                             }
                         }
                     }
@@ -2089,7 +2020,7 @@
                                             "const": "Product added to cart."
                                         },
                                         "cart": {
-                                            "$ref": "#/components/schemas/Cart"
+                                            "$ref": "#/components/schemas/Models.Cart"
                                         }
                                     },
                                     "required": [
@@ -2382,7 +2313,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PlaceOrderRequest"
+                                "$ref": "#/components/schemas/Requests.PlaceOrderRequest"
                             }
                         }
                     }
@@ -2407,7 +2338,7 @@
                                         "orders": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OrderResource"
+                                                "$ref": "#/components/schemas/Resources.OrderResource"
                                             }
                                         },
                                         "total_deducted": {
@@ -2594,7 +2525,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OrderResource"
+                                                "$ref": "#/components/schemas/Resources.OrderResource"
                                             }
                                         }
                                     },
@@ -2668,7 +2599,7 @@
                                     "type": "object",
                                     "properties": {
                                         "order": {
-                                            "$ref": "#/components/schemas/OrderResource"
+                                            "$ref": "#/components/schemas/Resources.OrderResource"
                                         }
                                     },
                                     "required": [
@@ -2801,7 +2732,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CancelOrderRequest"
+                                "$ref": "#/components/schemas/Requests.CancelOrderRequest"
                             }
                         }
                     }
@@ -3118,7 +3049,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Product"
+                                                "$ref": "#/components/schemas/Models.Product"
                                             }
                                         },
                                         "first_page_url": {
@@ -3289,7 +3220,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OrderResource"
+                                                "$ref": "#/components/schemas/Resources.OrderResource"
                                             }
                                         }
                                     },
@@ -3363,7 +3294,7 @@
                                     "type": "object",
                                     "properties": {
                                         "order": {
-                                            "$ref": "#/components/schemas/OrderResource"
+                                            "$ref": "#/components/schemas/Resources.OrderResource"
                                         }
                                     },
                                     "required": [
@@ -3475,7 +3406,7 @@
         "/seller/orders/{order}/status": {
             "patch": {
                 "operationId": "order.updateStatus",
-                "summary": "Advance an order's status (pending\u2192processing\u2192shipped\u2192delivered)",
+                "summary": "Advance an order's status (pending→processing→shipped→delivered)",
                 "tags": [
                     "Seller/Orders",
                     "Order"
@@ -3496,7 +3427,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateOrderStatusRequest"
+                                "$ref": "#/components/schemas/Requests.UpdateOrderStatusRequest"
                             }
                         }
                     }
@@ -3513,7 +3444,7 @@
                                             "type": "string"
                                         },
                                         "order": {
-                                            "$ref": "#/components/schemas/OrderResource"
+                                            "$ref": "#/components/schemas/Resources.OrderResource"
                                         }
                                     },
                                     "required": [
@@ -3687,7 +3618,7 @@
         "/seller/orders/{order}/cancel": {
             "patch": {
                 "operationId": "seller.order.cancel",
-                "summary": "Cancel a pending or processing order \u2014 restores stock and refunds wallet",
+                "summary": "Cancel a pending or processing order — restores stock and refunds wallet",
                 "tags": [
                     "Seller/Orders",
                     "Order"
@@ -3708,7 +3639,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CancelOrderRequest"
+                                "$ref": "#/components/schemas/Requests.CancelOrderRequest"
                             }
                         }
                     }
@@ -3725,7 +3656,7 @@
                                             "type": "string"
                                         },
                                         "order": {
-                                            "$ref": "#/components/schemas/OrderResource"
+                                            "$ref": "#/components/schemas/Resources.OrderResource"
                                         }
                                     },
                                     "required": [
@@ -3890,7 +3821,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Product"
+                                                "$ref": "#/components/schemas/Models.Product"
                                             }
                                         },
                                         "first_page_url": {
@@ -4045,7 +3976,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreProductRequest"
+                                "$ref": "#/components/schemas/Requests.StoreProductRequest"
                             }
                         }
                     }
@@ -4059,7 +3990,7 @@
                                     "type": "object",
                                     "properties": {
                                         "product": {
-                                            "$ref": "#/components/schemas/Product"
+                                            "$ref": "#/components/schemas/Models.Product"
                                         }
                                     },
                                     "required": [
@@ -4164,7 +4095,7 @@
                                     "type": "object",
                                     "properties": {
                                         "product": {
-                                            "$ref": "#/components/schemas/Product"
+                                            "$ref": "#/components/schemas/Models.Product"
                                         }
                                     },
                                     "required": [
@@ -4294,7 +4225,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateProductRequest"
+                                "$ref": "#/components/schemas/Requests.UpdateProductRequest"
                             }
                         }
                     }
@@ -4308,7 +4239,7 @@
                                     "type": "object",
                                     "properties": {
                                         "product": {
-                                            "$ref": "#/components/schemas/Product"
+                                            "$ref": "#/components/schemas/Models.Product"
                                         }
                                     },
                                     "required": [
@@ -4467,24 +4398,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "Product deleted."
-                                        }
-                                    },
-                                    "required": [
-                                        "message"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "403": {
                         "description": "FORBIDDEN Error",
@@ -4637,28 +4552,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "Product activated successfully"
-                                        },
-                                        "product": {
-                                            "$ref": "#/components/schemas/Product"
-                                        }
-                                    },
-                                    "required": [
-                                        "message",
-                                        "product"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "403": {
                         "description": "FORBIDDEN Error",
@@ -4779,28 +4674,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "Product deactivated successfully"
-                                        },
-                                        "product": {
-                                            "$ref": "#/components/schemas/Product"
-                                        }
-                                    },
-                                    "required": [
-                                        "message",
-                                        "product"
-                                    ]
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "No content"
                     },
                     "403": {
                         "description": "FORBIDDEN Error",
@@ -4914,7 +4789,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateSellerProfileRequest"
+                                "$ref": "#/components/schemas/Requests.UpdateSellerProfileRequest"
                             }
                         }
                     }
@@ -4932,7 +4807,7 @@
                                             "const": "Seller profile updated successfully."
                                         },
                                         "profile": {
-                                            "$ref": "#/components/schemas/SellerProfile"
+                                            "$ref": "#/components/schemas/Models.SellerProfile"
                                         }
                                     },
                                     "required": [
@@ -5055,7 +4930,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateProfileRequest"
+                                "$ref": "#/components/schemas/Requests.UpdateProfileRequest"
                             }
                         }
                     }
@@ -5073,7 +4948,7 @@
                                             "const": "Profile updated successfully."
                                         },
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/Models.User"
                                         }
                                     },
                                     "required": [
@@ -5199,7 +5074,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Wallet"
+                                        "$ref": "#/components/schemas/Models.Wallet"
                                     }
                                 }
                             }
@@ -5251,7 +5126,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreWalletRequest"
+                                "$ref": "#/components/schemas/Requests.StoreWalletRequest"
                             }
                         }
                     }
@@ -5269,7 +5144,7 @@
                                             "const": "Wallet created successfully."
                                         },
                                         "wallet": {
-                                            "$ref": "#/components/schemas/Wallet"
+                                            "$ref": "#/components/schemas/Models.Wallet"
                                         }
                                     },
                                     "required": [
@@ -5375,12 +5250,12 @@
                                     "type": "object",
                                     "properties": {
                                         "wallet": {
-                                            "$ref": "#/components/schemas/Wallet"
+                                            "$ref": "#/components/schemas/Models.Wallet"
                                         },
                                         "transactions": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/WalletTransaction"
+                                                "$ref": "#/components/schemas/Models.WalletTransaction"
                                             }
                                         }
                                     },
@@ -5515,7 +5390,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TopupRequest"
+                                "$ref": "#/components/schemas/Requests.TopupRequest"
                             }
                         }
                     }
@@ -5533,7 +5408,7 @@
                                             "const": "Top-up successful."
                                         },
                                         "transaction": {
-                                            "$ref": "#/components/schemas/WalletTransaction"
+                                            "$ref": "#/components/schemas/Models.WalletTransaction"
                                         },
                                         "balance": {
                                             "type": "string"
@@ -5711,7 +5586,7 @@
                                             "const": "Default wallet updated."
                                         },
                                         "wallet": {
-                                            "$ref": "#/components/schemas/Wallet"
+                                            "$ref": "#/components/schemas/Models.Wallet"
                                         }
                                     },
                                     "required": [
@@ -5824,7 +5699,7 @@
     },
     "components": {
         "schemas": {
-            "Address": {
+            "Models.Address": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -5898,26 +5773,7 @@
                 ],
                 "title": "Address"
             },
-            "CancelOrderRequest": {
-                "type": "object",
-                "properties": {
-                    "cancel_reason": {
-                        "$ref": "#/components/schemas/CancelReason"
-                    },
-                    "cancel_reason_notes": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 255
-                    }
-                },
-                "required": [
-                    "cancel_reason"
-                ],
-                "title": "CancelOrderRequest"
-            },
-            "CancelReason": {
+            "Models.CancelReason": {
                 "type": "integer",
                 "description": "| |\n|---|\n| `1` <br/> Customer changed their mind |\n| `2` <br/> The shipping address was incorrect |\n| `3` <br/> Duplicate order placed by mistake |\n| `4` <br/> Seller took too long to ship |\n| `5` <br/> Other reasons (requires notes) |",
                 "enum": [
@@ -5929,7 +5785,7 @@
                 ],
                 "title": "CancelReason"
             },
-            "Cart": {
+            "Models.Cart": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -5965,249 +5821,7 @@
                 ],
                 "title": "Cart"
             },
-            "LoginRequest": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "password": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "email",
-                    "password"
-                ],
-                "title": "LoginRequest"
-            },
-            "OrderItemResource": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    },
-                    "order_id": {
-                        "type": "integer"
-                    },
-                    "product_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "product_name": {
-                        "type": "string"
-                    },
-                    "unit_price": {
-                        "type": "string"
-                    },
-                    "quantity": {
-                        "type": "integer"
-                    },
-                    "subtotal": {
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    }
-                },
-                "required": [
-                    "id",
-                    "order_id",
-                    "product_id",
-                    "product_name",
-                    "unit_price",
-                    "quantity",
-                    "subtotal",
-                    "created_at",
-                    "updated_at"
-                ],
-                "title": "OrderItemResource"
-            },
-            "OrderResource": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    },
-                    "customer_id": {
-                        "type": "integer"
-                    },
-                    "seller_id": {
-                        "type": "integer"
-                    },
-                    "address_id": {
-                        "type": "integer"
-                    },
-                    "wallet_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "payment_method": {
-                        "type": "string"
-                    },
-                    "status": {
-                        "type": "string"
-                    },
-                    "batch_ref": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "total_amount": {
-                        "type": "string"
-                    },
-                    "cancel_reason": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/components/schemas/CancelReason"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    },
-                    "cancel_reason_notes": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "shipped_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "delivered_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "cancel_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "completed_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "created_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "items": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/OrderItemResource"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "customer_id",
-                    "seller_id",
-                    "address_id",
-                    "wallet_id",
-                    "payment_method",
-                    "status",
-                    "batch_ref",
-                    "total_amount",
-                    "cancel_reason",
-                    "cancel_reason_notes",
-                    "shipped_at",
-                    "delivered_at",
-                    "cancel_at",
-                    "completed_at",
-                    "created_at",
-                    "updated_at"
-                ],
-                "title": "OrderResource"
-            },
-            "PlaceOrderRequest": {
-                "type": "object",
-                "properties": {
-                    "address_id": {
-                        "type": "integer"
-                    },
-                    "payment_method": {
-                        "type": "string",
-                        "enum": [
-                            "wallet",
-                            "cod"
-                        ]
-                    },
-                    "wallet_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "items": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "product_id": {
-                                    "type": "integer"
-                                },
-                                "quantity": {
-                                    "type": "integer",
-                                    "minimum": 1,
-                                    "maximum": 999
-                                }
-                            },
-                            "required": [
-                                "product_id",
-                                "quantity"
-                            ]
-                        },
-                        "minItems": 1
-                    }
-                },
-                "required": [
-                    "address_id",
-                    "payment_method",
-                    "items"
-                ],
-                "title": "PlaceOrderRequest"
-            },
-            "Product": {
+            "Models.Product": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -6278,57 +5892,7 @@
                 ],
                 "title": "Product"
             },
-            "RegisterRequest": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "maxLength": 255
-                    },
-                    "password": {
-                        "type": "string"
-                    },
-                    "role": {
-                        "type": "string",
-                        "enum": [
-                            "customer",
-                            "seller"
-                        ]
-                    },
-                    "shop_name": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "description": "Seller-only fields",
-                        "maxLength": 255
-                    },
-                    "shop_description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 1000
-                    },
-                    "password_confirmation": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "name",
-                    "email",
-                    "password",
-                    "role",
-                    "password_confirmation"
-                ],
-                "title": "RegisterRequest"
-            },
-            "SellerProfile": {
+            "Models.SellerProfile": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -6371,299 +5935,7 @@
                 ],
                 "title": "SellerProfile"
             },
-            "StoreAddressRequest": {
-                "type": "object",
-                "properties": {
-                    "label": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "phone": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 30
-                    },
-                    "address_line1": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "address_line2": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 255
-                    },
-                    "city": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "province": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "postal_code": {
-                        "type": "string",
-                        "maxLength": 20
-                    },
-                    "country": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 100
-                    }
-                },
-                "required": [
-                    "label",
-                    "address_line1",
-                    "city",
-                    "province",
-                    "postal_code"
-                ],
-                "title": "StoreAddressRequest"
-            },
-            "StoreCartRequest": {
-                "type": "object",
-                "properties": {
-                    "product_id": {
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "product_id"
-                ],
-                "title": "StoreCartRequest"
-            },
-            "StoreProductRequest": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 5000
-                    },
-                    "price": {
-                        "type": "number",
-                        "minimum": 0.01,
-                        "maximum": 9999999.99
-                    },
-                    "stock": {
-                        "type": "integer",
-                        "minimum": 0
-                    },
-                    "is_active": {
-                        "type": "boolean"
-                    },
-                    "tags": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "string",
-                            "maxLength": 50
-                        },
-                        "maxItems": 10
-                    }
-                },
-                "required": [
-                    "name",
-                    "price",
-                    "stock"
-                ],
-                "title": "StoreProductRequest"
-            },
-            "StoreWalletRequest": {
-                "type": "object",
-                "properties": {
-                    "label": {
-                        "type": "string",
-                        "maxLength": 100
-                    }
-                },
-                "required": [
-                    "label"
-                ],
-                "title": "StoreWalletRequest"
-            },
-            "TopupRequest": {
-                "type": "object",
-                "properties": {
-                    "amount": {
-                        "type": "number",
-                        "minimum": 1,
-                        "maximum": 50000
-                    }
-                },
-                "required": [
-                    "amount"
-                ],
-                "title": "TopupRequest"
-            },
-            "UpdateAddressRequest": {
-                "type": "object",
-                "properties": {
-                    "label": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "phone": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 30
-                    },
-                    "address_line1": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "address_line2": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 255
-                    },
-                    "city": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "province": {
-                        "type": "string",
-                        "maxLength": 100
-                    },
-                    "postal_code": {
-                        "type": "string",
-                        "maxLength": 20
-                    },
-                    "country": {
-                        "type": "string",
-                        "maxLength": 100
-                    }
-                },
-                "title": "UpdateAddressRequest"
-            },
-            "UpdateOrderStatusRequest": {
-                "type": "object",
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "pending",
-                            "shipped",
-                            "delivered",
-                            "cancelled",
-                            "confirmed"
-                        ]
-                    }
-                },
-                "required": [
-                    "status"
-                ],
-                "title": "UpdateOrderStatusRequest"
-            },
-            "UpdateProductRequest": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 5000
-                    },
-                    "price": {
-                        "type": "number",
-                        "minimum": 0.01,
-                        "maximum": 9999999.99
-                    },
-                    "stock": {
-                        "type": "integer",
-                        "minimum": 0
-                    },
-                    "is_active": {
-                        "type": "boolean"
-                    },
-                    "tags": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "string",
-                            "maxLength": 50
-                        },
-                        "maxItems": 10
-                    }
-                },
-                "title": "UpdateProductRequest"
-            },
-            "UpdateProfileRequest": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "maxLength": 255
-                    },
-                    "password": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "password_confirmation": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                },
-                "required": [
-                    "name",
-                    "email"
-                ],
-                "title": "UpdateProfileRequest"
-            },
-            "UpdateSellerProfileRequest": {
-                "type": "object",
-                "properties": {
-                    "shop_name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "shop_description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "maxLength": 1000
-                    }
-                },
-                "required": [
-                    "shop_name"
-                ],
-                "title": "UpdateSellerProfileRequest"
-            },
-            "User": {
+            "Models.User": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -6715,7 +5987,7 @@
                 ],
                 "title": "User"
             },
-            "Wallet": {
+            "Models.Wallet": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -6759,7 +6031,7 @@
                 ],
                 "title": "Wallet"
             },
-            "WalletTransaction": {
+            "Models.WalletTransaction": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -6816,6 +6088,609 @@
                     "created_at"
                 ],
                 "title": "WalletTransaction"
+            },
+            "Requests.CancelOrderRequest": {
+                "type": "object",
+                "properties": {
+                    "cancel_reason": {
+                        "$ref": "#/components/schemas/Models.CancelReason"
+                    },
+                    "cancel_reason_notes": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    }
+                },
+                "required": [
+                    "cancel_reason"
+                ],
+                "title": "CancelOrderRequest"
+            },
+            "Requests.LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "title": "LoginRequest"
+            },
+            "Requests.PlaceOrderRequest": {
+                "type": "object",
+                "properties": {
+                    "address_id": {
+                        "type": "integer"
+                    },
+                    "payment_method": {
+                        "type": "string",
+                        "enum": [
+                            "wallet",
+                            "cod"
+                        ]
+                    },
+                    "wallet_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "product_id": {
+                                    "type": "integer"
+                                },
+                                "quantity": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 999
+                                }
+                            },
+                            "required": [
+                                "product_id",
+                                "quantity"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "address_id",
+                    "payment_method",
+                    "items"
+                ],
+                "title": "PlaceOrderRequest"
+            },
+            "Requests.RegisterRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "customer",
+                            "seller"
+                        ]
+                    },
+                    "shop_name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Seller-only fields",
+                        "maxLength": 255
+                    },
+                    "shop_description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 1000
+                    },
+                    "password_confirmation": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "role",
+                    "password_confirmation"
+                ],
+                "title": "RegisterRequest"
+            },
+            "Requests.StoreAddressRequest": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "phone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 30
+                    },
+                    "address_line1": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "address_line2": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "city": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "province": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "country": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "label",
+                    "address_line1",
+                    "city",
+                    "province",
+                    "postal_code"
+                ],
+                "title": "StoreAddressRequest"
+            },
+            "Requests.StoreCartRequest": {
+                "type": "object",
+                "properties": {
+                    "product_id": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "product_id"
+                ],
+                "title": "StoreCartRequest"
+            },
+            "Requests.StoreProductRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 5000
+                    },
+                    "price": {
+                        "type": "number",
+                        "minimum": 0.01,
+                        "maximum": 9999999.99
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "tags": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "string",
+                            "maxLength": 50
+                        },
+                        "maxItems": 10
+                    }
+                },
+                "required": [
+                    "name",
+                    "price",
+                    "stock"
+                ],
+                "title": "StoreProductRequest"
+            },
+            "Requests.StoreWalletRequest": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "label"
+                ],
+                "title": "StoreWalletRequest"
+            },
+            "Requests.TopupRequest": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 50000
+                    }
+                },
+                "required": [
+                    "amount"
+                ],
+                "title": "TopupRequest"
+            },
+            "Requests.UpdateAddressRequest": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "phone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 30
+                    },
+                    "address_line1": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "address_line2": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "city": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "province": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "country": {
+                        "type": "string",
+                        "maxLength": 100
+                    }
+                },
+                "title": "UpdateAddressRequest"
+            },
+            "Requests.UpdateOrderStatusRequest": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "shipped",
+                            "delivered",
+                            "cancelled",
+                            "confirmed"
+                        ]
+                    }
+                },
+                "required": [
+                    "status"
+                ],
+                "title": "UpdateOrderStatusRequest"
+            },
+            "Requests.UpdateProductRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 5000
+                    },
+                    "price": {
+                        "type": "number",
+                        "minimum": 0.01,
+                        "maximum": 9999999.99
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "tags": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "string",
+                            "maxLength": 50
+                        },
+                        "maxItems": 10
+                    }
+                },
+                "title": "UpdateProductRequest"
+            },
+            "Requests.UpdateProfileRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "password_confirmation": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "name",
+                    "email"
+                ],
+                "title": "UpdateProfileRequest"
+            },
+            "Requests.UpdateSellerProfileRequest": {
+                "type": "object",
+                "properties": {
+                    "shop_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "shop_description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 1000
+                    }
+                },
+                "required": [
+                    "shop_name"
+                ],
+                "title": "UpdateSellerProfileRequest"
+            },
+            "Resources.OrderItemResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "order_id": {
+                        "type": "integer"
+                    },
+                    "product_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "product_name": {
+                        "type": "string"
+                    },
+                    "unit_price": {
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "type": "integer"
+                    },
+                    "subtotal": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "order_id",
+                    "product_id",
+                    "product_name",
+                    "unit_price",
+                    "quantity",
+                    "subtotal",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "OrderItemResource"
+            },
+            "Resources.OrderResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "customer_id": {
+                        "type": "integer"
+                    },
+                    "seller_id": {
+                        "type": "integer"
+                    },
+                    "address_id": {
+                        "type": "integer"
+                    },
+                    "wallet_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "payment_method": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "batch_ref": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "total_amount": {
+                        "type": "string"
+                    },
+                    "cancel_reason": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/Models.CancelReason"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "cancel_reason_notes": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "shipped_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "delivered_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "cancel_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "completed_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Resources.OrderItemResource"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "customer_id",
+                    "seller_id",
+                    "address_id",
+                    "wallet_id",
+                    "payment_method",
+                    "status",
+                    "batch_ref",
+                    "total_amount",
+                    "cancel_reason",
+                    "cancel_reason_notes",
+                    "shipped_at",
+                    "delivered_at",
+                    "cancel_at",
+                    "completed_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "OrderResource"
             }
         }
     }

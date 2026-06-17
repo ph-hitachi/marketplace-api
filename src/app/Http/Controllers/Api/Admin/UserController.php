@@ -34,30 +34,32 @@ class UserController extends Controller
 
     /**
      * Activate user.
+     * 
      */
-    public function activate(User $user): JsonResponse
+    public function activate(User $user): \Illuminate\Http\Response
     {
         $user->update(['is_active' => true]);
 
-        return response()->json(['message' => 'User activated.', 'user' => $user]);
+        return response()->noContent();
     }
 
     /**
-     * Deactivate user.
+     * Deactivate user and revoke all tokens.
+     * 
      */
-    public function deactivate(User $user): JsonResponse
+    public function deactivate(User $user): \Illuminate\Http\Response
     {
         $user->update(['is_active' => false]);
         $user->tokens()->delete();
 
-        return response()->json(['message' => 'User deactivated and all tokens revoked.']);
+        return response()->noContent();
     }
 
     /**
      * Delete user.
      * 
      */
-    public function destroy(User $user): JsonResponse
+    public function destroy(User $user): \Illuminate\Http\Response
     {
         $hasOrders = $user->customerOrders()
             ->where('status', '!=', 'cancelled')
@@ -70,6 +72,6 @@ class UserController extends Controller
         $user->tokens()->delete();
         $user->delete();
 
-        return response()->json(['message' => 'User deleted.']);
+        return response()->noContent();
     }
 }

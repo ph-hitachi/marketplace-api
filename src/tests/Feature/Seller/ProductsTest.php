@@ -88,7 +88,7 @@ class ProductsTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token1}")
             ->deleteJson("/api/seller/products/{$product->id}");
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertSoftDeleted('products', ['id' => $product->id]);
     }
 
@@ -149,9 +149,7 @@ class ProductsTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token1}")
             ->patchJson("/api/seller/products/{$product->id}/deactivate");
 
-        $response->assertStatus(200)
-            ->assertJsonPath('message', 'Product deactivated successfully')
-            ->assertJsonPath('product.is_active', false);
+        $response->assertStatus(204);
             
         $this->assertDatabaseHas('products', ['id' => $product->id, 'is_active' => false]);
 
@@ -159,9 +157,7 @@ class ProductsTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token1}")
             ->patchJson("/api/seller/products/{$product->id}/activate");
 
-        $response->assertStatus(200)
-            ->assertJsonPath('message', 'Product activated successfully')
-            ->assertJsonPath('product.is_active', true);
+        $response->assertStatus(204);
 
         $this->assertDatabaseHas('products', ['id' => $product->id, 'is_active' => true]);
     }
