@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
@@ -25,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware) {
         // Apply security headers to every response
         $middleware->append(SecurityHeaders::class);
 
@@ -95,6 +96,15 @@ return Application::configure(basePath: dirname(__DIR__))
             ], Response::HTTP_NOT_FOUND);
         });
 
+        // ── 405 Method Not Allowed ─────────────────────────────────────────────────
+        $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
+            return response()->json([
+                'error_code'     => 'METHOD_NOT_ALLOWED',
+                'exception_type' => class_basename($e),
+                'message'        => 'Invalid HTTP method.',
+            ], Response::HTTP_METHOD_NOT_ALLOWED);
+        });
+
         // ── 422 Validation Error ────────────────────────────────────────────────────
         $exceptions->render(function (ValidationException $e, Request $request) {
             return response()->json([
@@ -122,12 +132,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 $e instanceof AccessDeniedHttpException ||
                 $e instanceof ValidationException ||
                 $e instanceof NotFoundHttpException ||
+                $e instanceof MethodNotAllowedHttpException ||
                 $e instanceof TooManyRequestsHttpException) {
                 return null;
             }
 
             if ($request->is('api/*')) {
-                report($e); // Still logs to Laravel log
                 $unexpected = new UnexpectedErrorException('Sorry, something went wrong on the server. Please try again later.');
                 return response()->json([
                     'error_code'     => $unexpected->getErrorCode(),

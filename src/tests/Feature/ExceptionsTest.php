@@ -84,13 +84,13 @@ class ExceptionsTest extends TestCase
             ],
             'InvalidStatusTransitionException' => [
                 fn() => new InvalidStatusTransitionException('pending', 'delivered'),
-                422,
+                409,
                 'INVALID_STATUS_TRANSITION',
                 'InvalidStatusTransitionException'
             ],
             'OrderInTransitException' => [
                 fn() => new OrderInTransitException(),
-                422,
+                409,
                 'ORDER_IN_TRANSIT',
                 'OrderInTransitException'
             ],
@@ -108,7 +108,7 @@ class ExceptionsTest extends TestCase
             ],
             'UserDeleteBlockedException' => [
                 fn() => new UserDeleteBlockedException(),
-                422,
+                409,
                 'DELETE_BLOCKED',
                 'UserDeleteBlockedException'
             ],

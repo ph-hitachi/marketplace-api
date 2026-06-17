@@ -430,7 +430,7 @@ class OrdersTest extends TestCase
         // Attempt cancel
         $response1 = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/customer/orders/{$order->id}/cancel", ['cancel_reason' => 1]);
-        $response1->assertStatus(422)
+        $response1->assertStatus(409)
             ->assertJson(['error_code' => 'ORDER_IN_TRANSIT']);
 
         // Move to shipped
@@ -440,7 +440,7 @@ class OrdersTest extends TestCase
         // Attempt cancel
         $response2 = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/customer/orders/{$order->id}/cancel", ['cancel_reason' => 1]);
-        $response2->assertStatus(422)
+        $response2->assertStatus(409)
             ->assertJson(['error_code' => 'ORDER_IN_TRANSIT']);
     }
 
@@ -525,7 +525,7 @@ class OrdersTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->postJson("/api/customer/orders/{$order->id}/confirm");
 
-        $response->assertStatus(422)
+        $response->assertStatus(409)
             ->assertJson([
                 'error_code' => 'INVALID_STATUS_TRANSITION',
             ]);
@@ -537,7 +537,7 @@ class OrdersTest extends TestCase
         $response2 = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->postJson("/api/customer/orders/{$order->id}/confirm");
 
-        $response2->assertStatus(422)
+        $response2->assertStatus(409)
             ->assertJson([
                 'error_code' => 'INVALID_STATUS_TRANSITION',
             ]);

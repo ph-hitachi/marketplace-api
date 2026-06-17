@@ -113,7 +113,7 @@ class UsersTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->deleteJson("/api/admin/users/{$this->customer->id}");
 
-        $response->assertStatus(422)
+        $response->assertStatus(409)
             ->assertJson([
                 'error_code' => 'DELETE_BLOCKED',
             ]);

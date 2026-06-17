@@ -11,7 +11,7 @@ class OrderInTransitException extends UnexpectedErrorException
 
     public function getStatusCode(): int
     {
-        return 422;
+        return 409;
     }
 
     public function getErrorCode(): string

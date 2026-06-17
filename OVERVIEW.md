@@ -372,7 +372,35 @@ return Application::configure(basePath: dirname(__DIR__))
 
 ---
 
-## 4. Test Results
+## 4. Standard HTTP Response Codes
+
+While domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.
+
+### Success Responses
+
+Success responses are typically documented on a per-endpoint basis, but adhere to these global conventions:
+
+- **`200 OK`**: The request succeeded. Used for `GET` (fetching records), `PUT`/`PATCH` (updating records), and standard actions.
+- **`201 Created`**: The request succeeded and a new resource was created. Used exclusively for `POST` requests that result in database creation.
+- **`204 No Content`**: The request succeeded, but there is no body to return. Used primarily for `DELETE` requests where the resource is successfully removed.
+
+### Standard HTTP Errors
+
+These errors are automatically intercepted and formatted consistently by the global exception handler in `bootstrap/app.php`:
+
+- **`400 Bad Request`**: Used for domain-specific logic failures (e.g., `InsufficientBalanceException`).
+- **`401 Unauthorized`**: Missing, invalid, or expired Bearer token.
+- **`403 Forbidden`**: The authenticated user does not have the correct role or permission (e.g., a customer trying to access a seller endpoint).
+- **`404 Not Found`**: The requested URL endpoint does not exist (`NotFoundHttpException`) or the requested database record (e.g., `Product::findOrFail()`) does not exist (`ModelNotFoundException`).
+- **`405 Method Not Allowed`**: Invalid HTTP method.
+- **`409 Conflict`**: The request could not be completed due to a conflict with the current state of the target resource (e.g., `InvalidStatusTransitionException` when trying to cancel an already shipped order).
+- **`422 Unprocessable Entity`**: The request body failed validation (`ValidationException`). The response includes an `errors` object detailing which fields failed.
+- **`429 Too Many Requests`**: The user has exceeded the global rate limit (`throttle:api`).
+- **`500 Internal Server Error`**: An unexpected system crash or fatal error occurred. The true exception is hidden from the user and logged in Telescope.
+
+---
+
+## 5. Test Results
 
 The application features a comprehensive automated test suite covering all critical roles, API endpoints, and logic flows.
 

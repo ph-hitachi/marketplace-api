@@ -127,7 +127,7 @@ class OrdersTest extends TestCase
             ->patchJson("/api/seller/orders/{$this->order1->id}/status", [
                 'status' => 'shipped',
             ]);
-        $responseBackward->assertStatus(422)
+        $responseBackward->assertStatus(409)
             ->assertJson([
                 'error_code' => 'INVALID_STATUS_TRANSITION',
             ]);
@@ -137,7 +137,7 @@ class OrdersTest extends TestCase
             ->patchJson("/api/seller/orders/{$this->order1->id}/status", [
                 'status' => 'pending',
             ]);
-        $responsePending->assertStatus(422);
+        $responsePending->assertStatus(409);
     }
 
 
@@ -202,7 +202,7 @@ class OrdersTest extends TestCase
             ->patchJson("/api/seller/orders/{$this->order1->id}/cancel", [
                 'cancel_reason' => 4,
             ]);
-        $response1->assertStatus(422)
+        $response1->assertStatus(409)
             ->assertJson([
                 'error_code' => 'ORDER_IN_TRANSIT',
             ]);
@@ -214,7 +214,7 @@ class OrdersTest extends TestCase
                 'cancel_reason' => 5,
                 'cancel_reason_notes' => 'Some note',
             ]);
-        $response2->assertStatus(422)
+        $response2->assertStatus(409)
             ->assertJson([
                 'error_code' => 'INVALID_STATUS_TRANSITION',
             ]);
@@ -225,7 +225,7 @@ class OrdersTest extends TestCase
             ->patchJson("/api/seller/orders/{$this->order1->id}/cancel", [
                 'cancel_reason' => 1,
             ]);
-        $response3->assertStatus(422)
+        $response3->assertStatus(409)
             ->assertJson([
                 'error_code' => 'INVALID_STATUS_TRANSITION',
             ]);

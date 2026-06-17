@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,15 +26,15 @@ class AuthController extends Controller
         $data = $request->validated();
 
         $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => $data['password'],
-            'role'     => $data['role'],
+            'role' => $data['role'],
         ]);
 
         if ($user->role === 'seller') {
             $user->sellerProfile()->create([
-                'shop_name'        => $data['shop_name'],
+                'shop_name' => $data['shop_name'],
                 'shop_description' => $data['shop_description'] ?? null,
             ]);
         }
@@ -45,10 +46,10 @@ class AuthController extends Controller
         );
 
         return response()->json([
-            'message'      => 'Registration successful.',
-            'user'         => $user->load('sellerProfile'),
+            'message' => 'Registration successful.',
+            'user' => $user->load('sellerProfile'),
             'access_token' => $token->plainTextToken,
-            'token_type'   => 'Bearer',
+            'token_type' => 'Bearer',
         ], 201);
     }
 
@@ -59,14 +60,14 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (! Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             throw new InvalidCredentialsException();
         }
 
         /** @var User $user */
         $user = Auth::user();
 
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             Auth::logout();
             throw new AccountDeactivatedException();
         }
@@ -81,10 +82,10 @@ class AuthController extends Controller
         );
 
         return response()->json([
-            'message'      => 'Login successful.',
-            'user'         => $user->load('sellerProfile'),
+            'message' => 'Login successful.',
+            'user' => $user->load('sellerProfile'),
             'access_token' => $token->plainTextToken,
-            'token_type'   => 'Bearer',
+            'token_type' => 'Bearer',
         ]);
     }
 

@@ -229,7 +229,23 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
 
 ---
 
-## 3. Global Error Responses
+## 3. Standard HTTP Response Codes
+
+While domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.
+
+### Success Responses
+
+Success responses are typically documented on a per-endpoint basis, but adhere to these global conventions:
+
+| HTTP Status | Description |
+|---|---|
+| `200 OK` | The request succeeded. Used for `GET` (fetching records), `PUT`/`PATCH` (updating records), and standard actions. |
+| `201 Created` | The request succeeded and a new resource was created. Used exclusively for `POST` requests that result in database creation. |
+| `204 No Content` | The request succeeded, but there is no body to return. Used primarily for `DELETE` requests where the resource is successfully removed. |
+
+---
+
+## 4. Global Error Responses
 
 The API uses a standardized error format for all exceptions. The `app.php` bootstrap configuration enforces the following global error codes:
 
@@ -238,6 +254,8 @@ The API uses a standardized error format for all exceptions. The `app.php` boots
 | `UNAUTHENTICATED` | `401 Unauthorized` | `AuthenticationException` | You are not authenticated. Please provide a valid Bearer token. |
 | `FORBIDDEN` | `403 Forbidden` | `AuthorizationException`, `AccessDeniedHttpException` | You do not have permission to perform this action. |
 | `NOT_FOUND` | `404 Not Found` | `NotFoundHttpException`, `ModelNotFoundException` | The requested resource or endpoint does not exist. |
+| `METHOD_NOT_ALLOWED` | `405 Method Not Allowed` | `MethodNotAllowedHttpException` | Invalid HTTP method. |
+| `CONFLICT` | `409 Conflict` | `InvalidStatusTransitionException`, `OrderInTransitException`, `UserDeleteBlockedException` | Business logic conflict preventing the action (e.g., already active). |
 | `VALIDATION_ERROR` | `422 Unprocessable Entity` | `ValidationException` | The given data was invalid. Check the `errors` object for details. |
 | `TOO_MANY_REQUESTS` | `429 Too Many Requests` | `TooManyRequestsHttpException` | Too many requests. Please slow down. |
 | (Various Domain Codes) | `400` or `422` | `UnexpectedErrorException` | Business logic errors (e.g. `INSUFFICIENT_BALANCE`, `PRODUCT_UNAVAILABLE`). |
@@ -279,10 +297,10 @@ In addition to the standard HTTP errors, the API throws custom business logic ex
 | `InsufficientBalanceException` | `422` | `INSUFFICIENT_BALANCE` | Placing an order when the wallet balance is too low. |
 | `InsufficientStockException` | `422` | `INSUFFICIENT_STOCK` | Placing an order for a quantity that exceeds available inventory. |
 | `InvalidCredentialsException` | `401` | `INVALID_CREDENTIALS` | Providing an incorrect password during login. |
-| `InvalidStatusTransitionException` | `422` | `INVALID_STATUS_TRANSITION` | Attempting to move an order to an illogical state (e.g., pending to delivered). |
-| `OrderInTransitException` | `422` | `ORDER_IN_TRANSIT` | Attempting to cancel an order that has already been shipped. |
+| `InvalidStatusTransitionException` | `409` | `INVALID_STATUS_TRANSITION` | Attempting to move an order to an illogical state (e.g., pending to delivered). |
+| `OrderInTransitException` | `409` | `ORDER_IN_TRANSIT` | Attempting to cancel an order that has already been shipped. |
 | `ProductUnavailableException` | `422` | `PRODUCT_UNAVAILABLE` | Attempting to purchase a product that is inactive or deleted. |
-| `UserDeleteBlockedException` | `422` | `DELETE_BLOCKED` | Attempting to delete a user that has active orders tied to it. |
+| `UserDeleteBlockedException` | `409` | `DELETE_BLOCKED` | Attempting to delete a user that has active orders tied to it. |
 | `UnexpectedErrorException` | `500` | `SERVER_ERROR` | A generic fallback for unhandled domain errors. |
 
 ### Domain Error JSON Format
