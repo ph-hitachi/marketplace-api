@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Public;
+namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,12 +24,6 @@ class JwtTokenTest extends TestCase
     // 1. Token Expiration
     // ─────────────────────────────────────────────────────────────────────
 
-    /**
-     * A token forged with TTL=0 (already expired) must be rejected with 401.
-     *
-     * Security guarantee: tokens cannot be used once they have passed their
-     * expiration time, limiting the window of opportunity for a stolen token.
-     */
     /**
      * A token with a past `exp` claim must be rejected with 401.
      *
