@@ -11,6 +11,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./src:/var/www/html
+      - ./docs:/var/www/html/docs
       - ./docker/php-fpm/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     networks:
       - app_network
@@ -23,6 +24,7 @@ services:
       - "80:80"
     volumes:
       - ./src:/var/www/html:ro
+      - ./docs:/var/www/html/docs:ro
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
     depends_on:
       - app

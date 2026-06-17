@@ -227,9 +227,75 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
 
 ---
 
+## 3. Endpoints Summary
+
+Below is a tabular summary of all endpoints grouped by their functional area.
+
+### Public Routes
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| POST | `/api/auth/register` | `201 Created` | Register a new customer or seller account. |
+| POST | `/api/auth/login` | `200 OK` | Authenticate a user and receive a bearer token. |
+| GET | `/api/products` | `200 OK` | List all active products available in the marketplace. |
+| GET | `/api/products/{id}` | `200 OK` | Retrieve details for a specific active product. |
+
+### Authenticated (Shared)
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| POST | `/api/auth/logout` | `200 OK` | Log out the current user and revoke their token. |
+| GET | `/api/auth/me` | `200 OK` | Retrieve the authenticated user's profile information. |
+| GET | `/api/user/wallets` | `200 OK` | List all wallets owned by the user. |
+| POST | `/api/user/wallets` | `201 Created` | Create a new wallet. |
+| GET | `/api/user/wallets/{wallet}` | `200 OK` | View details and transaction history of a specific wallet. |
+| POST | `/api/user/wallets/{wallet}/topup`| `200 OK` | Add funds to a specific wallet. |
+| POST | `/api/user/wallets/{wallet}/default`| `200 OK` | Set a specific wallet as the default payment method. |
+| PUT | `/api/user/profile` | `200 OK` | Update the authenticated user's profile details. |
+
+### Customer Routes
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| GET | `/api/customer/addresses` | `200 OK` | List all delivery addresses for the customer. |
+| POST | `/api/customer/addresses` | `201 Created` | Add a new delivery address. |
+| GET | `/api/customer/addresses/{address}`| `200 OK` | View a specific delivery address. |
+| PUT | `/api/customer/addresses/{address}`| `200 OK` | Update an existing delivery address. |
+| DELETE| `/api/customer/addresses/{address}`| `204 No Content` | Delete a delivery address. |
+| PATCH | `/api/customer/addresses/{address}/default`| `200 OK` | Set a specific address as the default delivery location. |
+| POST | `/api/customer/orders` | `201 Created` | Place a new order for products. |
+| GET | `/api/customer/orders` | `200 OK` | List all past and current orders. |
+| GET | `/api/customer/orders/{order}` | `200 OK` | View details of a specific order. |
+| PATCH | `/api/customer/orders/{order}/cancel`| `200 OK` | Cancel a pending order. |
+| POST | `/api/customer/orders/{order}/confirm`| `200 OK` | Confirm receipt of a delivered order to release funds to the seller. |
+
+### Seller Routes
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| PUT | `/api/seller/profile` | `200 OK` | Update the seller's shop profile details. |
+| GET | `/api/seller/products` | `200 OK` | List all products belonging to the seller. |
+| POST | `/api/seller/products` | `201 Created` | Add a new product to the marketplace. |
+| GET | `/api/seller/products/{product}` | `200 OK` | View details of a specific product. |
+| PUT | `/api/seller/products/{product}` | `200 OK` | Update an existing product's details. |
+| DELETE| `/api/seller/products/{product}` | `204 No Content` | Soft-delete a product. |
+| PATCH | `/api/seller/products/{product}/activate`| `204 No Content` | Mark a product as active and visible to customers. |
+| PATCH | `/api/seller/products/{product}/deactivate`|`204 No Content` | Mark a product as inactive. |
+| GET | `/api/seller/orders` | `200 OK` | List all orders placed for the seller's products. |
+| GET | `/api/seller/orders/{order}` | `200 OK` | View details of a specific order. |
+| PATCH | `/api/seller/orders/{order}/status`| `200 OK` | Update the fulfillment status of an order. |
+| PATCH | `/api/seller/orders/{order}/cancel`| `200 OK` | Cancel a pending order on behalf of the customer. |
+
+### Admin Routes
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| GET | `/api/admin/users` | `200 OK` | List all users registered in the system. |
+| GET | `/api/admin/users/{user}` | `200 OK` | View details of a specific user. |
+| PATCH | `/api/admin/users/{user}/activate`| `204 No Content` | Reactivate a deactivated user account. |
+| PATCH | `/api/admin/users/{user}/deactivate`| `204 No Content` | Deactivate a user account and revoke their tokens. |
+| DELETE| `/api/admin/users/{user}` | `204 No Content` | Permanently delete a user account (if no active orders exist). |
+| GET | `/api/admin/orders` | `200 OK` | List all orders across the entire marketplace. |
+| GET | `/api/admin/orders/{order}` | `200 OK` | View details of any order. |
+
 ---
 
-## 3. Standard HTTP Response Codes
+## 4. Standard HTTP Response Codes
 
 While domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.
 
@@ -245,7 +311,7 @@ Success responses are typically documented on a per-endpoint basis, but adhere t
 
 ---
 
-## 4. Global Error Responses
+## 5. Global Error Responses
 
 The API uses a standardized error format for all exceptions. The `app.php` bootstrap configuration enforces the following global error codes:
 
@@ -317,7 +383,7 @@ When a domain exception is thrown, the API returns a structured JSON response:
 
 ---
 
-## 4. Rate Limiting & Security Policies
+## 6. Rate Limiting & Security Policies
 
 The Marketplace API is built with high security standards. Every response includes strict security headers and global rate limits to protect both customer data and system integrity.
 
