@@ -239,11 +239,15 @@ Below is a tabular summary of all endpoints grouped by their functional area.
 | GET | `/api/products` | `200 OK` | List all active products available in the marketplace. |
 | GET | `/api/products/{id}` | `200 OK` | Retrieve details for a specific active product. |
 
-### Authenticated (Shared)
+### Authentication
 | Method | Endpoint | Success Status | Description |
 |---|---|---|---|
 | POST | `/api/auth/logout` | `200 OK` | Log out the current user and revoke their token. |
 | GET | `/api/auth/me` | `200 OK` | Retrieve the authenticated user's profile information. |
+
+### User (Shared)
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
 | GET | `/api/user/wallets` | `200 OK` | List all wallets owned by the user. |
 | POST | `/api/user/wallets` | `201 Created` | Create a new wallet. |
 | GET | `/api/user/wallets/{wallet}` | `200 OK` | View details and transaction history of a specific wallet. |
