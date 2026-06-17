@@ -39,18 +39,9 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken(
-            'auth_token',
-            ['*'],
-            now()->addDays((int) config('sanctum.token_expiry_days', 3))
-        );
+        $token = Auth::guard('api')->login($user);
 
-        return response()->json([
-            'message' => 'Registration successful.',
-            'user' => $user->load('sellerProfile'),
-            'access_token' => $token->plainTextToken,
-            'token_type' => 'Bearer',
-        ], 201);
+        return $this->respondWithToken($token, 'Registration successful.', $user->load('sellerProfile'), 201);
     }
 
     /**
@@ -60,52 +51,65 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials)) {
+        if (! $token = Auth::guard('api')->attempt($credentials)) {
             throw new InvalidCredentialsException();
         }
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
 
         if (!$user->is_active) {
-            Auth::logout();
+            Auth::guard('api')->logout();
             throw new AccountDeactivatedException();
         }
 
-        // Revoke old tokens to enforce single-session per demo
-        $user->tokens()->delete();
-
-        $token = $user->createToken(
-            'auth_token',
-            ['*'],
-            now()->addDays((int) config('sanctum.token_expiry_days', 3))
-        );
-
-        return response()->json([
-            'message' => 'Login successful.',
-            'user' => $user->load('sellerProfile'),
-            'access_token' => $token->plainTextToken,
-            'token_type' => 'Bearer',
-        ]);
+        return $this->respondWithToken($token, 'Login successful.', $user->load('sellerProfile'));
     }
 
     /**
      * Logout user.
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('api')->logout();
 
         return response()->json(['message' => 'Logged out successfully.']);
     }
 
     /**
+     * Refresh token.
+     */
+    public function refresh(): JsonResponse
+    {
+        return $this->respondWithToken(Auth::guard('api')->refresh(), 'Token refreshed successfully.');
+    }
+
+    /**
      * View profile.
      */
-    public function me(Request $request): JsonResponse
+    public function me(): JsonResponse
     {
-        $user = $request->user()->load('sellerProfile');
+        $user = Auth::guard('api')->user()->load('sellerProfile');
 
         return response()->json(['user' => $user]);
+    }
+
+    /**
+     * Get the token array structure.
+     */
+    protected function respondWithToken(string $token, string $message, ?User $user = null, int $status = 200): JsonResponse
+    {
+        $data = [
+            'message' => $message,
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ];
+
+        if ($user) {
+            $data['user'] = $user;
+        }
+
+        return response()->json($data, $status);
     }
 }

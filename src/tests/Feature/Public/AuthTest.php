@@ -182,28 +182,28 @@ class AuthTest extends TestCase
     public function test_logout_success(): void
     {
         $user  = User::factory()->create();
-        $token = $user->createToken('test_token')->plainTextToken;
+        $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/logout');
 
         $response->assertStatus(200);
-        $this->assertCount(0, $user->tokens);
+        $this->assertFalse(auth('api')->check());
     }
 
     public function test_me_profile_unauthorized_rejection(): void
     {
-        $response = $this->getJson('/api/auth/me');
+        $response = $this->getJson('/api/user/me');
         $response->assertStatus(401);
     }
 
     public function test_me_profile_success(): void
     {
-        $user  = User::factory()->create();
-        $token = $user->createToken('test_token')->plainTextToken;
+        $user  = User::factory()->create(['role' => 'customer']);
+        $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->getJson('/api/auth/me');
+            ->getJson('/api/user/me');
 
         $response->assertStatus(200)
             ->assertJsonPath('user.email', $user->email);

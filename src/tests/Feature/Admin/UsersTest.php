@@ -22,7 +22,7 @@ class UsersTest extends TestCase
         parent::setUp();
 
         $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->token = $this->admin->createToken('token')->plainTextToken;
+        $this->token = auth('api')->login($this->admin);
 
         $this->customer = User::factory()->create(['role' => 'customer']);
     }
@@ -47,9 +47,10 @@ class UsersTest extends TestCase
 
     public function test_admin_can_deactivate_user_and_revoke_tokens(): void
     {
-        // Give customer a token
-        $customerToken = $this->customer->createToken('c_token')->plainTextToken;
-        $this->assertCount(1, $this->customer->tokens);
+        // Pre-generate a JWT for the customer (simulating they are logged in)
+        $customerToken = auth('api')->login($this->customer);
+        // Re-login as admin so the guard context is reset
+        $this->token = auth('api')->login($this->admin);
 
         $response = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/admin/users/{$this->customer->id}/deactivate");
@@ -59,14 +60,11 @@ class UsersTest extends TestCase
         // Verify deactivated in DB
         $this->assertFalse((bool) $this->customer->fresh()->is_active);
 
-        // Verify tokens deleted
-        $this->assertCount(0, $this->customer->fresh()->tokens);
-
-        // Verify customer cannot use revoked token
-        $this->app['auth']->forgetGuards();
+        // Verify customer cannot use their token after deactivation
+        // (EnsureUserIsActive middleware blocks them)
         $responseAuthCheck = $this->withHeader('Authorization', "Bearer {$customerToken}")
             ->getJson('/api/user/wallets');
-        $responseAuthCheck->assertStatus(401);
+        $responseAuthCheck->assertStatus(403);
     }
 
     public function test_admin_can_activate_user(): void

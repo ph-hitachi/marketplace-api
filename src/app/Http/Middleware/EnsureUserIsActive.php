@@ -19,8 +19,8 @@ class EnsureUserIsActive
         $user = $request->user();
 
         if ($user && ! $user->is_active) {
-            // Revoke the current token so it cannot be reused
-            $user->currentAccessToken()->delete();
+            // Invalidate token
+            auth('api')->logout();
 
             throw new AccountDeactivatedException();
         }

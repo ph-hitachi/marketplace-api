@@ -29,7 +29,7 @@ class OrdersTest extends TestCase
         parent::setUp();
 
         $this->customer = User::factory()->create(['role' => 'customer']);
-        $this->token    = $this->customer->createToken('token')->plainTextToken;
+        $this->token    = auth('api')->login($this->customer);
 
         $this->seller1 = User::factory()->create(['role' => 'seller']);
         $this->seller2 = User::factory()->create(['role' => 'seller']);

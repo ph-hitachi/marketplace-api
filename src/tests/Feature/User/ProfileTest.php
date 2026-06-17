@@ -18,7 +18,7 @@ class ProfileTest extends TestCase
             'email' => 'old@example.com',
             'role'  => 'customer',
         ]);
-        $token = $user->createToken('token')->plainTextToken;
+        $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->putJson('/api/user/profile', [
@@ -46,7 +46,7 @@ class ProfileTest extends TestCase
             'email' => 'customer@example.com',
             'role'  => 'customer',
         ]);
-        $token = $user->createToken('token')->plainTextToken;
+        $token = auth('api')->login($user);
 
         // Attempting to change role to seller or admin
         $response = $this->withHeader('Authorization', "Bearer {$token}")
@@ -73,7 +73,7 @@ class ProfileTest extends TestCase
     public function test_seller_can_update_shop_profile_successfully(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
-        $token  = $seller->createToken('token')->plainTextToken;
+        $token = auth('api')->login($seller);
 
         // Populate initial profile
         $seller->sellerProfile()->create([
@@ -101,7 +101,7 @@ class ProfileTest extends TestCase
     public function test_customer_cannot_update_seller_profile(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->putJson('/api/seller/profile', [
@@ -125,7 +125,7 @@ class ProfileTest extends TestCase
         $sellerB->sellerProfile()->create([
             'shop_name' => 'Unique Shop B',
         ]);
-        $tokenB = $sellerB->createToken('token')->plainTextToken;
+        $tokenB = auth('api')->login($sellerB);
 
         // Seller B tries to take Seller A's shop name
         $response = $this->withHeader('Authorization', "Bearer {$tokenB}")

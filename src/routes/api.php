@@ -32,13 +32,14 @@ Route::get('/products',      [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
 // ── Authenticated routes (any role) ────────────────────────────────────────
-Route::middleware(['auth:sanctum', 'active'])->group(function () {
+Route::middleware(['auth:api', 'active'])->group(function () {
 
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/auth/me',      [AuthController::class, 'me']);
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
     // ── Wallets & Profile (Shared Customer/Seller) ─────────────────────────
     Route::middleware('role:customer,seller')->prefix('user')->group(function () {
+        Route::get('/me',                       [AuthController::class, 'me']);
         Route::get('/wallets',                  [WalletController::class, 'index']);
         Route::post('/wallets',                 [WalletController::class, 'store']);
         Route::get('/wallets/{wallet}',         [WalletController::class, 'show']);

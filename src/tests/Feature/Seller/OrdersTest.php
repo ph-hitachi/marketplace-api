@@ -25,7 +25,7 @@ class OrdersTest extends TestCase
         parent::setUp();
 
         $this->seller1  = User::factory()->create(['role' => 'seller']);
-        $this->token1   = $this->seller1->createToken('token')->plainTextToken;
+        $this->token1   = auth('api')->login($this->seller1);
         $this->seller2  = User::factory()->create(['role' => 'seller']);
         $this->customer = User::factory()->create(['role' => 'customer']);
 

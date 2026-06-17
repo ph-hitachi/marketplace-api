@@ -14,7 +14,7 @@ class WalletTest extends TestCase
     public function test_customer_can_list_wallets(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         // Default wallet already auto-created with is_default = true
         $response = $this->withHeader('Authorization', "Bearer {$token}")
@@ -31,7 +31,7 @@ class WalletTest extends TestCase
     public function test_customer_can_create_wallet_with_mass_assignment_protection(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/user/wallets', [
@@ -55,7 +55,7 @@ class WalletTest extends TestCase
     public function test_customer_can_set_default_wallet(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         $defaultWallet = $customer->wallets()->where('is_default', true)->first();
 
@@ -79,7 +79,7 @@ class WalletTest extends TestCase
     public function test_customer_can_topup_own_wallet(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
         $wallet   = $customer->wallets()->first();
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
@@ -109,7 +109,7 @@ class WalletTest extends TestCase
     {
         $customer1 = User::factory()->create(['role' => 'customer']);
         $customer2 = User::factory()->create(['role' => 'customer']);
-        $token1    = $customer1->createToken('token')->plainTextToken;
+        $token1 = auth('api')->login($customer1);
         $wallet2   = $customer2->wallets()->first();
 
         $response = $this->withHeader('Authorization', "Bearer {$token1}")
@@ -123,7 +123,7 @@ class WalletTest extends TestCase
     public function test_seller_can_list_and_manage_wallets(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
-        $token  = $seller->createToken('token')->plainTextToken;
+        $token = auth('api')->login($seller);
 
         // List
         $response = $this->withHeader('Authorization', "Bearer {$token}")

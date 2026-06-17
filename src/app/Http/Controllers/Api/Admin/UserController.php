@@ -34,7 +34,6 @@ class UserController extends Controller
 
     /**
      * Activate user.
-     * 
      */
     public function activate(User $user): \Illuminate\Http\Response
     {
@@ -44,20 +43,22 @@ class UserController extends Controller
     }
 
     /**
-     * Deactivate user and revoke all tokens.
-     * 
+     * Deactivate user.
+     *
+     * JWT is stateless — there are no stored tokens to revoke.
+     * The is_active flag is checked on every request by the
+     * EnsureUserIsActive middleware, so the user is effectively
+     * locked out immediately.
      */
     public function deactivate(User $user): \Illuminate\Http\Response
     {
         $user->update(['is_active' => false]);
-        $user->tokens()->delete();
 
         return response()->noContent();
     }
 
     /**
      * Delete user.
-     * 
      */
     public function destroy(User $user): \Illuminate\Http\Response
     {
@@ -69,7 +70,6 @@ class UserController extends Controller
             throw new UserDeleteBlockedException();
         }
 
-        $user->tokens()->delete();
         $user->delete();
 
         return response()->noContent();

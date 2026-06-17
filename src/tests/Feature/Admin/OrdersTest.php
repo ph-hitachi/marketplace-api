@@ -22,7 +22,7 @@ class OrdersTest extends TestCase
         parent::setUp();
 
         $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->token = $this->admin->createToken('token')->plainTextToken;
+        $this->token = auth('api')->login($this->admin);
 
         $customer = User::factory()->create(['role' => 'customer']);
         $seller   = User::factory()->create(['role' => 'seller']);

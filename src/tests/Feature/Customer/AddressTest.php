@@ -14,7 +14,7 @@ class AddressTest extends TestCase
     public function test_customer_can_list_own_addresses(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         Address::create([
             'user_id'       => $customer->id,
@@ -38,7 +38,7 @@ class AddressTest extends TestCase
     public function test_customer_can_create_address(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/customer/addresses', [
@@ -66,7 +66,7 @@ class AddressTest extends TestCase
     {
         $customer1 = User::factory()->create(['role' => 'customer']);
         $customer2 = User::factory()->create(['role' => 'customer']);
-        $token1    = $customer1->createToken('token')->plainTextToken;
+        $token1 = auth('api')->login($customer1);
 
         $address2 = Address::create([
             'user_id'       => $customer2->id,
@@ -87,7 +87,7 @@ class AddressTest extends TestCase
     public function test_customer_can_set_default_address(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
-        $token    = $customer->createToken('token')->plainTextToken;
+        $token = auth('api')->login($customer);
 
         $address1 = Address::create([
             'user_id'       => $customer->id,
