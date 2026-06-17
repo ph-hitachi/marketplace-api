@@ -140,6 +140,13 @@ class ExceptionsTest extends TestCase
                 'NotFoundHttpException',
                 'The requested endpoint does not exist.'
             ],
+            'ModelNotFoundException' => [
+                fn() => new \Illuminate\Database\Eloquent\ModelNotFoundException(),
+                404,
+                'NOT_FOUND',
+                'ModelNotFoundException',
+                'The requested resource was not found.'
+            ],
             'ValidationException' => [
                 fn() => new \Illuminate\Validation\ValidationException(\Illuminate\Support\Facades\Validator::make([], ['field' => 'required'])),
                 422,
