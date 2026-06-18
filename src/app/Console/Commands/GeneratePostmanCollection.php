@@ -324,31 +324,16 @@ class GeneratePostmanCollection extends Command
                 return $this->faker->unique()->safeEmail;
             }
             if (strpos($propNameLower, 'password') !== false) {
-                return 'Password123!'; // Keep simple static password for convenience
+                return $this->faker->password(8, 16, true, true, true);
             }
-            if (strpos($propNameLower, 'balance') !== false || strpos($propNameLower, 'price') !== false || strpos($propNameLower, 'amount') !== false || $propNameLower === 'subtotal') {
-                return $this->faker->randomFloat(2, 10, 1000);
+            if (strpos($propNameLower, 'phone') !== false || strpos($propNameLower, 'mobile') !== false) {
+                return $this->faker->phoneNumber;
             }
             if (strpos($propNameLower, 'description') !== false || strpos($propNameLower, 'summary') !== false) {
                 return $this->faker->sentence();
             }
-            if ($propNameLower === 'shop_name' || $propNameLower === 'name' || strpos($propNameLower, 'title') !== false) {
-                return $this->faker->words(3, true);
-            }
-            if ($propNameLower === 'role') {
-                return 'customer';
-            }
-            if ($propNameLower === 'payment_method') {
-                return 'wallet';
-            }
-            if ($propNameLower === 'status') {
-                return 'pending';
-            }
-            if ($propNameLower === 'quantity' || strpos($propNameLower, 'stock') !== false) {
-                return $this->faker->numberBetween(1, 50);
-            }
-            if (strpos($propNameLower, 'phone') !== false || strpos($propNameLower, 'mobile') !== false) {
-                return $this->faker->phoneNumber;
+            if (strpos($propNameLower, 'price') !== false || strpos($propNameLower, 'balance') !== false || strpos($propNameLower, 'amount') !== false || $propNameLower === 'subtotal') {
+                return $this->faker->randomFloat(2, 10, 1000);
             }
             if ($propNameLower === 'country') {
                 return $this->faker->country;
@@ -365,8 +350,8 @@ class GeneratePostmanCollection extends Command
             if (strpos($propNameLower, 'address') !== false) {
                 return $this->faker->address;
             }
-            if ($propNameLower === 'is_default' || $propNameLower === 'is_active' || strpos($propNameLower, 'is_') === 0) {
-                return true;
+            if ($propNameLower === 'name' || strpos($propNameLower, 'title') !== false) {
+                return $this->faker->words(3, true);
             }
         }
 
