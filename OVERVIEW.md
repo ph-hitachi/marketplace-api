@@ -290,3 +290,44 @@ The application features a comprehensive automated test suite covering all criti
 | `Unit\JwtTokenTest` | 13 | JWT authentication, refresh, blacklist, expiration |
 | `Unit\ExampleTest` | 1 | Unit test baseline |
 | **Total** | **99** | **340 assertions** |
+
+---
+
+## 4. Error Handling & Exceptions
+
+The API maintains a unified JSON error response format for all failures:
+
+```json
+{
+  "error_code": "SNAKE_CASE_CODE",
+  "message": "Human-readable description."
+}
+```
+
+### Global HTTP Errors
+These are standard framework or HTTP-level exceptions captured globally:
+
+| HTTP Code | Error Code | Exception Class | Description |
+|---|---|---|---|
+| `401` | `UNAUTHENTICATED` | `AuthenticationException` | No Bearer token or invalid token. |
+| `403` | `UNAUTHORIZED` | `AuthorizationException` | Action forbidden (wrong role or policy restriction). |
+| `404` | `ROUTE_NOT_FOUND` | `NotFoundHttpException` | The requested route does not exist. |
+| `405` | `METHOD_NOT_ALLOWED` | `MethodNotAllowedHttpException` | The HTTP method is not supported for the route. |
+| `422` | `VALIDATION_ERROR` | `ValidationException` | Field validation failed. |
+| `429` | `TOO_MANY_REQUESTS` | `TooManyRequestsHttpException` | Rate limit exceeded (60 requests/minute). |
+| `500` | `SERVER_ERROR` | `Throwable` (catch-all) | Unexpected internal server error. |
+
+### Domain-Specific Exceptions
+These are custom exceptions mapped to business rules within the application:
+
+| HTTP Code | Error Code | Exception Class | When it happens |
+|---|---|---|---|
+| `400` | `INSUFFICIENT_BALANCE` | `InsufficientBalanceException` | Wallet has insufficient funds during purchase. |
+| `401` | `INVALID_CREDENTIALS` | `InvalidCredentialsException` | Login email/password mismatch. |
+| `403` | `ACCOUNT_DEACTIVATED` | `AccountDeactivatedException` | Attempting to access resource with a blocked account. |
+| `409` | `INVALID_STATUS_TRANSITION` | `InvalidStatusTransitionException` | Advancing an order status out of order or setting an invalid state. |
+| `409` | `ORDER_IN_TRANSIT` | `OrderInTransitException` | Attempting to cancel an order that has already been shipped. |
+| `409` | `USER_DELETE_BLOCKED` | `UserDeleteBlockedException` | Admin trying to delete a user with active or processing orders. |
+| `422` | `INSUFFICIENT_STOCK` | `InsufficientStockException` | Buying quantity exceeding available product stock. |
+| `422` | `PRODUCT_UNAVAILABLE` | `ProductUnavailableException` | Ordering an inactive or soft-deleted product. |
+
