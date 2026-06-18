@@ -11,6 +11,13 @@ use Illuminate\Console\Attributes\Signature;
 class GeneratePostmanCollection extends Command
 {
     private $schemas = [];
+    private $faker;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->faker = \Faker\Factory::create();
+    }
 
     public function handle()
     {
@@ -314,19 +321,19 @@ class GeneratePostmanCollection extends Command
         if ($propName !== null) {
             $propNameLower = strtolower($propName);
             if (strpos($propNameLower, 'email') !== false) {
-                return 'customer@example.com';
+                return $this->faker->unique()->safeEmail;
             }
             if (strpos($propNameLower, 'password') !== false) {
-                return 'Password123!';
+                return 'Password123!'; // Keep simple static password for convenience
             }
             if (strpos($propNameLower, 'balance') !== false || strpos($propNameLower, 'price') !== false || strpos($propNameLower, 'amount') !== false || $propNameLower === 'subtotal') {
-                return '500.00';
+                return $this->faker->randomFloat(2, 10, 1000);
             }
-            if ($propNameLower === 'shop_name' || $propNameLower === 'name') {
-                return 'Example Name';
+            if (strpos($propNameLower, 'description') !== false || strpos($propNameLower, 'summary') !== false) {
+                return $this->faker->sentence();
             }
-            if ($propNameLower === 'shop_description' || $propNameLower === 'description') {
-                return 'An example description.';
+            if ($propNameLower === 'shop_name' || $propNameLower === 'name' || strpos($propNameLower, 'title') !== false) {
+                return $this->faker->words(3, true);
             }
             if ($propNameLower === 'role') {
                 return 'customer';
@@ -338,27 +345,40 @@ class GeneratePostmanCollection extends Command
                 return 'pending';
             }
             if ($propNameLower === 'quantity' || strpos($propNameLower, 'stock') !== false) {
-                return 2;
+                return $this->faker->numberBetween(1, 50);
             }
-            if ($propNameLower === 'phone') {
-                return '09171234567';
+            if (strpos($propNameLower, 'phone') !== false || strpos($propNameLower, 'mobile') !== false) {
+                return $this->faker->phoneNumber;
             }
             if ($propNameLower === 'country') {
-                return 'Philippines';
+                return $this->faker->country;
             }
-            if ($propNameLower === 'is_default' || $propNameLower === 'is_active') {
+            if (strpos($propNameLower, 'zip') !== false || strpos($propNameLower, 'postal') !== false) {
+                return $this->faker->postcode;
+            }
+            if (strpos($propNameLower, 'city') !== false) {
+                return $this->faker->city;
+            }
+            if (strpos($propNameLower, 'state') !== false || strpos($propNameLower, 'province') !== false) {
+                return $this->faker->state;
+            }
+            if (strpos($propNameLower, 'address') !== false) {
+                return $this->faker->address;
+            }
+            if ($propNameLower === 'is_default' || $propNameLower === 'is_active' || strpos($propNameLower, 'is_') === 0) {
                 return true;
             }
         }
 
         switch ($type) {
             case 'integer':
+                return $this->faker->numberBetween(1, 100);
             case 'number':
-                return 1;
+                return $this->faker->randomFloat(2, 1, 100);
             case 'boolean':
                 return true;
             case 'string':
-                return 'string';
+                return $this->faker->word;
             case 'null':
                 return null;
             default:
