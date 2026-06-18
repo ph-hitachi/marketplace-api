@@ -318,43 +318,6 @@ class GeneratePostmanCollection extends Command
 
     private function getMockValueByType($type, $propName = null)
     {
-        if ($propName !== null) {
-            $propNameLower = strtolower($propName);
-            if (strpos($propNameLower, 'email') !== false) {
-                return $this->faker->unique()->safeEmail;
-            }
-            if (strpos($propNameLower, 'password') !== false) {
-                return $this->faker->password(8, 16, true, true, true);
-            }
-            if (strpos($propNameLower, 'phone') !== false || strpos($propNameLower, 'mobile') !== false) {
-                return $this->faker->phoneNumber;
-            }
-            if (strpos($propNameLower, 'description') !== false || strpos($propNameLower, 'summary') !== false) {
-                return $this->faker->sentence();
-            }
-            if (strpos($propNameLower, 'price') !== false || strpos($propNameLower, 'balance') !== false || strpos($propNameLower, 'amount') !== false || $propNameLower === 'subtotal') {
-                return $this->faker->randomFloat(2, 10, 1000);
-            }
-            if ($propNameLower === 'country') {
-                return $this->faker->country;
-            }
-            if (strpos($propNameLower, 'zip') !== false || strpos($propNameLower, 'postal') !== false) {
-                return $this->faker->postcode;
-            }
-            if (strpos($propNameLower, 'city') !== false) {
-                return $this->faker->city;
-            }
-            if (strpos($propNameLower, 'state') !== false || strpos($propNameLower, 'province') !== false) {
-                return $this->faker->state;
-            }
-            if (strpos($propNameLower, 'address') !== false) {
-                return $this->faker->address;
-            }
-            if ($propNameLower === 'name' || strpos($propNameLower, 'title') !== false) {
-                return $this->faker->words(3, true);
-            }
-        }
-
         switch ($type) {
             case 'integer':
                 return $this->faker->numberBetween(1, 100);
