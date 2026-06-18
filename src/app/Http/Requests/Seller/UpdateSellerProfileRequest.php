@@ -20,14 +20,12 @@ class UpdateSellerProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        $shopId = ($this->user() && $this->user()->shop) ? $this->user()->shop->id : null;
-
         return [
-            'shop_name'        => [
+            'shop_name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('shops', 'shop_name')->ignore($shopId),
+                Rule::unique('shops', 'shop_name')->ignore($this->user()->shop?->id),
             ],
             'shop_description' => ['nullable', 'string', 'max:1000'],
         ];
