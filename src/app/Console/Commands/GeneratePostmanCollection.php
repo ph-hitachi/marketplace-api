@@ -135,7 +135,7 @@ class GeneratePostmanCollection extends Command
                         if (is_array($pType)) {
                             $pType = implode(' / ', $pType);
                         }
-                        $pDesc = str_replace('|', '\\|', $pp['description'] ?? '');
+                        $pDesc = str_replace('|', ' / ', $pp['description'] ?? '');
                         $markdownDesc .= "| `{$name}` | `{$pType}` | Yes | {$pDesc} | - |\n";
                     }
                     $markdownDesc .= "\n";
@@ -158,7 +158,7 @@ class GeneratePostmanCollection extends Command
                             $constraints[] = "Enum: " . implode(', ', $enumOpts);
                         }
                         $constraintsStr = empty($constraints) ? '-' : implode('<br>', $constraints);
-                        $qpDesc = str_replace('|', '\\|', $qp['description'] ?? '');
+                        $qpDesc = str_replace('|', ' / ', $qp['description'] ?? '');
                         $markdownDesc .= "| `{$qp['name']}` | `{$pType}` | {$req} | {$qpDesc} | {$constraintsStr} |\n";
                     }
                     $markdownDesc .= "\n";
@@ -202,7 +202,7 @@ class GeneratePostmanCollection extends Command
                                     $propType = implode(' / ', $propType);
                                 }
                                 $isReq = in_array($propName, $requiredProps) ? 'Yes' : 'No';
-                                $propDesc = str_replace('|', '\\|', $propSchema['description'] ?? '');
+                                $propDesc = str_replace('|', ' / ', $propSchema['description'] ?? '');
 
                                 // Build constraints
                                 $constraints = [];
