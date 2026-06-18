@@ -64,7 +64,7 @@ class UnexpectedErrorExceptionExtension extends ExceptionToResponseExtension
             ->setRequired(['error_code', 'exception_type', 'message']);
 
         return Response::make($statusCode)
-            ->setDescription(Str::headline($baseName) . ' Error')
+            ->setDescription($message)
             ->setContent(
                 'application/json',
                 Schema::fromType($responseBodyType),

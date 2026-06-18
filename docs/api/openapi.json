@@ -42,7 +42,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -115,7 +115,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -147,7 +147,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -314,7 +314,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -387,7 +387,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -419,7 +419,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -475,7 +475,7 @@
                         "description": "No content"
                     },
                     "409": {
-                        "description": "User Delete Blocked Exception Error",
+                        "description": "This action cannot be completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -507,7 +507,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -539,7 +539,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -571,7 +571,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -629,7 +629,7 @@
                         "description": "No content"
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -661,7 +661,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -720,7 +720,7 @@
                         "description": "No content"
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -752,7 +752,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -849,7 +849,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -946,7 +946,7 @@
                         }
                     },
                     "401": {
-                        "description": "Invalid Credentials Exception Error",
+                        "description": "This action cannot be completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -978,7 +978,7 @@
                         }
                     },
                     "403": {
-                        "description": "Account Deactivated Exception Error",
+                        "description": "This action cannot be completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1010,7 +1010,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1072,7 +1072,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1159,7 +1159,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1220,7 +1220,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1285,7 +1285,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1355,7 +1355,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1387,7 +1387,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1460,7 +1460,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1492,7 +1492,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1524,7 +1524,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1604,7 +1604,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1636,7 +1636,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1668,7 +1668,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1700,7 +1700,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1756,7 +1756,7 @@
                         "description": "No content"
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1788,7 +1788,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1820,7 +1820,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1852,7 +1852,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1930,7 +1930,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1962,7 +1962,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1994,7 +1994,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2051,7 +2051,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2083,7 +2083,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2158,7 +2158,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2190,7 +2190,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2222,7 +2222,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2296,7 +2296,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2328,7 +2328,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2360,7 +2360,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2392,7 +2392,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2489,7 +2489,7 @@
                         }
                     },
                     "422": {
-                        "description": "Product Unavailable Exception Error\n\nInsufficient Stock Exception Error\n\nInsufficient Balance Exception Error",
+                        "description": "This action cannot be completed.\n\nThis action cannot be completed.\n\nThis action cannot be completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2575,7 +2575,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2607,7 +2607,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2670,7 +2670,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2743,7 +2743,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2775,7 +2775,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2807,7 +2807,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2891,7 +2891,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2923,7 +2923,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2955,7 +2955,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2987,7 +2987,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3061,7 +3061,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3093,7 +3093,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3125,7 +3125,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3365,7 +3365,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3438,7 +3438,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3470,7 +3470,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3502,7 +3502,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3589,7 +3589,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3621,7 +3621,7 @@
                         }
                     },
                     "409": {
-                        "description": "Invalid Status Transition Exception Error",
+                        "description": "This action cannot be completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3653,7 +3653,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3685,7 +3685,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3717,7 +3717,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3804,7 +3804,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3836,7 +3836,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3868,7 +3868,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3900,7 +3900,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4067,7 +4067,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4137,7 +4137,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4169,7 +4169,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4242,7 +4242,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4274,7 +4274,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4306,7 +4306,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4386,7 +4386,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4418,7 +4418,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4450,7 +4450,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4482,7 +4482,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4538,7 +4538,7 @@
                         "description": "No content"
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4570,7 +4570,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4602,7 +4602,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4634,7 +4634,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4692,7 +4692,7 @@
                         "description": "No content"
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4724,7 +4724,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4756,7 +4756,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4814,7 +4814,7 @@
                         "description": "No content"
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4846,7 +4846,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4878,7 +4878,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4955,7 +4955,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4987,7 +4987,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5019,7 +5019,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5241,7 +5241,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5318,7 +5318,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5350,7 +5350,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5382,7 +5382,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5439,7 +5439,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5514,7 +5514,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5546,7 +5546,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5626,7 +5626,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5658,7 +5658,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5690,7 +5690,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5782,7 +5782,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5814,7 +5814,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5846,7 +5846,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5878,7 +5878,7 @@
                         }
                     },
                     "500": {
-                        "description": "INTERNAL_ERROR Error",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5956,7 +5956,7 @@
                         }
                     },
                     "403": {
-                        "description": "FORBIDDEN Error",
+                        "description": "This action is unauthorized.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5988,7 +5988,7 @@
                         }
                     },
                     "404": {
-                        "description": "NOT_FOUND Error",
+                        "description": "Resource not found.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6020,7 +6020,7 @@
                         }
                     },
                     "401": {
-                        "description": "UNAUTHENTICATED Error",
+                        "description": "Unauthenticated.",
                         "content": {
                             "application/json": {
                                 "schema": {
