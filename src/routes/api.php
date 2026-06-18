@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\User\ProfileController as UserProfileController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Api\Seller\ProductController as SellerProductController;
-use App\Http\Controllers\Api\Seller\SellerProfileController;
+use App\Http\Controllers\Api\Seller\ShopProfileController;
 use App\Http\Controllers\Api\Seller\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -78,7 +78,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
 
     // ── Seller Profile, Products, & Orders fulfillment ──────────────────────
     Route::middleware('role:seller')->prefix('seller')->group(function () {
-        Route::put('/profile',             [SellerProfileController::class, 'update']);
+        Route::put('/profile',             [ShopProfileController::class, 'update']);
 
         // Products
         Route::get('/products',           [SellerProductController::class, 'index']);

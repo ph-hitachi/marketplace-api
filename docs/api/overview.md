@@ -32,7 +32,7 @@ src/
 │   │   │       ├── Seller/
 │   │   │       │   ├── OrderController.php
 │   │   │       │   ├── ProductController.php
-│   │   │       │   ├── SellerProfileController.php
+│   │   │       │   ├── ShopProfileController.php
 │   │   │       │   └── ShopController.php
 │   │   │       ├── User/
 │   │   │       │   ├── ProfileController.php
@@ -201,7 +201,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::middleware('role:seller')->prefix('seller')->group(function () {
  
         // Profile
-        Route::put('/profile',            [SellerProfileController::class, 'update']);
+        Route::put('/profile',            [ShopProfileController::class, 'update']);
  
         // Products
         Route::get('/products',           [SellerProductController::class, 'index']);

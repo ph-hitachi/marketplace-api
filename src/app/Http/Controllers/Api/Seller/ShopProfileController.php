@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 /**
  * @tags Seller/Profile
  */
-class SellerProfileController extends Controller
+class ShopProfileController extends Controller
 {
     /**
      * Update seller profile.
@@ -19,7 +19,7 @@ class SellerProfileController extends Controller
     {
         $user = $request->user();
 
-        $shop = $user->shop ?: new Shop(['user_id' => $user->id]);
+        $shop = $user->shop;
 
         $this->authorize('update', $shop);
 

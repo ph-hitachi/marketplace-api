@@ -383,7 +383,7 @@ Advances the status of a pending order. Valid transitions: `pending -> shipped -
 
 Updates the shop profile of the seller.
 
-> **Controller:** `App\Http\Controllers\Api\Seller\SellerProfileController` | **Method:** `update`
+> **Controller:** `App\Http\Controllers\Api\Seller\ShopProfileController` | **Method:** `update`
 
 #### `PUT /api/seller/profile`
 
