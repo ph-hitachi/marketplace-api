@@ -292,7 +292,10 @@ class GeneratePostmanCollection extends Command
             return $schema['example'];
         }
 
-        $type = $schema['type'] ?? 'object';
+        $type = $schema['type'] ?? 'string';
+        if (is_array($type)) {
+            $type = $type[0] ?? 'string';
+        }
 
         if ($type === 'object') {
             $properties = $schema['properties'] ?? [];
@@ -308,74 +311,130 @@ class GeneratePostmanCollection extends Command
             return [$this->resolveSchemaExample($itemsSchema, $propName)];
         }
 
-        // Basic types fallback
-        if (isset($schema['enum']) && !empty($schema['enum'])) {
-            return $schema['enum'][0];
-        }
-
         return $this->getMockValueByType($schema, $propName);
     }
 
     private function getMockValueByType($schema, $propName = null)
     {
+        // 1. Resolve Enums (allowed values from schema)
+        if (isset($schema['enum']) && is_array($schema['enum']) && !empty($schema['enum'])) {
+            return $schema['enum'][0];
+        }
+
         $type = $schema['type'] ?? 'string';
         if (is_array($type)) {
             $type = $type[0] ?? 'string';
         }
+        $type = strtolower((string)$type);
         $format = $schema['format'] ?? null;
 
-        switch (strtolower((string)$type)) {
+        // 2. Resolve Min/Max Length Rules
+        $minLength = $schema['minLength'] ?? null;
+        $maxLength = $schema['maxLength'] ?? null;
+
+        switch ($type) {
             case 'integer':
             case 'int':
             case 'int32':
             case 'int64':
-                return $this->faker->numberBetween(1, 100);
+                $min = $schema['minimum'] ?? 1;
+                $max = $schema['maximum'] ?? 100;
+                return $this->faker->numberBetween($min, $max);
+
             case 'number':
             case 'float':
             case 'double':
             case 'decimal':
-                return $this->faker->randomFloat(2, 1, 100);
+                $min = $schema['minimum'] ?? 1.0;
+                $max = $schema['maximum'] ?? 100.0;
+                return $this->faker->randomFloat(2, $min, $max);
+
             case 'boolean':
             case 'bool':
                 return true;
+
             case 'string':
+                // Check format-specific rules first
                 if ($format === 'date') {
                     return $this->faker->date('Y-m-d');
                 }
-                if ($format === 'date-time') {
+                if ($format === 'date-time' || $format === 'datetime') {
                     return $this->faker->dateTime()->format('c');
                 }
                 if ($format === 'password') {
-                    return $this->faker->password(8, 16, true, true, true);
+                    $minL = $minLength ?? 8;
+                    $maxL = $maxLength ?? 16;
+                    return $this->faker->password($minL, $maxL, true, true, true);
                 }
                 if ($format === 'email') {
                     return $this->faker->unique()->safeEmail;
                 }
-                // Handle common property formats or names dynamically from constraints
+
+                // Property name based pattern heuristics
                 if ($propName !== null) {
                     $propLower = strtolower($propName);
                     if (strpos($propLower, 'email') !== false) {
                         return $this->faker->unique()->safeEmail;
                     }
                     if (strpos($propLower, 'password') !== false) {
-                        return $this->faker->password(8, 16, true, true, true);
+                        $minL = $minLength ?? 8;
+                        $maxL = $maxLength ?? 16;
+                        return $this->faker->password($minL, $maxL, true, true, true);
                     }
                     if (strpos($propLower, 'phone') !== false || strpos($propLower, 'mobile') !== false) {
                         return $this->faker->phoneNumber;
                     }
+                    if (strpos($propLower, 'description') !== false || strpos($propLower, 'summary') !== false) {
+                        return $this->faker->sentence();
+                    }
+                    if (strpos($propLower, 'price') !== false || strpos($propLower, 'balance') !== false || strpos($propLower, 'amount') !== false || $propLower === 'subtotal') {
+                        return $this->faker->randomFloat(2, 10, 1000);
+                    }
+                    if ($propLower === 'country') {
+                        return $this->faker->country;
+                    }
+                    if (strpos($propLower, 'zip') !== false || strpos($propLower, 'postal') !== false) {
+                        return $this->faker->postcode;
+                    }
+                    if (strpos($propLower, 'city') !== false) {
+                        return $this->faker->city;
+                    }
+                    if (strpos($propLower, 'state') !== false || strpos($propLower, 'province') !== false) {
+                        return $this->faker->state;
+                    }
+                    if (strpos($propLower, 'address') !== false) {
+                        return $this->faker->address;
+                    }
+                    if ($propLower === 'name' || strpos($propLower, 'title') !== false) {
+                        return $this->faker->words(3, true);
+                    }
                 }
+
+                // Use minLength and maxLength rules if set
+                if ($minLength !== null || $maxLength !== null) {
+                    $minL = $minLength ?? 1;
+                    $maxL = $maxLength ?? 100;
+                    return substr($this->faker->text($maxL), 0, $maxL);
+                }
+
                 return $this->faker->word;
+
             case 'date':
                 return $this->faker->date('Y-m-d');
+
             case 'date-time':
             case 'datetime':
                 return $this->faker->dateTime()->format('c');
+
             case 'array':
                 return [];
+
             case 'object':
                 return new \stdClass();
+
             case 'null':
                 return null;
+
             default:
                 return '';
         }
