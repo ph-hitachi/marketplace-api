@@ -2,7 +2,8 @@
     "openapi": "3.1.0",
     "info": {
         "title": "Marketplace API",
-        "version": "0.0.1"
+        "version": "0.0.1",
+        "description": "# API Overview\n\nWelcome to the Marketplace API documentation.\n\n## 1. Complete Folder Structure\n\n```text\nsrc/\n├── app/\n│   ├── Enums/\n│   │   └── CancelReason.php\n│   ├── Exceptions/\n│   │   ├── AccountDeactivatedException.php\n│   │   ├── InsufficientBalanceException.php\n│   │   ├── InsufficientStockException.php\n│   │   ├── InvalidCredentialsException.php\n│   │   ├── InvalidStatusTransitionException.php\n│   │   ├── OrderInTransitException.php\n│   │   ├── ProductUnavailableException.php\n│   │   ├── UnexpectedErrorException.php\n│   │   └── UserDeleteBlockedException.php\n│   ├── Http/\n│   │   ├── Controllers/\n│   │   │   ├── Controller.php\n│   │   │   └── Api/\n│   │   │       ├── Admin/\n│   │   │       │   ├── OrderController.php\n│   │   │       │   └── UserController.php\n│   │   │       ├── Customer/\n│   │   │       │   ├── AddressController.php\n│   │   │       │   └── OrderController.php\n│   │   │       ├── Seller/\n│   │   │       │   ├── OrderController.php\n│   │   │       │   ├── ProductController.php\n│   │   │       │   ├── SellerProfileController.php\n│   │   │       │   └── ShopController.php\n│   │   │       ├── User/\n│   │   │       │   ├── ProfileController.php\n│   │   │       │   └── WalletController.php\n│   │   │       ├── AuthController.php\n│   │   │       └── ProductController.php\n│   │   ├── Middleware/\n│   │   │   ├── EnsureRole.php\n│   │   │   ├── EnsureUserIsActive.php\n│   │   │   └── SecurityHeaders.php\n│   │   └── Requests/\n│   │       ├── Address/\n│   │       │   ├── StoreAddressRequest.php\n│   │       │   └── UpdateAddressRequest.php\n│   │       ├── Auth/\n│   │       │   ├── LoginRequest.php\n│   │       │   └── RegisterRequest.php\n│   │       ├── Order/\n│   │       │   ├── CancelOrderRequest.php\n│   │       │   ├── PlaceOrderRequest.php\n│   │       │   └── UpdateOrderStatusRequest.php\n│   │       ├── Product/\n│   │       │   ├── StoreProductRequest.php\n│   │       │   └── UpdateProductRequest.php\n│   │       ├── Seller/\n│   │       │   └── UpdateSellerProfileRequest.php\n│   │       ├── User/\n│   │       │   └── UpdateProfileRequest.php\n│   │       └── Wallet/\n│   │           ├── StoreWalletRequest.php\n│   │           └── TopupRequest.php\n│   ├── Models/\n│   │   ├── Address.php\n│   │   ├── Order.php\n│   │   ├── Product.php\n│   │   ├── Shop.php\n│   │   ├── User.php\n│   │   ├── Wallet.php\n│   │   └── WalletTransaction.php\n│   ├── Policies/\n│   │   ├── AddressPolicy.php\n│   │   ├── OrderPolicy.php\n│   │   ├── ProductPolicy.php\n│   │   ├── ShopPolicy.php\n│   │   ├── UserPolicy.php\n│   │   └── WalletPolicy.php\n│   ├── Providers/\n│   │   └── AppServiceProvider.php\n│   └── Services/\n│       ├── OrderPaymentService.php\n│       ├── OrderService.php\n│       └── ProductStockService.php\n├── database/\n│   ├── migrations/\n│   │   ├── 0001_01_01_000000_create_users_table.php\n│   │   ├── 0001_01_01_000001_create_cache_table.php\n│   │   ├── 0001_01_01_000002_create_jobs_table.php\n│   │   ├── 2026_01_01_000010_create_shops_table.php\n│   │   ├── 2026_01_01_000020_create_addresses_table.php\n│   │   ├── 2026_01_01_000030_create_products_table.php\n│   │   ├── 2026_01_01_000040_create_orders_table.php\n│   │   ├── 2026_01_01_000060_create_wallet_transactions_table.php\n│   │   └── 2026_06_14_054230_create_personal_access_tokens_table.php\n│   └── seeders/\n│       └── DatabaseSeeder.php\n├── docs/\n│   ├── api/\n│   │   ├── admin/\n│   │   │   └── readme.md\n│   │   ├── customer/\n│   │   │   └── readme.md\n│   │   ├── public/\n│   │   │   └── readme.md\n│   │   ├── seller/\n│   │   │   └── readme.md\n│   │   └── user/\n│   │       └── readme.md\n│   └── marketplace.dbml\n├── routes/\n│   ├── api.php\n│   ├── console.php\n│   └── web.php\n└── tests/\n    ├── TestCase.php\n    ├── Feature/\n    │   ├── Admin/\n    │   │   ├── OrdersTest.php\n    │   │   └── UsersTest.php\n    │   ├── Customer/\n    │   │   ├── AddressTest.php\n    │   │   └── OrdersTest.php\n    │   ├── Public/\n    │   │   ├── AuthTest.php\n    │   │   ├── ProductsTest.php\n    │   │   └── ShopsTest.php\n    │   ├── Seller/\n    │   │   ├── OrdersTest.php\n    │   │   └── ProductsTest.php\n    │   ├── User/\n    │   │   ├── ProfileTest.php\n    │   │   └── WalletTest.php\n    │   └── ExampleTest.php\n    └── Unit/\n        └── ExampleTest.php\n```\n\n---\n\n## 2. API Routes Outline (`routes/api.php`)\n\nBelow is the routing layout configured in the application:\n\n```php\n// ── Public routes (no auth) ────────────────────────────────────────────────\nRoute::post('/auth/register', [AuthController::class, 'register']);\nRoute::post('/auth/login',    [AuthController::class, 'login']);\n\nRoute::get('/products',      [ProductController::class, 'index']);\nRoute::get('/products/{id}', [ProductController::class, 'show']);\n\nRoute::get('/shops',         [ShopController::class, 'index']);\nRoute::get('/shops/{shop}',  [ShopController::class, 'show']);\n\n// ── Authenticated routes (any role) ────────────────────────────────────────\nRoute::middleware(['auth:api', 'active'])->group(function () {\n\n    Route::post('/auth/logout', [AuthController::class, 'logout']);\n    Route::post('/auth/refresh', [AuthController::class, 'refresh']);\n\n    // ── Wallets & Profile (Shared Customer/Seller) ─────────────────────────\n    Route::middleware('role:customer,seller')->prefix('user')->group(function () {\n        Route::get('/me',                       [AuthController::class, 'me']);\n        Route::get('/wallets',                  [WalletController::class, 'index']);\n        Route::post('/wallets',                 [WalletController::class, 'store']);\n        Route::get('/wallets/{wallet}',         [WalletController::class, 'show']);\n        Route::post('/wallets/{wallet}/topup',  [WalletController::class, 'topup']);\n        Route::post('/wallets/{wallet}/default', [WalletController::class, 'setDefault']);\n        Route::put('/profile',                  [UserProfileController::class, 'update']);\n    });\n\n    // ── Customer ──────────────────────────────────────────────────────────\n    Route::middleware('role:customer')->prefix('customer')->group(function () {\n\n        // Addresses\n        Route::get('/addresses',                    [AddressController::class, 'index']);\n        Route::post('/addresses',                   [AddressController::class, 'store']);\n        Route::get('/addresses/{address}',          [AddressController::class, 'show']);\n        Route::put('/addresses/{address}',          [AddressController::class, 'update']);\n        Route::delete('/addresses/{address}',       [AddressController::class, 'destroy']);\n        Route::patch('/addresses/{address}/default',[AddressController::class, 'setDefault']);\n\n        // Carts (Bookmark)\n        Route::get('/carts',                    [CartController::class, 'index']);\n        Route::post('/carts',                   [CartController::class, 'store']);\n        Route::delete('/carts/{cart}',          [CartController::class, 'destroy']);\n\n        // Orders\n        Route::post('/orders',              [CustomerOrderController::class, 'store']);\n        Route::get('/orders',               [CustomerOrderController::class, 'index']);\n        Route::get('/orders/{order}',       [CustomerOrderController::class, 'show']);\n        Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel']);\n        Route::post('/orders/{order}/confirm', [CustomerOrderController::class, 'confirm']);\n    });\n\n    // ── Seller ────────────────────────────────────────────────────────────\n    Route::middleware('role:seller')->prefix('seller')->group(function () {\n \n        // Profile\n        Route::put('/profile',            [SellerProfileController::class, 'update']);\n \n        // Products\n        Route::get('/products',           [SellerProductController::class, 'index']);\n        Route::post('/products',          [SellerProductController::class, 'store']);\n        Route::get('/products/{product}', [SellerProductController::class, 'show']);\n        Route::put('/products/{product}', [SellerProductController::class, 'update']);\n        Route::delete('/products/{product}', [SellerProductController::class, 'destroy']);\n        Route::patch('/products/{product}/activate', [SellerProductController::class, 'activate']);\n        Route::patch('/products/{product}/deactivate', [SellerProductController::class, 'deactivate']);\n\n        // Orders\n        Route::get('/orders',              [SellerOrderController::class, 'index']);\n        Route::get('/orders/{order}',      [SellerOrderController::class, 'show']);\n        Route::patch('/orders/{order}/status', [SellerOrderController::class, 'updateStatus']);\n        Route::patch('/orders/{order}/cancel', [SellerOrderController::class, 'cancel']);\n    });\n\n    // ── Admin ─────────────────────────────────────────────────────────────\n    Route::middleware('role:admin')->prefix('admin')->group(function () {\n\n        // Users\n        Route::get('/users',                    [AdminUserController::class, 'index']);\n        Route::get('/users/{user}',             [AdminUserController::class, 'show']);\n        Route::patch('/users/{user}/activate',  [AdminUserController::class, 'activate']);\n        Route::patch('/users/{user}/deactivate',[AdminUserController::class, 'deactivate']);\n        Route::delete('/users/{user}',          [AdminUserController::class, 'destroy']);\n\n        // Orders\n        Route::get('/orders',               [AdminOrderController::class, 'index']);\n        Route::get('/orders/{order}',       [AdminOrderController::class, 'show']);\n    });\n});\n```\n\n---\n\n## 3. Endpoints Summary\n\n### Public Routes\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| POST | `/api/auth/register` | `201 Created` | Register a new customer or seller account. |\n| POST | `/api/auth/login` | `200 OK` | Authenticate a user and receive a token. |\n| GET | `/api/products` | `200 OK` | List all active products. |\n| GET | `/api/products/{id}` | `200 OK` | Retrieve details for an active product. |\n| GET | `/api/shops` | `200 OK` | List all available shops. |\n| GET | `/api/shops/{shop}` | `200 OK` | Retrieve a specific shop profile and active products. |\n\n### Authentication\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| POST | `/api/auth/logout` | `200 OK` | Log out and revoke token. |\n| POST | `/api/auth/refresh` | `200 OK` | Exchange token. |\n| GET | `/api/user/me` | `200 OK` | Retrieve authenticated user profile. |\n\n### User (Shared)\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| GET | `/api/user/wallets` | `200 OK` | List user wallets. |\n| POST | `/api/user/wallets` | `201 Created` | Create new wallet. |\n| GET | `/api/user/wallets/{wallet}` | `200 OK` | View specific wallet details. |\n| POST | `/api/user/wallets/{wallet}/topup`| `200 OK` | Add funds. |\n| POST | `/api/user/wallets/{wallet}/default`| `200 OK` | Set default payment wallet. |\n| PUT | `/api/user/profile` | `200 OK` | Update profile details. |\n\n### Customer Routes\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| GET | `/api/customer/addresses` | `200 OK` | List saved addresses. |\n| POST | `/api/customer/addresses` | `201 Created` | Add a new address. |\n| GET | `/api/customer/addresses/{address}`| `200 OK` | View a delivery address. |\n| PUT | `/api/customer/addresses/{address}`| `200 OK` | Update address. |\n| DELETE| `/api/customer/addresses/{address}`| `204 No Content` | Delete address. |\n| PATCH | `/api/customer/addresses/{address}/default`| `200 OK` | Set default address. |\n| POST | `/api/customer/orders` | `201 Created` | Place order. |\n| GET | `/api/customer/orders` | `200 OK` | List orders. |\n| GET | `/api/customer/orders/{order}` | `200 OK` | View order details. |\n| PATCH | `/api/customer/orders/{order}/cancel`| `200 OK` | Cancel order. |\n| POST | `/api/customer/orders/{order}/confirm`| `200 OK` | Confirm receipt to release funds. |\n\n### Seller Routes\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| PUT | `/api/seller/profile` | `200 OK` | Update shop profile. |\n| GET | `/api/seller/products` | `200 OK` | List seller shop products. |\n| POST | `/api/seller/products` | `201 Created` | Add new product. |\n| GET | `/api/seller/products/{product}` | `200 OK` | View specific product. |\n| PUT | `/api/seller/products/{product}` | `200 OK` | Update product details. |\n| DELETE| `/api/seller/products/{product}` | `204 No Content` | Soft-delete product. |\n| PATCH | `/api/seller/products/{product}/activate`| `204 No Content` | Mark active. |\n| PATCH | `/api/seller/products/{product}/deactivate`|`204 No Content` | Mark inactive. |\n| GET | `/api/seller/orders` | `200 OK` | List seller shop orders. |\n| GET | `/api/seller/orders/{order}` | `200 OK` | View specific seller order. |\n| PATCH | `/api/seller/orders/{order}/status`| `200 OK` | Advance status. |\n| PATCH | `/api/seller/orders/{order}/cancel`| `200 OK` | Cancel order. |\n\n### Admin Routes\n| Method | Endpoint | Success Status | Description |\n|---|---|---|---|\n| GET | `/api/admin/users` | `200 OK` | List registered users. |\n| GET | `/api/admin/users/{user}` | `200 OK` | View specific user. |\n| PATCH | `/api/admin/users/{user}/activate`| `204 No Content` | Reactivate user. |\n| PATCH | `/api/admin/users/{user}/deactivate`| `204 No Content` | Deactivate user. |\n| DELETE| `/api/admin/users/{user}` | `204 No Content` | Delete user account. |\n| GET | `/api/admin/orders` | `200 OK` | List all orders. |\n| GET | `/api/admin/orders/{order}` | `200 OK` | View any order details. |\n"
     },
     "servers": [
         {
@@ -694,7 +695,8 @@
         "/admin/users/{user}/deactivate": {
             "patch": {
                 "operationId": "user.deactivate",
-                "summary": "Deactivate user and revoke all tokens",
+                "description": "JWT is stateless — there are no stored tokens to revoke.\nThe is_active flag is checked on every request by the\nEnsureUserIsActive middleware, so the user is effectively\nlocked out immediately.",
+                "summary": "Deactivate user",
                 "tags": [
                     "Admin/Users",
                     "User"
@@ -813,19 +815,31 @@
                                         "user": {
                                             "$ref": "#/components/schemas/Models.User"
                                         },
-                                        "access_token": {
-                                            "type": "string"
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "const": "Bearer"
+                                        "authorization": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "object"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "const": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "access_token",
+                                                "token_type",
+                                                "expires_in"
+                                            ]
                                         }
                                     },
                                     "required": [
                                         "message",
                                         "user",
-                                        "access_token",
-                                        "token_type"
+                                        "authorization"
                                     ]
                                 }
                             }
@@ -898,19 +912,31 @@
                                         "user": {
                                             "type": "string"
                                         },
-                                        "access_token": {
-                                            "type": "string"
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "const": "Bearer"
+                                        "authorization": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "boolean"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "const": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "access_token",
+                                                "token_type",
+                                                "expires_in"
+                                            ]
                                         }
                                     },
                                     "required": [
                                         "message",
                                         "user",
-                                        "access_token",
-                                        "token_type"
+                                        "authorization"
                                     ]
                                 }
                             }
@@ -1067,7 +1093,94 @@
                 }
             }
         },
-        "/auth/me": {
+        "/auth/refresh": {
+            "post": {
+                "operationId": "auth.refresh",
+                "summary": "Refresh token",
+                "tags": [
+                    "Auth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Token refreshed successfully."
+                                        },
+                                        "user": {
+                                            "type": "null"
+                                        },
+                                        "authorization": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "const": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "access_token",
+                                                "token_type",
+                                                "expires_in"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "user",
+                                        "authorization"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHENTICATED Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "UNAUTHENTICATED"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "AuthenticationException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/me": {
             "get": {
                 "operationId": "auth.me",
                 "summary": "View profile",
@@ -1083,7 +1196,7 @@
                                     "type": "object",
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/Models.User"
+                                            "type": "string"
                                         }
                                     },
                                     "required": [
@@ -3406,7 +3519,7 @@
         "/seller/orders/{order}/status": {
             "patch": {
                 "operationId": "order.updateStatus",
-                "summary": "Advance an order's status (pending→processing→shipped→delivered)",
+                "summary": "Advance an order's status (pending→shipped→delivered)",
                 "tags": [
                     "Seller/Orders",
                     "Order"
@@ -3618,7 +3731,7 @@
         "/seller/orders/{order}/cancel": {
             "patch": {
                 "operationId": "seller.order.cancel",
-                "summary": "Cancel a pending or processing order — restores stock and refunds wallet",
+                "summary": "Cancel a pending order — restores stock and refunds wallet",
                 "tags": [
                     "Seller/Orders",
                     "Order"
@@ -4807,7 +4920,7 @@
                                             "const": "Seller profile updated successfully."
                                         },
                                         "profile": {
-                                            "$ref": "#/components/schemas/Models.SellerProfile"
+                                            "$ref": "#/components/schemas/Models.Shop"
                                         }
                                     },
                                     "required": [
@@ -4903,6 +5016,228 @@
                                             "type": "string",
                                             "description": "A human-readable error message.",
                                             "example": "Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/shops": {
+            "get": {
+                "operationId": "shop.index",
+                "summary": "Display a listing of shops",
+                "tags": [
+                    "Shops",
+                    "Shop"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "minimum": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Models.Shop"
+                                            }
+                                        },
+                                        "first_page_url": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "from": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ],
+                                            "minimum": 1
+                                        },
+                                        "last_page_url": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "minimum": 1
+                                        },
+                                        "links": {
+                                            "type": "array",
+                                            "description": "Generated paginator links.",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "url": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "label": {
+                                                        "type": "string"
+                                                    },
+                                                    "active": {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "url",
+                                                    "label",
+                                                    "active"
+                                                ]
+                                            }
+                                        },
+                                        "next_page_url": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "path": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Base path for paginator generated URLs."
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "description": "Number of items shown per page.",
+                                            "minimum": 0
+                                        },
+                                        "prev_page_url": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "to": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ],
+                                            "description": "Number of the last item in the slice.",
+                                            "minimum": 1
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "description": "Total number of items being paginated.",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "current_page",
+                                        "data",
+                                        "first_page_url",
+                                        "from",
+                                        "last_page_url",
+                                        "last_page",
+                                        "links",
+                                        "next_page_url",
+                                        "path",
+                                        "per_page",
+                                        "prev_page_url",
+                                        "to",
+                                        "total"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/shops/{shop}": {
+            "get": {
+                "operationId": "shop.show",
+                "summary": "Display the specified shop",
+                "tags": [
+                    "Shops",
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "description": "The shop ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Models.Product"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "description",
+                                        "products"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "NOT_FOUND Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "NOT_FOUND"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "ModelNotFoundException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Resource not found."
                                         }
                                     },
                                     "required": [
@@ -5827,7 +6162,7 @@
                     "id": {
                         "type": "integer"
                     },
-                    "seller_id": {
+                    "shop_id": {
                         "type": "integer"
                     },
                     "name": {
@@ -5879,7 +6214,7 @@
                 },
                 "required": [
                     "id",
-                    "seller_id",
+                    "shop_id",
                     "name",
                     "description",
                     "price",
@@ -5892,13 +6227,10 @@
                 ],
                 "title": "Models.Product"
             },
-            "Models.SellerProfile": {
+            "Models.Shop": {
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "integer"
-                    },
-                    "user_id": {
                         "type": "integer"
                     },
                     "shop_name": {
@@ -5927,13 +6259,12 @@
                 },
                 "required": [
                     "id",
-                    "user_id",
                     "shop_name",
                     "shop_description",
                     "created_at",
                     "updated_at"
                 ],
-                "title": "Models.SellerProfile"
+                "title": "Models.Shop"
             },
             "Models.User": {
                 "type": "object",
@@ -6579,8 +6910,11 @@
                     "customer_id": {
                         "type": "integer"
                     },
-                    "seller_id": {
+                    "shop_id": {
                         "type": "integer"
+                    },
+                    "shop": {
+                        "$ref": "#/components/schemas/Models.Shop"
                     },
                     "address_id": {
                         "type": "integer"
@@ -6674,7 +7008,7 @@
                 "required": [
                     "id",
                     "customer_id",
-                    "seller_id",
+                    "shop_id",
                     "address_id",
                     "wallet_id",
                     "payment_method",

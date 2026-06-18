@@ -32,10 +32,13 @@ class OrdersTest extends TestCase
         $this->token    = auth('api')->login($this->customer);
 
         $this->seller1 = User::factory()->create(['role' => 'seller']);
+        $shop1 = \App\Models\Shop::factory()->create(['user_id' => $this->seller1->id]);
+
         $this->seller2 = User::factory()->create(['role' => 'seller']);
+        $shop2 = \App\Models\Shop::factory()->create(['user_id' => $this->seller2->id]);
 
         $this->product1 = Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $shop1->id,
             'name'      => 'Product A',
             'price'     => 100.00,
             'stock'     => 10,
@@ -43,7 +46,7 @@ class OrdersTest extends TestCase
         ]);
 
         $this->product2 = Product::create([
-            'seller_id' => $this->seller2->id,
+            'shop_id'   => $shop2->id,
             'name'      => 'Product B',
             'price'     => 150.00,
             'stock'     => 5,
@@ -423,7 +426,7 @@ class OrdersTest extends TestCase
         $orderId = $placeResponse->json('orders.0.id');
         $order = Order::find($orderId);
 
-        // Move to processing
+        // Move to shipped
         $order->status = 'shipped';
         $order->save();
 
@@ -431,16 +434,6 @@ class OrdersTest extends TestCase
         $response1 = $this->withHeader('Authorization', "Bearer {$this->token}")
             ->patchJson("/api/customer/orders/{$order->id}/cancel", ['cancel_reason' => 1]);
         $response1->assertStatus(409)
-            ->assertJson(['error_code' => 'ORDER_IN_TRANSIT']);
-
-        // Move to shipped
-        $order->status = 'shipped';
-        $order->save();
-
-        // Attempt cancel
-        $response2 = $this->withHeader('Authorization', "Bearer {$this->token}")
-            ->patchJson("/api/customer/orders/{$order->id}/cancel", ['cancel_reason' => 1]);
-        $response2->assertStatus(409)
             ->assertJson(['error_code' => 'ORDER_IN_TRANSIT']);
     }
 

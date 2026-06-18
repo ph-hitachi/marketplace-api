@@ -70,9 +70,9 @@ class User extends Authenticatable implements JWTSubject
 
     // ── Relations ──────────────────────────────────────────────
 
-    public function sellerProfile(): HasOne
+    public function shop(): HasOne
     {
-        return $this->hasOne(SellerProfile::class);
+        return $this->hasOne(Shop::class);
     }
 
     public function addresses(): HasMany
@@ -81,9 +81,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /** Products this user sells (seller role). */
-    public function products(): HasMany
+    public function products(): HasManyThrough
     {
-        return $this->hasMany(Product::class, 'seller_id');
+        return $this->hasManyThrough(Product::class, Shop::class);
     }
 
     /** Orders placed by this user (customer role). */
@@ -92,10 +92,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Order::class, 'customer_id');
     }
 
-    /** Orders assigned to this user (seller role). */
-    public function sellerOrders(): HasMany
+    /** Orders assigned to this user's shop (seller role). */
+    public function sellerOrders(): HasManyThrough
     {
-        return $this->hasMany(Order::class, 'seller_id');
+        return $this->hasManyThrough(Order::class, Shop::class);
     }
 
     public function wallets(): HasMany

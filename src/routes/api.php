@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Api\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\Api\Seller\SellerProfileController;
+use App\Http\Controllers\Api\Seller\ShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +31,9 @@ Route::post('/auth/login',    [AuthController::class, 'login']);
 
 Route::get('/products',      [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
+
+Route::get('/shops',                 [ShopController::class, 'index']);
+Route::get('/shops/{shop}',          [ShopController::class, 'show']);
 
 // ── Authenticated routes (any role) ────────────────────────────────────────
 Route::middleware(['auth:api', 'active'])->group(function () {
@@ -72,11 +76,9 @@ Route::middleware(['auth:api', 'active'])->group(function () {
         Route::post('/orders/{order}/confirm', [CustomerOrderController::class, 'confirm']);
     });
 
-    // ── Seller ────────────────────────────────────────────────────────────
+    // ── Seller Profile, Products, & Orders fulfillment ──────────────────────
     Route::middleware('role:seller')->prefix('seller')->group(function () {
-
-        // Profile
-        Route::put('/profile',            [SellerProfileController::class, 'update']);
+        Route::put('/profile',             [SellerProfileController::class, 'update']);
 
         // Products
         Route::get('/products',           [SellerProductController::class, 'index']);

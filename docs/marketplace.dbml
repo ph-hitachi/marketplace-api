@@ -33,7 +33,7 @@ Table wallets {
   }
 }
 
-Table seller_profiles {
+Table shops {
   id                bigint        [pk, increment]
   user_id           bigint        [not null, unique, ref: > users.id]
   shop_name         varchar(255)  [not null, unique]
@@ -56,7 +56,7 @@ Table addresses {
   is_default        boolean       [not null, default: false]
   created_at        timestamp     [null]
   updated_at        timestamp     [null]
-
+ 
   indexes {
     user_id
   }
@@ -64,7 +64,7 @@ Table addresses {
 
 Table products {
   id                bigint        [pk, increment]
-  seller_id         bigint        [not null, ref: > users.id]
+  shop_id           bigint        [not null, ref: > shops.id]
   name              varchar(255)  [not null]
   description       text          [null]
   price             decimal(12,2) [not null]
@@ -76,7 +76,7 @@ Table products {
   updated_at        timestamp     [null]
 
   indexes {
-    seller_id
+    shop_id
     is_active
   }
 }
@@ -84,15 +84,12 @@ Table products {
 Table orders {
   id                bigint        [pk, increment]
   customer_id       bigint        [not null, ref: > users.id]
-  seller_id         bigint        [not null, ref: > users.id, note: "One order row per seller"]
+  shop_id           bigint        [not null, ref: > shops.id, note: "One order row per shop"]
   address_id        bigint        [not null, ref: > addresses.id]
   wallet_id         bigint        [null, ref: > wallets.id]
   payment_method    enum          [not null, default: "wallet", note: "wallet|cod"]
-  status            enum          [not null, default: "pending", note: "pending|processing|shipped|delivered|cancelled|confirmed"]
-  product_id        bigint        [not null, ref: > products.id]
-  product_name      varchar(255)  [not null, note: "Snapshot of product name at purchase time"]
-  unit_price        decimal(12,2) [not null, note: "Snapshot of price at purchase time"]
-  quantity          int           [not null]
+  status            enum          [not null, default: "pending", note: "pending|shipped|delivered|cancelled|confirmed"]
+  batch_ref         varchar(255)  [null, note: "Batch UUID for grouping orders placed together"]
   total_amount      decimal(14,2) [not null, default: 0]
   cancel_reason     int           [null, note: "Enum: 1=mind, 2=address, 3=dup, 4=delay, 5=other"]
   cancel_reason_notes varchar(255) [null, note: "Required if cancel_reason is 5"]
@@ -105,7 +102,31 @@ Table orders {
 
   indexes {
     customer_id
-    seller_id
+    shop_id
+  }
+}
+
+Table order_items {
+  id                bigint        [pk, increment]
+  order_id          bigint        [not null, ref: > orders.id]
+  product_id        bigint        [null, ref: > products.id]
+  product_name      varchar(255)  [not null]
+  unit_price        decimal(14,2) [not null]
+  quantity          int           [not null]
+  subtotal          decimal(14,2) [not null]
+  created_at        timestamp     [null]
+  updated_at        timestamp     [null]
+}
+
+Table carts {
+  id                bigint        [pk, increment]
+  customer_id       bigint        [not null, ref: > users.id]
+  product_id        bigint        [not null, ref: > products.id]
+  created_at        timestamp     [null]
+  updated_at        timestamp     [null]
+
+  indexes {
+    (customer_id, product_id) [unique]
   }
 }
 

@@ -18,7 +18,7 @@ class OrderController extends Controller
      */
     public function index(): JsonResponse
     {
-        $orders = Order::with(['customer', 'seller.sellerProfile', 'address', 'items.product'])
+        $orders = Order::with(['customer', 'shop', 'address', 'items.product'])
             ->latest()
             ->paginate(20);
 
@@ -32,7 +32,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        $order->load(['items.product', 'customer', 'seller.sellerProfile', 'address']);
+        $order->load(['items.product', 'customer', 'shop', 'address']);
 
         return response()->json(['order' => $order]);
     }

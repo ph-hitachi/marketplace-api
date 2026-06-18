@@ -3,7 +3,7 @@
 namespace Tests\Feature\User;
 
 use App\Models\User;
-use App\Models\SellerProfile;
+use App\Models\Shop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -76,13 +76,13 @@ class ProfileTest extends TestCase
         $token = auth('api')->login($seller);
 
         // Populate initial profile
-        $seller->sellerProfile()->create([
+        $shop = $seller->shop()->create([
             'shop_name'        => 'Old Shop Name',
             'shop_description' => 'Old description.',
         ]);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->putJson('/api/seller/profile', [
+            ->putJson("/api/seller/profile", [
                 'shop_name'        => 'New Shop Name',
                 'shop_description' => 'New description.',
             ]);
@@ -91,7 +91,7 @@ class ProfileTest extends TestCase
             ->assertJsonPath('profile.shop_name', 'New Shop Name')
             ->assertJsonPath('profile.shop_description', 'New description.');
 
-        $this->assertDatabaseHas('seller_profiles', [
+        $this->assertDatabaseHas('shops', [
             'user_id'          => $seller->id,
             'shop_name'        => 'New Shop Name',
             'shop_description' => 'New description.',
@@ -104,7 +104,7 @@ class ProfileTest extends TestCase
         $token = auth('api')->login($customer);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->putJson('/api/seller/profile', [
+            ->putJson("/api/seller/profile", [
                 'shop_name'        => 'Hacked Shop',
                 'shop_description' => 'Should not work.',
             ]);
@@ -116,20 +116,20 @@ class ProfileTest extends TestCase
     {
         // Seller A
         $sellerA = User::factory()->create(['role' => 'seller']);
-        $sellerA->sellerProfile()->create([
+        $shopA = $sellerA->shop()->create([
             'shop_name' => 'Unique Shop A',
         ]);
 
         // Seller B
         $sellerB = User::factory()->create(['role' => 'seller']);
-        $sellerB->sellerProfile()->create([
+        $shopB = $sellerB->shop()->create([
             'shop_name' => 'Unique Shop B',
         ]);
         $tokenB = auth('api')->login($sellerB);
 
         // Seller B tries to take Seller A's shop name
         $response = $this->withHeader('Authorization', "Bearer {$tokenB}")
-            ->putJson('/api/seller/profile', [
+            ->putJson("/api/seller/profile", [
                 'shop_name'        => 'Unique Shop A',
                 'shop_description' => 'Attempted hijack.',
             ]);
@@ -139,7 +139,7 @@ class ProfileTest extends TestCase
 
         // Seller B updates shop description but keeps own unique name
         $response2 = $this->withHeader('Authorization', "Bearer {$tokenB}")
-            ->putJson('/api/seller/profile', [
+            ->putJson("/api/seller/profile", [
                 'shop_name'        => 'Unique Shop B',
                 'shop_description' => 'Valid update.',
             ]);

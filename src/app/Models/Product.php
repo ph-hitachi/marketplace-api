@@ -17,7 +17,7 @@ class Product extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'seller_id',
+        'shop_id',
         'name',
         'description',
         'price',
@@ -38,9 +38,9 @@ class Product extends Model
 
     // ── Relations ──────────────────────────────────────────────
 
-    public function seller(): BelongsTo
+    public function shop(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'seller_id');
+        return $this->belongsTo(Shop::class, 'shop_id');
     }
 
     public function orderItems(): HasMany

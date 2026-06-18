@@ -81,6 +81,7 @@ class UsersTest extends TestCase
     public function test_admin_cannot_delete_user_with_active_orders(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
+        $shop = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
         $address = Address::create([
             'user_id'       => $this->customer->id,
             'label'         => 'Home',
@@ -91,10 +92,10 @@ class UsersTest extends TestCase
             'country'       => 'Philippines',
         ]);
 
-        $product = Product::create(['seller_id' => $seller->id, 'name' => 'Test', 'price' => 50, 'stock' => 10]);
+        $product = Product::create(['shop_id' => $shop->id, 'name' => 'Test', 'price' => 50, 'stock' => 10]);
         $order = Order::create([
             'customer_id'    => $this->customer->id,
-            'seller_id'      => $seller->id,
+            'shop_id'        => $shop->id,
             'address_id'     => $address->id,
             'payment_method' => 'cod',
             'status'         => 'pending',

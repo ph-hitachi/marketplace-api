@@ -95,11 +95,11 @@ class OrderService
             }
 
             return [
-                'seller_id' => $product->seller_id,
+                'shop_id' => $product->shop_id,
                 'product' => $product,
                 'quantity' => $item['quantity'],
             ];
-        })->groupBy('seller_id');
+        })->groupBy('shop_id');
     }
 
     private function createOrders(
@@ -108,10 +108,10 @@ class OrderService
         array $data,
         string $batchRef
     ): Collection {
-        return $groups->map(function ($sellerItems, $sellerId) use ($customer, $data, $batchRef) {
+        return $groups->map(function ($shopItems, $shopId) use ($customer, $data, $batchRef) {
             $order = Order::create([
                 'customer_id' => $customer->id,
-                'seller_id' => $sellerId,
+                'shop_id' => $shopId,
                 'address_id' => $data['address_id'],
                 'wallet_id' => $data['payment_method'] === 'wallet' ? ($data['wallet_id'] ?? null) : null,
                 'payment_method' => $data['payment_method'],
@@ -120,7 +120,7 @@ class OrderService
                 'batch_ref' => $batchRef,
             ]);
 
-            $items = $sellerItems->map(function ($entry) {
+            $items = $shopItems->map(function ($entry) {
                 $product = $entry['product'];
                 $quantity = $entry['quantity'];
 

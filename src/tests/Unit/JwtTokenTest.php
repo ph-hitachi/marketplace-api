@@ -45,9 +45,9 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
-                'exception_type' => 'OAuthException',
-                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
+                'error_code'     => 'TOKEN_EXPIRED',
+                'exception_type' => 'TokenExpiredException',
+                'message'        => 'The token has expired.',
             ]);
     }
 
@@ -64,9 +64,9 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
-                'exception_type' => 'OAuthException',
-                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
+                'error_code'     => 'TOKEN_INVALID',
+                'exception_type' => 'TokenInvalidException',
+                'message'        => 'The token is invalid.',
             ]);
     }
 
@@ -107,14 +107,16 @@ class JwtTokenTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
-                'access_token',
-                'token_type',
-                'expires_in',
+                'authorization' => [
+                    'access_token',
+                    'token_type',
+                    'expires_in',
+                ],
             ])
-            ->assertJsonPath('token_type', 'bearer');
+            ->assertJsonPath('authorization.token_type', 'bearer');
 
         // The new token must be different from the original
-        $newToken = $response->json('access_token');
+        $newToken = $response->json('authorization.access_token');
         $this->assertNotEquals($token, $newToken);
     }
 
@@ -141,7 +143,7 @@ class JwtTokenTest extends TestCase
             ->postJson('/api/auth/refresh');
 
         $refreshResponse->assertStatus(200);
-        $newToken = $refreshResponse->json('access_token');
+        $newToken = $refreshResponse->json('authorization.access_token');
 
         // Token rotation: the new token must be a different string
         $this->assertNotEquals($token, $newToken, 'Refresh must produce a new token (old token is rotated out)');
@@ -165,7 +167,7 @@ class JwtTokenTest extends TestCase
         $refreshResponse = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/refresh');
 
-        $newToken = $refreshResponse->json('access_token');
+        $newToken = $refreshResponse->json('authorization.access_token');
 
         $response = $this->withHeader('Authorization', "Bearer {$newToken}")
             ->getJson('/api/user/me');
@@ -218,9 +220,9 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
-                'exception_type' => 'OAuthException',
-                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
+                'error_code'     => 'TOKEN_BLACKLISTED',
+                'exception_type' => 'TokenBlacklistedException',
+                'message'        => 'The token has been blacklisted.',
             ]);
     }
 
@@ -246,9 +248,9 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'error_code'     => 'TOKEN_COULD_NOT_VERIFIED',
-                'exception_type' => 'OAuthException',
-                'message'        => 'The provided token is invalid, has expired, or has been blacklisted.',
+                'error_code'     => 'TOKEN_BLACKLISTED',
+                'exception_type' => 'TokenBlacklistedException',
+                'message'        => 'The token has been blacklisted.',
             ]);
     }
 
@@ -329,15 +331,17 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'access_token',
-                'token_type',
-                'expires_in',  // clients use this to schedule proactive refresh
+                'authorization' => [
+                    'access_token',
+                    'token_type',
+                    'expires_in',  // clients use this to schedule proactive refresh
+                ],
             ])
-            ->assertJsonPath('token_type', 'bearer');
+            ->assertJsonPath('authorization.token_type', 'bearer');
 
         // expires_in must be a positive integer (seconds)
-        $this->assertIsInt($response->json('expires_in'));
-        $this->assertGreaterThan(0, $response->json('expires_in'));
+        $this->assertIsInt($response->json('authorization.expires_in'));
+        $this->assertGreaterThan(0, $response->json('authorization.expires_in'));
     }
 
     /**

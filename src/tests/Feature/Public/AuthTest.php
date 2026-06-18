@@ -24,7 +24,11 @@ class AuthTest extends TestCase
             ->assertJsonStructure([
                 'message',
                 'user' => ['id', 'name', 'email', 'role'],
-                'access_token',
+                'authorization' => [
+                    'access_token',
+                    'token_type',
+                    'expires_in',
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
@@ -58,8 +62,8 @@ class AuthTest extends TestCase
         $user = User::where('email', 'sellertest@marketplace.com')->first();
         $this->assertNotNull($user);
 
-        // Verify seller profile creation
-        $this->assertDatabaseHas('seller_profiles', [
+        // Verify shop creation
+        $this->assertDatabaseHas('shops', [
             'user_id'   => $user->id,
             'shop_name' => 'Test Shop',
         ]);
@@ -136,7 +140,11 @@ class AuthTest extends TestCase
             ->assertJsonStructure([
                 'message',
                 'user',
-                'access_token',
+                'authorization' => [
+                    'access_token',
+                    'token_type',
+                    'expires_in',
+                ],
             ]);
     }
 

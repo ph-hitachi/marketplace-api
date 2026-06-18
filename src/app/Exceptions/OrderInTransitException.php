@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 class OrderInTransitException extends UnexpectedErrorException
 {
-    public function __construct(string $message = 'Cannot cancel the order while it is in processing or shipped.')
+    public function __construct(string $message = 'Cannot cancel the order while it is shipped.')
     {
         parent::__construct($message);
     }

@@ -14,10 +14,11 @@ class ProductsTest extends TestCase
     public function test_list_products_only_shows_active(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
+        $shop = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
 
         // Active product
         $active = Product::create([
-            'seller_id' => $seller->id,
+            'shop_id'   => $shop->id,
             'name'      => 'Active Product',
             'price'     => 100,
             'stock'     => 10,
@@ -26,7 +27,7 @@ class ProductsTest extends TestCase
 
         // Inactive product
         $inactive = Product::create([
-            'seller_id' => $seller->id,
+            'shop_id'   => $shop->id,
             'name'      => 'Inactive Product',
             'price'     => 200,
             'stock'     => 10,
@@ -43,8 +44,9 @@ class ProductsTest extends TestCase
     public function test_get_single_product_success(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
+        $shop = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
         $product = Product::create([
-            'seller_id' => $seller->id,
+            'shop_id'   => $shop->id,
             'name'      => 'Detailed Product',
             'price'     => 150,
             'stock'     => 5,
@@ -60,8 +62,9 @@ class ProductsTest extends TestCase
     public function test_get_inactive_product_returns_404(): void
     {
         $seller = User::factory()->create(['role' => 'seller']);
+        $shop = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
         $product = Product::create([
-            'seller_id' => $seller->id,
+            'shop_id'   => $shop->id,
             'name'      => 'Secret Product',
             'price'     => 150,
             'stock'     => 5,

@@ -13,7 +13,7 @@
         "y": 12
       },
       {
-        "name": "seller_profiles",
+        "name": "shops",
         "schemaName": "public",
         "x": 895,
         "y": 53
@@ -74,7 +74,7 @@
         "secondFieldNames": [
           "user_id"
         ],
-        "secondTableName": "seller_profiles",
+        "secondTableName": "shops",
         "secondSchemaName": "public",
         "secondRelation": "*",
         "checkPoints": []
@@ -98,11 +98,11 @@
         "firstFieldNames": [
           "id"
         ],
-        "firstTableName": "users",
+        "firstTableName": "shops",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
-          "seller_id"
+          "shop_id"
         ],
         "secondTableName": "products",
         "secondSchemaName": "public",
@@ -128,11 +128,11 @@
         "firstFieldNames": [
           "id"
         ],
-        "firstTableName": "users",
+        "firstTableName": "shops",
         "firstSchemaName": "public",
         "firstRelation": "1",
         "secondFieldNames": [
-          "seller_id"
+          "shop_id"
         ],
         "secondTableName": "orders",
         "secondSchemaName": "public",

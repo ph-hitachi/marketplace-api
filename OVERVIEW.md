@@ -45,7 +45,8 @@ src/
 │   │   │       ├── Seller/
 │   │   │       │   ├── OrderController.php
 │   │   │       │   ├── ProductController.php
-│   │   │       │   └── SellerProfileController.php
+│   │   │       │   ├── SellerProfileController.php
+│   │   │       │   └── ShopController.php
 │   │   │       ├── User/
 │   │   │       │   ├── ProfileController.php
 │   │   │       │   └── WalletController.php
@@ -83,7 +84,7 @@ src/
 │   │   ├── Order.php
 │   │   ├── OrderItem.php
 │   │   ├── Product.php
-│   │   ├── SellerProfile.php
+│   │   ├── Shop.php
 │   │   ├── User.php
 │   │   ├── Wallet.php
 │   │   └── WalletTransaction.php
@@ -91,7 +92,7 @@ src/
 │   │   ├── AddressPolicy.php
 │   │   ├── OrderPolicy.php
 │   │   ├── ProductPolicy.php
-│   │   ├── SellerProfilePolicy.php
+│   │   ├── ShopPolicy.php
 │   │   ├── UserPolicy.php
 │   │   └── WalletPolicy.php
 │   ├── Providers/
@@ -101,18 +102,16 @@ src/
 │       ├── OrderService.php
 │       └── ProductStockService.php
 ├── config/
-│   ├── auth.php          ← api guard: jwt driver
-│   ├── jwt.php           ← JWT Auth config (php-open-source-saver/jwt-auth)
-│   ├── scramble.php      ← API docs config
+│   ├── auth.php
+│   ├── jwt.php
+│   ├── scramble.php
 │   └── ...
 ├── database/
-│   ├── factories/
-│   │   └── UserFactory.php
 │   ├── migrations/
 │   │   ├── 0001_01_01_000000_create_users_table.php
 │   │   ├── 0001_01_01_000001_create_cache_table.php
 │   │   ├── 0001_01_01_000002_create_jobs_table.php
-│   │   ├── 2026_01_01_000010_create_seller_profiles_table.php
+│   │   ├── 2026_01_01_000010_create_shops_table.php
 │   │   ├── 2026_01_01_000020_create_addresses_table.php
 │   │   ├── 2026_01_01_000030_create_products_table.php
 │   │   ├── 2026_01_01_000040_create_orders_table.php
@@ -149,7 +148,8 @@ src/
     │   │   └── OrdersTest.php
     │   ├── Public/
     │   │   ├── AuthTest.php
-    │   │   └── ProductsTest.php
+    │   │   ├── ProductsTest.php
+    │   │   └── ShopsTest.php
     │   ├── Seller/
     │   │   ├── OrdersTest.php
     │   │   └── ProductsTest.php
@@ -174,6 +174,9 @@ Route::post('/auth/login',    [AuthController::class, 'login']);
 
 Route::get('/products',      [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
+
+Route::get('/shops',                 [ShopController::class, 'index']);
+Route::get('/shops/{shop}',          [ShopController::class, 'show']);
 
 // ── Authenticated routes (JWT — any role) ──────────────────────────────────
 Route::middleware(['auth:api', 'active'])->group(function () {
@@ -257,309 +260,15 @@ Route::middleware(['auth:api', 'active'])->group(function () {
 
 ---
 
-## 3. Global Exception & Middleware Setup (`bootstrap/app.php`)
-
-The application configures global exception rendering to ensure consistent JSON formats across all endpoints, including standardizing HTTP errors, validation errors, and domain-specific `UnexpectedErrorException`s.
-
-```php
-<?php
-
-use App\Exceptions\AccountDeactivatedException;
-use App\Exceptions\UnexpectedErrorException;
-use App\Http\Middleware\EnsureRole;
-use App\Http\Middleware\EnsureUserIsActive;
-use App\Http\Middleware\SecurityHeaders;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware): void {
-        // Apply security headers to every response
-        $middleware->append(SecurityHeaders::class);
-
-        // Middleware aliases
-        $middleware->alias([
-            'role'   => EnsureRole::class,
-            'active' => EnsureUserIsActive::class,
-        ]);
-
-        // Apply rate limiting to the api middleware group
-        $middleware->throttleApi();
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-
-        // Render all API errors as JSON
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
-        );
-
-        // ── UnexpectedErrorException (domain errors: balance, stock, transitions, etc.) ──
-        $exceptions->render(function (UnexpectedErrorException $e, Request $request) {
-            return response()->json([
-                'error_code'     => $e->getErrorCode(),
-                'exception_type' => class_basename($e),
-                'message'        => $e->getMessage(),
-            ], $e->getStatusCode());
-        });
-
-        // ── 401 Unauthenticated ────────────────────────────────────────────────────
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
-            return response()->json([
-                'error_code' => 'UNAUTHENTICATED',
-                'message'    => 'You are not authenticated. Please provide a valid Bearer token.',
-            ], Response::HTTP_UNAUTHORIZED);
-        });
-
-        // ── 403 Forbidden (Policy / Gate failures) ─────────────────────────────────
-        $exceptions->render(function (AuthorizationException $e, Request $request) {
-            return response()->json([
-                'error_code' => 'FORBIDDEN',
-                'message'    => 'You do not have permission to perform this action.',
-            ], Response::HTTP_FORBIDDEN);
-        });
-
-        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
-            return response()->json([
-                'error_code' => 'FORBIDDEN',
-                'message'    => 'You do not have permission to perform this action.',
-            ], Response::HTTP_FORBIDDEN);
-        });
-
-        // ── 404 Not Found (Route or Model) ─────────────────────────────────────────
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            // Unwrap ModelNotFoundException for a cleaner message
-            $previous = $e->getPrevious();
-            $message  = $previous instanceof ModelNotFoundException
-                ? 'The requested resource was not found.'
-                : 'The requested endpoint does not exist.';
-
-            return response()->json([
-                'error_code' => 'NOT_FOUND',
-                'message'    => $message,
-            ], Response::HTTP_NOT_FOUND);
-        });
-
-        // ── 422 Validation Error ────────────────────────────────────────────────────
-        $exceptions->render(function (ValidationException $e, Request $request) {
-            return response()->json([
-                'error_code' => 'VALIDATION_ERROR',
-                'message'    => 'The given data was invalid.',
-                'errors'     => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        });
-
-        // ── 429 Too Many Requests ───────────────────────────────────────────────────
-        $exceptions->render(function (TooManyRequestsHttpException $e, Request $request) {
-            return response()->json([
-                'error_code' => 'TOO_MANY_REQUESTS',
-                'message'    => 'Too many requests. Please slow down and try again in a moment.',
-            ], Response::HTTP_TOO_MANY_REQUESTS);
-        });
-
-        // ── 500 Internal Server Error (catch-all) ───────────────────────────────────
-        $exceptions->render(function (\Throwable $e, Request $request) {
-            if ($e instanceof UnexpectedErrorException ||
-                $e instanceof AuthenticationException ||
-                $e instanceof AuthorizationException ||
-                $e instanceof AccessDeniedHttpException ||
-                $e instanceof ValidationException ||
-                $e instanceof NotFoundHttpException ||
-                $e instanceof TooManyRequestsHttpException) {
-                return null;
-            }
-
-            if ($request->is('api/*')) {
-                report($e); // Still logs to Laravel log
-                $unexpected = new UnexpectedErrorException('Sorry, something went wrong on the server. Please try again later.');
-                return response()->json([
-                    'error_code'     => $unexpected->getErrorCode(),
-                    'exception_type' => class_basename($unexpected),
-                    'message'        => $unexpected->getMessage(),
-                ], $unexpected->getStatusCode());
-            }
-        });
-
-    })->create();
-```
-
----
-
-## 4. Standard HTTP Response Codes
-
-While domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.
-
-### Success Responses
-
-Success responses are typically documented on a per-endpoint basis, but adhere to these global conventions:
-
-- **`200 OK`**: The request succeeded. Used for `GET` (fetching records), `PUT`/`PATCH` (updating records), and standard actions.
-- **`201 Created`**: The request succeeded and a new resource was created. Used exclusively for `POST` requests that result in database creation.
-- **`204 No Content`**: The request succeeded, but there is no body to return. Used primarily for `DELETE` requests where the resource is successfully removed.
-
-### Standard HTTP Errors
-
-These errors are automatically intercepted and formatted consistently by the global exception handler in `bootstrap/app.php`:
-
-- **`400 Bad Request`**: Used for domain-specific logic failures (e.g., `InsufficientBalanceException`).
-- **`401 Unauthorized`**: Missing, invalid, or expired Bearer token.
-- **`403 Forbidden`**: The authenticated user does not have the correct role or permission (e.g., a customer trying to access a seller endpoint).
-- **`404 Not Found`**: The requested URL endpoint does not exist (`NotFoundHttpException`) or the requested database record (e.g., `Product::findOrFail()`) does not exist (`ModelNotFoundException`).
-- **`405 Method Not Allowed`**: Invalid HTTP method.
-- **`409 Conflict`**: The request could not be completed due to a conflict with the current state of the target resource (e.g., `InvalidStatusTransitionException` when trying to cancel an already shipped order).
-- **`422 Unprocessable Entity`**: The request body failed validation (`ValidationException`). The response includes an `errors` object detailing which fields failed.
-- **`429 Too Many Requests`**: The user has exceeded the global rate limit (`throttle:api`).
-- **`500 Internal Server Error`**: An unexpected system crash or fatal error occurred. The true exception is hidden from the user and logged in Telescope.
-
----
-
-## 5. Test Results
+## 3. Test Results
 
 The application features a comprehensive automated test suite covering all critical roles, API endpoints, and logic flows.
 
-**Latest Run — post JWT Migration (2026-06-18):**
+**Latest Run (99 Tests Passed successfully):**
 
 ```
-    PASS  Tests\Unit\ExampleTest
-  ✓ that true is true
-
-    PASS  Tests\Unit\ExceptionsTest
-  ✓ account deactivated exception renders correct json format
-  ✓ insufficient balance exception renders correct json format
-  ✓ insufficient stock exception renders correct json format
-  ✓ invalid credentials exception renders correct json format
-  ✓ invalid status transition exception renders correct json format
-  ✓ order in transit exception renders correct json format
-  ✓ product unavailable exception renders correct json format
-  ✓ unexpected error exception renders correct json format
-  ✓ user delete blocked exception renders correct json format
-  ✓ authentication exception renders correct json format
-  ✓ authorization exception renders correct json format
-  ✓ access denied http exception renders correct json format
-  ✓ not found http exception renders correct json format
-  ✓ model not found exception renders correct json format
-  ✓ validation exception renders correct json format
-  ✓ too many requests http exception renders correct json format
-  ✓ fallback 500 error renders unexpected error exception format
-
-    PASS  Tests\Unit\JwtTokenTest
-  ✓ expired token is rejected
-  ✓ tampered token is rejected
-  ✓ missing token is rejected
-  ✓ refresh returns new token
-  ✓ old token is blacklisted after refresh
-  ✓ new token from refresh is valid
-  ✓ refresh without token fails
-  ✓ blacklisted token cannot access protected routes
-  ✓ blacklisted token cannot be refreshed
-  ✓ double logout is safe
-  ✓ same token is valid across multiple requests
-  ✓ login response includes token metadata
-  ✓ token is bound to issuing user
-
-    PASS  Tests\Feature\Admin\OrdersTest
-  ✓ admin can list all orders
-  ✓ admin can view order details
-  ✓ admin cannot override order status
-
-    PASS  Tests\Feature\Admin\UsersTest
-  ✓ admin can list all users
-  ✓ admin can view user details
-  ✓ admin can deactivate user and revoke tokens
-  ✓ admin can activate user
-  ✓ admin cannot delete user with active orders
-  ✓ admin can delete user without active orders
-
-    PASS  Tests\Feature\Customer\AddressTest
-  ✓ customer can list own addresses
-  ✓ customer can create address
-  ✓ customer cannot view other users address idor
-  ✓ customer can set default address
-
-    PASS  Tests\Feature\Customer\OrdersTest
-  ✓ place order via wallet success
-  ✓ place order via cod success
-  ✓ place order invalid payment method validation failure
-  ✓ place order missing wallet id validation failure
-  ✓ place order negative quantity validation failure
-  ✓ cannot place order using other users address idor
-  ✓ cannot place order using other users wallet idor
-  ✓ insufficient wallet balance failure
-  ✓ cannot place order for deactivated product
-  ✓ cancel pending wallet order refunds correctly
-  ✓ cancel reason validation rules
-  ✓ cancel delivered order refunds correctly
-  ✓ cancel blocked when order in transit
-  ✓ confirm releases funds to seller successfully
-  ✓ cannot confirm already confirmed or cancelled order
-
-    PASS  Tests\Feature\Public\AuthTest
-  ✓ customer registration success
-  ✓ seller registration success
-  ✓ registration validation failures
-  ✓ cannot register duplicate email
-  ✓ login success
-  ✓ login deactivated account fail
-  ✓ login invalid credentials fail
-  ✓ logout success
-  ✓ me profile unauthorized rejection
-  ✓ me profile success
-  ✓ cannot register admin role
-
-    PASS  Tests\Feature\Public\ProductsTest
-  ✓ list products only shows active
-  ✓ get single product success
-  ✓ get inactive product returns 404
-
-    PASS  Tests\Feature\Seller\OrdersTest
-  ✓ seller can list own orders only
-  ✓ seller cannot view or update other sellers orders
-  ✓ seller can advance order status step by step
-  ✓ seller cannot move status backward or skip invalid steps
-  ✓ seller can cancel order via cancel endpoint
-  ✓ seller cannot cancel shipped delivered or confirmed orders
-  ✓ seller cannot confirm order directly
-  ✓ seller cannot see customer email in order response
-
-    PASS  Tests\Feature\Seller\ProductsTest
-  ✓ seller can list own products
-  ✓ seller cannot view or update other sellers product
-  ✓ seller can delete own product
-  ✓ seller cannot delete product with any orders
-  ✓ seller can activate and deactivate own product
-
-    PASS  Tests\Feature\User\ProfileTest
-  ✓ user can update profile successfully
-  ✓ user cannot update profile role
-  ✓ seller can update shop profile successfully
-  ✓ customer cannot update seller profile
-  ✓ seller shop name unique validation
-
-    PASS  Tests\Feature\User\WalletTest
-  ✓ customer can list wallets
-  ✓ customer can create wallet with mass assignment protection
-  ✓ customer can set default wallet
-  ✓ customer can topup own wallet
-  ✓ customer cannot topup other users wallet idor
-  ✓ seller can list and manage wallets
-
-  Tests:    97 passed (316 assertions)
-  Duration: 39.83s
+  Tests:    99 passed (340 assertions)
+  Duration: 39.18s
 ```
 
 ### Coverage Summary
@@ -572,6 +281,7 @@ The application features a comprehensive automated test suite covering all criti
 | `Customer\OrdersTest` | 15 | Full order lifecycle, payments, cancellations, IDOR |
 | `Public\AuthTest` | 11 | Register, login, logout, profile |
 | `Public\ProductsTest` | 3 | Public product listing and visibility |
+| `Public\ShopsTest` | 2 | Public shop list and shop details visibility |
 | `Seller\OrdersTest` | 8 | Seller order management, status transitions |
 | `Seller\ProductsTest` | 5 | Product CRUD, activate/deactivate, ownership |
 | `User\ProfileTest` | 5 | Profile update, role protection, seller shop |
@@ -579,4 +289,4 @@ The application features a comprehensive automated test suite covering all criti
 | `Unit\ExceptionsTest` | 17 | JSON error format for every domain exception |
 | `Unit\JwtTokenTest` | 13 | JWT authentication, refresh, blacklist, expiration |
 | `Unit\ExampleTest` | 1 | Unit test baseline |
-| **Total** | **97** | **316 assertions** |
+| **Total** | **99** | **340 assertions** |

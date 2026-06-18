@@ -26,6 +26,7 @@ class OrdersTest extends TestCase
 
         $customer = User::factory()->create(['role' => 'customer']);
         $seller   = User::factory()->create(['role' => 'seller']);
+        $shop     = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
 
         $address = Address::create([
             'user_id'       => $customer->id,
@@ -37,10 +38,10 @@ class OrdersTest extends TestCase
             'country'       => 'Philippines',
         ]);
 
-        $product = Product::create(['seller_id' => $seller->id, 'name' => 'Test', 'price' => 120, 'stock' => 10]);
+        $product = Product::create(['shop_id' => $shop->id, 'name' => 'Test', 'price' => 120, 'stock' => 10]);
         $this->order = Order::create([
             'customer_id'    => $customer->id,
-            'seller_id'      => $seller->id,
+            'shop_id'        => $shop->id,
             'address_id'     => $address->id,
             'payment_method' => 'cod',
             'status'         => 'pending',

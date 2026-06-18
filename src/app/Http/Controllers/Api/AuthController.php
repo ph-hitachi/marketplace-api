@@ -33,7 +33,7 @@ class AuthController extends Controller
         ]);
 
         if ($user->role === 'seller') {
-            $user->sellerProfile()->create([
+            $user->shop()->create([
                 'shop_name' => $data['shop_name'],
                 'shop_description' => $data['shop_description'] ?? null,
             ]);
@@ -41,7 +41,7 @@ class AuthController extends Controller
 
         $token = Auth::guard('api')->login($user);
 
-        return $this->respondWithToken($token, 'Registration successful.', $user->load('sellerProfile'), 201);
+        return $this->respondWithToken($token, 'Registration successful.', $user->load('shop'), 201);
     }
 
     /**
@@ -63,7 +63,7 @@ class AuthController extends Controller
             throw new AccountDeactivatedException();
         }
 
-        return $this->respondWithToken($token, 'Login successful.', $user->load('sellerProfile'));
+        return $this->respondWithToken($token, 'Login successful.', $user->load('shop'));
     }
 
     /**
@@ -89,7 +89,7 @@ class AuthController extends Controller
      */
     public function me(): JsonResponse
     {
-        $user = Auth::guard('api')->user()->load('sellerProfile');
+        $user = Auth::guard('api')->user()->load('shop');
 
         return response()->json(['user' => $user]);
     }
@@ -101,14 +101,17 @@ class AuthController extends Controller
     {
         $data = [
             'message' => $message,
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
         ];
 
         if ($user) {
             $data['user'] = $user;
         }
+
+        $data['authorization'] = [
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ];
 
         return response()->json($data, $status);
     }

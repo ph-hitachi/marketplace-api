@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('users');
-            $table->foreignId('seller_id')->constrained('users');
+            $table->foreignId('shop_id')->constrained('shops');
             $table->foreignId('address_id')->constrained('addresses');
             $table->foreignId('wallet_id')->nullable()->constrained('wallets')->nullOnDelete();
             $table->enum('payment_method', ['wallet', 'cod'])->default('wallet');
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('customer_id');
-            $table->index('seller_id');
+            $table->index('shop_id');
         });
     }
 

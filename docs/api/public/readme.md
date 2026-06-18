@@ -1,10 +1,10 @@
-# Public API — Postman Reference
+# Public API — Reference
 
 > **Base URL:** `http://localhost/api`
 > **Auth Required:** ❌ None
 > **Rate Limit:** 60 requests/minute per IP
 
-These endpoints are open to anyone — no token needed. Use them to browse products and authenticate.
+These endpoints are open to anyone — no token needed. Use them to browse products, list/view shops, and authenticate.
 
 ---
 
@@ -13,8 +13,10 @@ These endpoints are open to anyone — no token needed. Use them to browse produ
 2. [Login](#2-login)
 3. [Browse Products](#3-browse-products)
 4. [Get Single Product](#4-get-single-product)
-5. [Logout](#5-logout-any-authenticated-user)
-6. [Get Own Profile](#6-get-own-profile-any-authenticated-user)
+5. [List Shops](#5-list-shops)
+6. [Get Single Shop](#6-get-single-shop)
+7. [Logout](#7-logout-any-authenticated-user)
+8. [Get Own Profile](#8-get-own-profile-any-authenticated-user)
 
 ---
 
@@ -56,16 +58,17 @@ Creates a new user account. Role can be `customer` or `seller`. **Admins cannot 
     "role": "customer",
     "is_active": true,
     "balance": "0.00",
-    "seller_profile": null,
+    "shop": null,
     "created_at": "2026-06-14T06:00:00.000000Z",
     "updated_at": "2026-06-14T06:00:00.000000Z"
   },
-  "access_token": "1|abc123tokenxyz...",
-  "token_type": "Bearer"
+  "access_token": "eyJ0eXAi...",
+  "token_type": "bearer",
+  "expires_in": 3600
 }
 ```
 
-> ⚠️ **Save the `access_token`** — you'll need it as the Bearer token for all protected customer endpoints. It expires in **3 days**.
+> ⚠️ **Save the `access_token`** — you'll need it as the Bearer token for all protected customer/seller endpoints.
 
 ---
 
@@ -97,15 +100,15 @@ Creates a new user account. Role can be `customer` or `seller`. **Admins cannot 
     "role": "seller",
     "is_active": true,
     "balance": "0.00",
-    "seller_profile": {
+    "shop": {
       "id": 3,
-      "user_id": 7,
       "shop_name": "My Awesome Store",
       "shop_description": "We sell premium handcrafted goods."
     }
   },
-  "access_token": "2|def456tokenabc...",
-  "token_type": "Bearer"
+  "access_token": "eyJ0eXAi...",
+  "token_type": "bearer",
+  "expires_in": 3600
 }
 ```
 
@@ -135,7 +138,7 @@ Creates a new user account. Role can be `customer` or `seller`. **Admins cannot 
 
 ## 2. Login
 
-Authenticates an existing user and returns a 3-day Bearer token.
+Authenticates an existing user and returns a Bearer token.
 
 > **Controller:** `App\Http\Controllers\Api\AuthController` | **Method:** `login`
 
@@ -167,12 +170,11 @@ Authenticates an existing user and returns a 3-day Bearer token.
     "is_active": true,
     "balance": "5000.00"
   },
-  "access_token": "3|ghiTokenValue...",
-  "token_type": "Bearer"
+  "access_token": "eyJ0eXAi...",
+  "token_type": "bearer",
+  "expires_in": 3600
 }
 ```
-
-> **Note:** Each login revokes all previous tokens for this user. Only one active session is maintained per account.
 
 **Error — Invalid Credentials `401`:**
 ```json
@@ -221,31 +223,27 @@ Returns a paginated list of all active, in-stock products available for purchase
   "data": [
     {
       "id": 1,
-      "seller_id": 2,
+      "shop_id": 2,
       "name": "Wireless Earbuds Pro",
       "slug": "wireless-earbuds-pro",
-      "description": "High-quality Wireless Earbuds Pro from Tech Haven.",
+      "description": "High-quality Wireless Earbuds Pro.",
       "price": "1299.00",
       "stock": 50,
-      "tags": ["electronics", "audio", "wireless"],
       "is_active": true,
       "deleted_at": null,
       "created_at": "2026-06-14T05:42:00.000000Z",
       "updated_at": "2026-06-14T05:42:00.000000Z",
-      "seller": {
+      "shop": {
         "id": 2,
-        "name": "Tech Haven Store",
-        "seller_profile": {
-          "shop_name": "Tech Haven",
-          "shop_description": "Your one-stop shop for gadgets and electronics."
-        }
+        "shop_name": "Tech Haven",
+        "shop_description": "Your one-stop shop for gadgets and electronics."
       }
     }
   ],
   "first_page_url": "http://localhost/api/products?page=1",
   "per_page": 15,
-  "to": 10,
-  "total": 10
+  "to": 1,
+  "total": 1
 }
 ```
 
@@ -262,28 +260,22 @@ Returns the details of a single active product.
 
 ### `GET /api/products/{id}`
 
-**Example:** `GET /api/products/1`
-
 **Success Response — `200 OK`:**
 ```json
 {
   "product": {
     "id": 1,
-    "seller_id": 2,
+    "shop_id": 2,
     "name": "Wireless Earbuds Pro",
     "slug": "wireless-earbuds-pro",
-    "description": "High-quality Wireless Earbuds Pro from Tech Haven.",
+    "description": "High-quality Wireless Earbuds Pro.",
     "price": "1299.00",
     "stock": 50,
-    "tags": ["electronics", "audio", "wireless"],
     "is_active": true,
-    "seller": {
+    "shop": {
       "id": 2,
-      "name": "Tech Haven Store",
-      "seller_profile": {
-        "shop_name": "Tech Haven",
-        "shop_description": "Your one-stop shop for gadgets and electronics."
-      }
+      "shop_name": "Tech Haven",
+      "shop_description": "Your one-stop shop for gadgets and electronics."
     }
   }
 }
@@ -299,9 +291,69 @@ Returns the details of a single active product.
 
 ---
 
-## 5. Logout (Any Authenticated User)
+## 5. List Shops
 
-Revokes the current Bearer token. Subsequent requests using that token return 401.
+Returns a paginated list of all registered shops publicly.
+
+> **Controller:** `App\Http\Controllers\Api\Seller\ShopController` | **Method:** `index`
+
+### `GET /api/shops`
+
+**Success Response — `200 OK`:**
+```json
+{
+  "current_page": 1,
+  "data": [
+    {
+      "id": 1,
+      "shop_name": "Tech Haven",
+      "shop_description": "Your one-stop shop for gadgets and electronics.",
+      "created_at": "2026-06-14T05:42:00.000000Z",
+      "updated_at": "2026-06-14T05:42:00.000000Z"
+    }
+  ],
+  "first_page_url": "http://localhost/api/shops?page=1",
+  "per_page": 15,
+  "to": 1,
+  "total": 1
+}
+```
+
+---
+
+## 6. Get Single Shop
+
+Returns the profile name, description, and list of active products for a specific shop.
+
+> **Controller:** `App\Http\Controllers\Api\Seller\ShopController` | **Method:** `show`
+
+### `GET /api/shops/{shop}`
+
+**Success Response — `200 OK`:**
+```json
+{
+  "name": "Tech Haven",
+  "description": "Your one-stop shop for gadgets and electronics.",
+  "products": [
+    {
+      "id": 1,
+      "shop_id": 1,
+      "name": "Wireless Earbuds Pro",
+      "slug": "wireless-earbuds-pro",
+      "description": "High-quality Wireless Earbuds Pro.",
+      "price": "1299.00",
+      "stock": 50,
+      "is_active": true
+    }
+  ]
+}
+```
+
+---
+
+## 7. Logout (Any Authenticated User)
+
+Revokes the current Bearer token.
 
 > **Controller:** `App\Http\Controllers\Api\AuthController` | **Method:** `logout`
 
@@ -322,9 +374,9 @@ Revokes the current Bearer token. Subsequent requests using that token return 40
 
 ---
 
-## 6. Get Own Profile (Any Authenticated User)
+## 8. Get Own Profile (Any Authenticated User)
 
-Returns the authenticated user's profile. Includes `seller_profile` for sellers and `balance` for customers.
+Returns the authenticated user's profile. Includes `shop` details for sellers.
 
 > **Controller:** `App\Http\Controllers\Api\AuthController` | **Method:** `me`
 
@@ -346,7 +398,7 @@ Returns the authenticated user's profile. Includes `seller_profile` for sellers 
     "role": "customer",
     "is_active": true,
     "balance": "5000.00",
-    "seller_profile": null
+    "shop": null
   }
 }
 ```
@@ -361,7 +413,8 @@ Returns the authenticated user's profile. Includes `seller_profile` for sellers 
     "role": "seller",
     "is_active": true,
     "balance": "0.00",
-    "seller_profile": {
+    "shop": {
+      "id": 2,
       "shop_name": "Tech Haven",
       "shop_description": "Your one-stop shop for gadgets and electronics."
     }
@@ -380,22 +433,13 @@ All errors follow a consistent JSON shape:
   "message": "Human-readable description."
 }
 ```
-Validation errors additionally include an `errors` object with field-level detail.
 
 | HTTP Code | Meaning | Exception Class | When it happens |
 |---|---|---|---|
 | `401` | Unauthenticated | `Illuminate\Auth\AuthenticationException` | No Bearer token, invalid token, or expired token |
 | `403` | Forbidden | `Illuminate\Auth\Access\AuthorizationException` | Valid token but wrong role, or policy check failed |
-| `403` | Account Deactivated | `App\Exceptions\AccountDeactivatedException` | Token is valid but user's `is_active = false`; token is also immediately revoked |
+| `403` | Account Deactivated | `App\Exceptions\AccountDeactivatedException` | Token is valid but user's `is_active = false` |
 | `404` | Not Found | `Symfony\Component\HttpKernel\Exception\NotFoundHttpException` | Route or model does not exist |
 | `422` | Validation Error | `Illuminate\Validation\ValidationException` | Missing or invalid request fields |
 | `429` | Too Many Requests | `Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException` | Exceeded 60 requests/minute |
-| `500` | Server Error | `Throwable` (catch-all) | Unexpected server-side failure; error is logged, safe message returned |
-
-**Example 500 response:**
-```json
-{
-  "error_code": "SERVER_ERROR",
-  "message": "Sorry, something went wrong on the server. Please try again later."
-}
-```
+| `500` | Server Error | `Throwable` (catch-all) | Unexpected server-side failure |

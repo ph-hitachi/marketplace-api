@@ -15,6 +15,8 @@ class ProductsTest extends TestCase
 
     private User $seller1;
     private User $seller2;
+    private \App\Models\Shop $shop1;
+    private \App\Models\Shop $shop2;
     private string $token1;
 
     protected function setUp(): void
@@ -22,22 +24,28 @@ class ProductsTest extends TestCase
         parent::setUp();
 
         $this->seller1 = User::factory()->create(['role' => 'seller']);
+        $this->shop1   = $this->seller1->shop()->create([
+            'shop_name' => 'Shop 1',
+        ]);
         $this->token1  = auth('api')->login($this->seller1);
 
         $this->seller2 = User::factory()->create(['role' => 'seller']);
+        $this->shop2   = $this->seller2->shop()->create([
+            'shop_name' => 'Shop 2',
+        ]);
     }
 
     public function test_seller_can_list_own_products(): void
     {
         Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $this->shop1->id,
             'name'      => 'Seller 1 Product',
             'price'     => 10,
             'stock'     => 5,
         ]);
 
         Product::create([
-            'seller_id' => $this->seller2->id,
+            'shop_id'   => $this->shop2->id,
             'name'      => 'Seller 2 Product',
             'price'     => 20,
             'stock'     => 1,
@@ -52,12 +60,10 @@ class ProductsTest extends TestCase
             ->assertJsonMissing(['name' => 'Seller 2 Product']);
     }
 
-
-
     public function test_seller_cannot_view_or_update_other_sellers_product(): void
     {
         $product2 = Product::create([
-            'seller_id' => $this->seller2->id,
+            'shop_id'   => $this->shop2->id,
             'name'      => 'Seller 2 Product',
             'price'     => 10,
             'stock'     => 5,
@@ -79,7 +85,7 @@ class ProductsTest extends TestCase
     public function test_seller_can_delete_own_product(): void
     {
         $product = Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $this->shop1->id,
             'name'      => 'To Delete',
             'price'     => 10,
             'stock'     => 5,
@@ -95,7 +101,7 @@ class ProductsTest extends TestCase
     public function test_seller_cannot_delete_product_with_any_orders(): void
     {
         $product = Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $this->shop1->id,
             'name'      => 'Active Product',
             'price'     => 10,
             'stock'     => 5,
@@ -115,7 +121,7 @@ class ProductsTest extends TestCase
         // Create an order in any status (e.g. delivered)
         $order = Order::create([
             'customer_id'    => $customer->id,
-            'seller_id'      => $this->seller1->id,
+            'shop_id'        => $this->shop1->id,
             'address_id'     => $address->id,
             'payment_method' => 'cod',
             'status'         => 'delivered',
@@ -139,7 +145,7 @@ class ProductsTest extends TestCase
     public function test_seller_can_activate_and_deactivate_own_product(): void
     {
         $product = Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $this->shop1->id,
             'name'      => 'Toggle Product',
             'price'     => 10,
             'stock'     => 5,

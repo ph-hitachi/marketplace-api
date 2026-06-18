@@ -56,7 +56,7 @@ class OrderPaymentService
                 ->where('reference_id', $order->id)
                 ->update(['status' => 'completed']);
 
-            $sellerWallet = $order->seller->wallets()->where('is_default', true)->first();
+            $sellerWallet = $order->shop->user->wallets()->where('is_default', true)->first();
 
             if ($sellerWallet) {
                 $sellerWallet->transactions()->create([

@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        $users = User::with('sellerProfile')->latest()->paginate(20);
+        $users = User::with('shop')->latest()->paginate(20);
 
         return response()->json($users);
     }
@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        $user->load(['sellerProfile', 'addresses']);
+        $user->load(['shop', 'addresses']);
 
         return response()->json(['user' => $user]);
     }

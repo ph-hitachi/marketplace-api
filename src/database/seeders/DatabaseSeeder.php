@@ -6,7 +6,7 @@ use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\SellerProfile;
+use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        SellerProfile::create([
+        $shop1 = Shop::create([
             'user_id'          => $seller1->id,
             'shop_name'        => 'Tech Haven',
             'shop_description' => 'Your one-stop shop for gadgets and electronics.',
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        SellerProfile::create([
+        $shop2 = Shop::create([
             'user_id'          => $seller2->id,
             'shop_name'        => 'Fashion Hub',
             'shop_description' => 'Trendy clothes and accessories for every style.',
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($products1 as $p) {
-            Product::create(array_merge($p, ['seller_id' => $seller1->id, 'is_active' => true, 'description' => "High-quality {$p['name']} from Tech Haven."]));
+            Product::create(array_merge($p, ['shop_id' => $shop1->id, 'is_active' => true, 'description' => "High-quality {$p['name']} from Tech Haven."]));
         }
 
         // ── Products for Seller 2 ─────────────────────────────────────────
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($products2 as $p) {
-            Product::create(array_merge($p, ['seller_id' => $seller2->id, 'is_active' => true, 'description' => "Premium {$p['name']} from Fashion Hub."]));
+            Product::create(array_merge($p, ['shop_id' => $shop2->id, 'is_active' => true, 'description' => "Premium {$p['name']} from Fashion Hub."]));
         }
 
         // ── Customers ─────────────────────────────────────────────────────

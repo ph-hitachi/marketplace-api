@@ -32,7 +32,7 @@ class OrderController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $orders = Order::where('seller_id', $request->user()->id)
+        $orders = Order::where('shop_id', $request->user()->shop->id)
             ->with(['customer:id,name', 'address'])
             ->latest()
             ->paginate(15);
@@ -55,7 +55,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Advance an order's status (pending→processing→shipped→delivered).
+     * Advance an order's status (pending→shipped→delivered).
      *
      * @throws InvalidStatusTransitionException
      * @response array{message: string, order: \App\Http\Resources\OrderResource}
@@ -97,7 +97,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Cancel a pending or processing order — restores stock and refunds wallet.
+     * Cancel a pending order — restores stock and refunds wallet.
      * 
      * @response array{message: string, order: \App\Http\Resources\OrderResource}
      */

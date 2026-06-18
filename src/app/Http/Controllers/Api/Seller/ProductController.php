@@ -19,7 +19,8 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $products = Product::where('seller_id', $request->user()->id)
+        $shopId = $request->user()->shop->id;
+        $products = Product::where('shop_id', $shopId)
             ->withTrashed()     // include soft-deleted for seller visibility
             ->latest()
             ->paginate(15);
@@ -32,8 +33,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $data              = $request->validated();
-        $data['seller_id'] = $request->user()->id;
+        $data            = $request->validated();
+        $data['shop_id'] = $request->user()->shop->id;
 
         $product = Product::create($data);
 

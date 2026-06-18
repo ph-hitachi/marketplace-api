@@ -15,6 +15,8 @@ class OrdersTest extends TestCase
 
     private User $seller1;
     private User $seller2;
+    private \App\Models\Shop $shop1;
+    private \App\Models\Shop $shop2;
     private User $customer;
     private string $token1;
     private Order $order1;
@@ -25,8 +27,10 @@ class OrdersTest extends TestCase
         parent::setUp();
 
         $this->seller1  = User::factory()->create(['role' => 'seller']);
+        $this->shop1    = $this->seller1->shop()->create(['shop_name' => 'Shop 1']);
         $this->token1   = auth('api')->login($this->seller1);
         $this->seller2  = User::factory()->create(['role' => 'seller']);
+        $this->shop2    = $this->seller2->shop()->create(['shop_name' => 'Shop 2']);
         $this->customer = User::factory()->create(['role' => 'customer']);
 
         $address = Address::create([
@@ -39,12 +43,12 @@ class OrdersTest extends TestCase
             'country'       => 'Philippines',
         ]);
 
-        $product1 = Product::create(['seller_id' => $this->seller1->id, 'name' => 'Test 1', 'price' => 100, 'stock' => 10]);
-        $product2 = Product::create(['seller_id' => $this->seller2->id, 'name' => 'Test 2', 'price' => 200, 'stock' => 10]);
+        $product1 = Product::create(['shop_id' => $this->shop1->id, 'name' => 'Test 1', 'price' => 100, 'stock' => 10]);
+        $product2 = Product::create(['shop_id' => $this->shop2->id, 'name' => 'Test 2', 'price' => 200, 'stock' => 10]);
 
         $this->order1 = Order::create([
             'customer_id'    => $this->customer->id,
-            'seller_id'      => $this->seller1->id,
+            'shop_id'        => $this->shop1->id,
             'address_id'     => $address->id,
             'payment_method' => 'cod',
             'status'         => 'pending',
@@ -60,7 +64,7 @@ class OrdersTest extends TestCase
 
         $this->order2 = Order::create([
             'customer_id'    => $this->customer->id,
-            'seller_id'      => $this->seller2->id,
+            'shop_id'        => $this->shop2->id,
             'address_id'     => $address->id,
             'payment_method' => 'cod',
             'status'         => 'pending',
@@ -140,12 +144,10 @@ class OrdersTest extends TestCase
         $responsePending->assertStatus(409);
     }
 
-
-
     public function test_seller_can_cancel_order_via_cancel_endpoint(): void
     {
         $product = Product::create([
-            'seller_id' => $this->seller1->id,
+            'shop_id'   => $this->shop1->id,
             'name'      => 'Test Pro 2',
             'slug'      => 'test-pro-2',
             'price'     => 50.00,
@@ -158,7 +160,7 @@ class OrdersTest extends TestCase
 
         $order = Order::create([
             'customer_id'    => $this->customer->id,
-            'seller_id'      => $this->seller1->id,
+            'shop_id'        => $this->shop1->id,
             'address_id'     => $this->order1->address_id,
             'payment_method' => 'wallet',
             'wallet_id'      => $wallet->id,

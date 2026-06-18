@@ -57,7 +57,7 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $orders = Order::where('customer_id', $request->user()->id)
-            ->with(['items.product', 'seller.sellerProfile', 'address'])
+            ->with(['items.product', 'shop', 'address'])
             ->orderByDesc('created_at')
             ->paginate(15);
 
@@ -73,7 +73,7 @@ class OrderController extends Controller
     {
         $this->authorize('viewAsCustomer', $order);
 
-        $order->load(['items.product', 'seller.sellerProfile', 'address']);
+        $order->load(['items.product', 'shop', 'address']);
 
         return response()->json(['order' => $order]);
     }

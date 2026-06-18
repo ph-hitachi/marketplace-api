@@ -6,7 +6,7 @@ class ProductFactory extends Factory {
     protected $model = Product::class;
     public function definition() {
         return [
-            'seller_id' => 2,
+            'shop_id' => \App\Models\Shop::factory(),
             'name' => 'Premium Wireless Headphones',
             'description' => 'High quality noise cancelling headphones.',
             'price' => 1500.50,

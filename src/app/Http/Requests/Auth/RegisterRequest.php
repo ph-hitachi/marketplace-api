@@ -23,7 +23,7 @@ class RegisterRequest extends FormRequest
             // Seller-only fields
             'shop_name'        => [
                 'required_if:role,seller',
-                'nullable', 'string', 'max:255', 'unique:seller_profiles,shop_name',
+                'nullable', 'string', 'max:255', 'unique:shops,shop_name',
             ],
             'shop_description' => [
                 'required_if:role,seller',

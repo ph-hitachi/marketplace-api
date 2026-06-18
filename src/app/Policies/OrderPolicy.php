@@ -37,7 +37,7 @@ class OrderPolicy
      */
     public function viewAsSeller(User $user, Order $order): bool
     {
-        return $user->id === $order->seller_id;
+        return $user->id === $order->shop->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class OrderPolicy
      */
     public function updateStatus(User $user, Order $order): bool
     {
-        return $user->id === $order->seller_id;
+        return $user->id === $order->shop->user_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class OrderPolicy
      */
     public function cancelAsSeller(User $user, Order $order): bool
     {
-        return $user->id === $order->seller_id;
+        return $user->id === $order->shop->user_id;
     }
 }
 

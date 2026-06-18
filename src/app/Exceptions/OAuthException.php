@@ -33,9 +33,11 @@ class OAuthException extends UnexpectedErrorException
     private function getDefaultMessage(string $code): string
     {
         return match ($code) {
-            'token_could_not_verified' => 'The provided token is invalid, has expired, or has been blacklisted.',
-            'token_could_not_parse'    => 'The token could not be parsed.',
-            default                    => 'An authentication error occurred.',
+            'token_expired'     => 'The token has expired.',
+            'token_invalid'     => 'The token is invalid.',
+            'token_blacklisted' => 'The token has been blacklisted.',
+            'token_could_not_parse' => 'The token could not be parsed.',
+            default                 => 'An authentication error occurred.',
         };
     }
 }

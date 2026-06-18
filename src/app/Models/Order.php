@@ -19,7 +19,7 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id',
-        'seller_id',
+        'shop_id',
         'address_id',
         'wallet_id',
         'payment_method',
@@ -53,9 +53,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function seller(): BelongsTo
+    public function shop(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'seller_id');
+        return $this->belongsTo(Shop::class, 'shop_id');
     }
 
     public function address(): BelongsTo

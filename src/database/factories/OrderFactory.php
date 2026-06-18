@@ -6,10 +6,10 @@ class OrderFactory extends Factory {
     protected $model = Order::class;
     public function definition() {
         return [
-            'customer_id' => 1,
-            'seller_id' => 2,
-            'address_id' => 1,
-            'wallet_id' => 1,
+            'customer_id' => \App\Models\User::factory(),
+            'shop_id' => \App\Models\Shop::factory(),
+            'address_id' => \App\Models\Address::factory(),
+            'wallet_id' => \App\Models\Wallet::factory(),
             'payment_method' => 'wallet',
             'status' => 'pending',
             'batch_ref' => fake()->uuid(),

@@ -164,7 +164,7 @@ class ExceptionsTest extends TestCase
                  ->assertJson([
                      'error_code'     => 'UNAUTHENTICATED',
                      'exception_type' => 'AuthenticationException',
-                     'message'        => 'You are not authenticated. Please provide a valid Bearer token.',
+                     'message'        => 'You are not authenticated. Please provide a valid token.',
                  ]);
     }
 
@@ -197,7 +197,7 @@ class ExceptionsTest extends TestCase
                  ->assertJson([
                      'error_code'     => 'FORBIDDEN',
                      'exception_type' => 'AccessDeniedHttpException',
-                     'message'        => 'You do not have permission to perform this action.',
+                     'message'        => 'You do not have permission to access this resource.',
                  ]);
     }
 

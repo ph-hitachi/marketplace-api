@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         $products = Product::available()
-            ->with('seller.sellerProfile')
+            ->with('shop')
             ->latest()
             ->paginate(15);
 
@@ -30,7 +30,7 @@ class ProductController extends Controller
     public function show(string $id): JsonResponse
     {
         $product = Product::available()
-            ->with('seller.sellerProfile')
+            ->with('shop')
             ->findOrFail($id);
 
         return response()->json(['product' => $product]);

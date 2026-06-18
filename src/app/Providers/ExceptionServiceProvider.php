@@ -54,41 +54,37 @@ class ExceptionServiceProvider extends ServiceProvider
             if ($request->is('api/*') && $request->bearerToken()) {
                 try {
                     \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
-                } catch (TokenInvalidException $e) {
-                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
-                    return response()->json([
-                        'error_code'     => $oauth->getErrorCode(),
-                        'exception_type' => class_basename($oauth),
-                        'message'        => $oauth->getMessage(),
-                    ], $oauth->getStatusCode());
-                } catch (TokenExpiredException $e) {
-                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
-                    return response()->json([
-                        'error_code'     => $oauth->getErrorCode(),
-                        'exception_type' => class_basename($oauth),
-                        'message'        => $oauth->getMessage(),
-                    ], $oauth->getStatusCode());
                 } catch (TokenBlacklistedException $e) {
-                    $oauth = new OAuthException('', 'token_could_not_verified', 401);
                     return response()->json([
-                        'error_code'     => $oauth->getErrorCode(),
-                        'exception_type' => class_basename($oauth),
-                        'message'        => $oauth->getMessage(),
-                    ], $oauth->getStatusCode());
+                        'error_code'     => 'TOKEN_BLACKLISTED',
+                        'exception_type' => class_basename($e),
+                        'message'        => 'The token has been blacklisted.',
+                    ], 401);
+                } catch (TokenExpiredException $e) {
+                    return response()->json([
+                        'error_code'     => 'TOKEN_EXPIRED',
+                        'exception_type' => class_basename($e),
+                        'message'        => 'The token has expired.',
+                    ], 401);
+                } catch (TokenInvalidException $e) {
+                    return response()->json([
+                        'error_code'     => 'TOKEN_INVALID',
+                        'exception_type' => class_basename($e),
+                        'message'        => 'The token is invalid.',
+                    ], 401);
                 } catch (JWTException $e) {
-                    $oauth = new OAuthException('', 'token_could_not_parse', 500);
                     return response()->json([
-                        'error_code'     => $oauth->getErrorCode(),
-                        'exception_type' => class_basename($oauth),
-                        'message'        => $oauth->getMessage(),
-                    ], $oauth->getStatusCode());
+                        'error_code'     => 'TOKEN_COULD_NOT_PARSE',
+                        'exception_type' => class_basename($e),
+                        'message'        => 'The token could not be parsed.',
+                    ], 500);
                 }
             }
 
             return response()->json([
                 'error_code'     => 'UNAUTHENTICATED',
                 'exception_type' => class_basename($e),
-                'message'        => 'You are not authenticated. Please provide a valid Bearer token.',
+                'message'        => 'You are not authenticated. Please provide a valid token.',
             ], Response::HTTP_UNAUTHORIZED);
         });
 
@@ -103,10 +99,13 @@ class ExceptionServiceProvider extends ServiceProvider
 
         // 403 Forbidden (Access Denied)
         $handler->renderable(function (AccessDeniedHttpException $e, Request $request) {
+            $isAuthz = $e->getPrevious() instanceof AuthorizationException;
             return response()->json([
                 'error_code'     => 'FORBIDDEN',
                 'exception_type' => class_basename($e),
-                'message'        => 'You do not have permission to perform this action.',
+                'message'        => $isAuthz 
+                    ? 'You do not have permission to perform this action.' 
+                    : 'You do not have permission to access this resource.',
             ], Response::HTTP_FORBIDDEN);
         });
 
@@ -154,39 +153,35 @@ class ExceptionServiceProvider extends ServiceProvider
 
         // JWT Exceptions
         $handler->renderable(function (TokenInvalidException $e, Request $request) {
-            $oauth = new OAuthException('', 'token_could_not_verified', 401);
             return response()->json([
-                'error_code'     => $oauth->getErrorCode(),
-                'exception_type' => class_basename($oauth),
-                'message'        => $oauth->getMessage(),
-            ], $oauth->getStatusCode());
+                'error_code'     => 'TOKEN_INVALID',
+                'exception_type' => class_basename($e),
+                'message'        => 'The token is invalid.',
+            ], 401);
         });
 
         $handler->renderable(function (TokenExpiredException $e, Request $request) {
-            $oauth = new OAuthException('', 'token_could_not_verified', 401);
             return response()->json([
-                'error_code'     => $oauth->getErrorCode(),
-                'exception_type' => class_basename($oauth),
-                'message'        => $oauth->getMessage(),
-            ], $oauth->getStatusCode());
+                'error_code'     => 'TOKEN_EXPIRED',
+                'exception_type' => class_basename($e),
+                'message'        => 'The token has expired.',
+            ], 401);
         });
 
         $handler->renderable(function (TokenBlacklistedException $e, Request $request) {
-            $oauth = new OAuthException('', 'token_could_not_verified', 401);
             return response()->json([
-                'error_code'     => $oauth->getErrorCode(),
-                'exception_type' => class_basename($oauth),
-                'message'        => $oauth->getMessage(),
-            ], $oauth->getStatusCode());
+                'error_code'     => 'TOKEN_BLACKLISTED',
+                'exception_type' => class_basename($e),
+                'message'        => 'The token has been blacklisted.',
+            ], 401);
         });
 
         $handler->renderable(function (JWTException $e, Request $request) {
-            $oauth = new OAuthException('', 'token_could_not_parse', 500);
             return response()->json([
-                'error_code'     => $oauth->getErrorCode(),
-                'exception_type' => class_basename($oauth),
-                'message'        => $oauth->getMessage(),
-            ], $oauth->getStatusCode());
+                'error_code'     => 'TOKEN_COULD_NOT_PARSE',
+                'exception_type' => class_basename($e),
+                'message'        => 'The token could not be parsed.',
+            ], 500);
         });
 
         // 500 Fallback (Uncaught Exception)
