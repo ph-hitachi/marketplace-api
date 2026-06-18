@@ -128,23 +128,38 @@ class GeneratePostmanCollection extends Command
                 
                 if (!empty($pathParams)) {
                     $markdownDesc .= "#### Path Variables\n\n";
-                    $markdownDesc .= "| Parameter | Type | Required | Description |\n";
-                    $markdownDesc .= "|---|---|---|---|\n";
+                    $markdownDesc .= "| Parameter | Type | Required | Description | Constraints |\n";
+                    $markdownDesc .= "|---|---|---|---|---|\n";
                     foreach ($pathParams as $name => $pp) {
                         $pType = $pp['schema']['type'] ?? 'string';
-                        $markdownDesc .= "| `{$name}` | `{$pType}` | Yes | " . ($pp['description'] ?? '') . " |\n";
+                        if (is_array($pType)) {
+                            $pType = implode(' / ', $pType);
+                        }
+                        $pDesc = str_replace('|', '\\|', $pp['description'] ?? '');
+                        $markdownDesc .= "| `{$name}` | `{$pType}` | Yes | {$pDesc} | - |\n";
                     }
                     $markdownDesc .= "\n";
                 }
 
                 if (!empty($queryParams)) {
                     $markdownDesc .= "#### Query Parameters\n\n";
-                    $markdownDesc .= "| Parameter | Type | Required | Description |\n";
-                    $markdownDesc .= "|---|---|---|---|\n";
+                    $markdownDesc .= "| Parameter | Type | Required | Description | Constraints |\n";
+                    $markdownDesc .= "|---|---|---|---|---|\n";
                     foreach ($queryParams as $qp) {
                         $req = ($qp['required'] ?? false) ? 'Yes' : 'No';
                         $pType = $qp['schema']['type'] ?? 'string';
-                        $markdownDesc .= "| `{$qp['name']}` | `{$pType}` | {$req} | " . ($qp['description'] ?? '') . " |\n";
+                        if (is_array($pType)) {
+                            $pType = implode(' / ', $pType);
+                        }
+                        $qSchema = $qp['schema'] ?? [];
+                        $constraints = [];
+                        if (isset($qSchema['enum']) && is_array($qSchema['enum'])) {
+                            $enumOpts = array_map(fn($opt) => "`$opt`", $qSchema['enum']);
+                            $constraints[] = "Enum: " . implode(', ', $enumOpts);
+                        }
+                        $constraintsStr = empty($constraints) ? '-' : implode('<br>', $constraints);
+                        $qpDesc = str_replace('|', '\\|', $qp['description'] ?? '');
+                        $markdownDesc .= "| `{$qp['name']}` | `{$pType}` | {$req} | {$qpDesc} | {$constraintsStr} |\n";
                     }
                     $markdownDesc .= "\n";
                 }
@@ -169,8 +184,8 @@ class GeneratePostmanCollection extends Command
                         if (!empty($properties)) {
                             $requiredProps = $resolvedSchema['required'] ?? [];
                             $markdownDesc .= "#### Request Body Parameters\n\n";
-                            $markdownDesc .= "| Parameter | Type | Required | Description |\n";
-                            $markdownDesc .= "|---|---|---|---|\n";
+                            $markdownDesc .= "| Parameter | Type | Required | Description | Constraints |\n";
+                            $markdownDesc .= "|---|---|---|---|---|\n";
                             foreach ($properties as $propName => $propSchema) {
                                 // Resolve properties recursively if ref
                                 if (isset($propSchema['$ref'])) {
@@ -184,11 +199,32 @@ class GeneratePostmanCollection extends Command
 
                                 $propType = $propSchema['type'] ?? 'string';
                                 if (is_array($propType)) {
-                                    $propType = implode('|', $propType);
+                                    $propType = implode(' / ', $propType);
                                 }
                                 $isReq = in_array($propName, $requiredProps) ? 'Yes' : 'No';
-                                $propDesc = $propSchema['description'] ?? '';
-                                $markdownDesc .= "| `{$propName}` | `{$propType}` | {$isReq} | {$propDesc} |\n";
+                                $propDesc = str_replace('|', '\\|', $propSchema['description'] ?? '');
+
+                                // Build constraints
+                                $constraints = [];
+                                if (isset($propSchema['enum']) && is_array($propSchema['enum'])) {
+                                    $enumOpts = array_map(fn($opt) => "`$opt`", $propSchema['enum']);
+                                    $constraints[] = "Enum: " . implode(', ', $enumOpts);
+                                }
+                                if (isset($propSchema['minLength'])) {
+                                    $constraints[] = "Min Length: `{$propSchema['minLength']}`";
+                                }
+                                if (isset($propSchema['maxLength'])) {
+                                    $constraints[] = "Max Length: `{$propSchema['maxLength']}`";
+                                }
+                                if (isset($propSchema['minimum'])) {
+                                    $constraints[] = "Min: `{$propSchema['minimum']}`";
+                                }
+                                if (isset($propSchema['maximum'])) {
+                                    $constraints[] = "Max: `{$propSchema['maximum']}`";
+                                }
+                                
+                                $constraintsStr = empty($constraints) ? '-' : implode('<br>', $constraints);
+                                $markdownDesc .= "| `{$propName}` | `{$propType}` | {$isReq} | {$propDesc} | {$constraintsStr} |\n";
                             }
                             $markdownDesc .= "\n";
                         }
