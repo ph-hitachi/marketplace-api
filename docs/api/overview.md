@@ -309,43 +309,118 @@ Route::middleware(['auth:api', 'active'])->group(function () {
 | GET | `/api/admin/orders` | `200 OK` | List all orders. |
 | GET | `/api/admin/orders/{order}` | `200 OK` | View any order details. |
 
+## 4. Standard HTTP Response Codes
+
+While domain-specific errors (`UnexpectedErrorException`) have their own dedicated error codes, the API also relies heavily on standard HTTP status codes.
+
+### Success Responses
+
+Success responses are typically documented on a per-endpoint basis, but adhere to these global conventions:
+
+| HTTP Status | Description |
+|---|---|
+| `200 OK` | The request succeeded. Used for `GET` (fetching records), `PUT`/`PATCH` (updating records), and standard actions. |
+| `201 Created` | The request succeeded and a new resource was created. Used exclusively for `POST` requests that result in database creation. |
+| `204 No Content` | The request succeeded, but there is no body to return. Used primarily for `DELETE` requests where the resource is successfully removed. |
+
 ---
 
-## 4. Error Handling & Exceptions
+## 5. Global Error Responses
 
-The API maintains a unified JSON error response format for all failures:
+The API uses a standardized error format for all exceptions. The `app.php` bootstrap configuration enforces the following global error codes:
+
+| Error Code | HTTP Status | Exception Type | Description |
+|---|---|---|---|
+| `UNAUTHENTICATED` | `401 Unauthorized` | `AuthenticationException` | You are not authenticated. Please provide a valid Bearer token. |
+| `FORBIDDEN` | `403 Forbidden` | `AuthorizationException`, `AccessDeniedHttpException` | You do not have permission to perform this action. |
+| `NOT_FOUND` | `404 Not Found` | `NotFoundHttpException`, `ModelNotFoundException` | The requested resource or endpoint does not exist. |
+| `METHOD_NOT_ALLOWED` | `405 Method Not Allowed` | `MethodNotAllowedHttpException` | Invalid HTTP method. |
+| `CONFLICT` | `409 Conflict` | `InvalidStatusTransitionException`, `OrderInTransitException`, `UserDeleteBlockedException` | Business logic conflict preventing the action (e.g., already active). |
+| `VALIDATION_ERROR` | `422 Unprocessable Entity` | `ValidationException` | The given data was invalid. Check the `errors` object for details. |
+| `TOO_MANY_REQUESTS` | `429 Too Many Requests` | `TooManyRequestsHttpException` | Too many requests. Please slow down. |
+| (Various Domain Codes) | `400` or `422` | `UnexpectedErrorException` | Business logic errors (e.g. `INSUFFICIENT_BALANCE`, `PRODUCT_UNAVAILABLE`). |
+| `INTERNAL_ERROR` | `500 Internal Server Error` | `Throwable` | Unhandled server errors. |
+
+### Global Error JSON Format
+
+When a global error (like 401, 403, 404, 429, or 500) occurs, the API returns a structured JSON response matching the domain exception format:
 
 ```json
 {
-  "error_code": "SNAKE_CASE_CODE",
-  "message": "Human-readable description."
+    "error_code": "UNAUTHENTICATED",
+    "exception_type": "AuthenticationException",
+    "message": "Unauthenticated."
 }
 ```
 
-### Global HTTP Errors
-These are standard framework or HTTP-level exceptions captured globally:
+### Example Error Response
 
-| HTTP Code | Error Code | Exception Class | Description |
+```json
+{
+    "error_code": "VALIDATION_ERROR",
+    "message": "The given data was invalid.",
+    "errors": {
+        "payment_method": [
+            "The selected payment method is invalid."
+        ]
+    }
+}
+```
+
+### Domain-Specific Error Codes
+
+In addition to the standard HTTP errors, the API throws custom business logic exceptions. These return a consistent JSON payload containing the specific `error_code` and a human-readable `message`.
+
+| Exception Class | HTTP Status | Error Code (`error_code`) | Typical Cause |
 |---|---|---|---|
-| `401` | `UNAUTHENTICATED` | `AuthenticationException` | No Bearer token or invalid token. |
-| `403` | `UNAUTHORIZED` | `AuthorizationException` | Action forbidden (wrong role or policy restriction). |
-| `404` | `ROUTE_NOT_FOUND` | `NotFoundHttpException` | The requested route does not exist. |
-| `405` | `METHOD_NOT_ALLOWED` | `MethodNotAllowedHttpException` | The HTTP method is not supported for the route. |
-| `422` | `VALIDATION_ERROR` | `ValidationException` | Field validation failed. |
-| `429` | `TOO_MANY_REQUESTS` | `TooManyRequestsHttpException` | Rate limit exceeded (60 requests/minute). |
-| `500` | `SERVER_ERROR` | `Throwable` (catch-all) | Unexpected internal server error. |
+| `AccountDeactivatedException` | `403` | `ACCOUNT_DEACTIVATED` | Attempting to login or perform actions with a deactivated account. |
+| `InsufficientBalanceException` | `422` | `INSUFFICIENT_BALANCE` | Placing an order when the wallet balance is too low. |
+| `InsufficientStockException` | `422` | `INSUFFICIENT_STOCK` | Placing an order for a quantity that exceeds available inventory. |
+| `InvalidCredentialsException` | `401` | `INVALID_CREDENTIALS` | Providing an incorrect password during login. |
+| `InvalidStatusTransitionException` | `409` | `INVALID_STATUS_TRANSITION` | Attempting to move an order to an illogical state (e.g., pending to delivered). |
+| `OrderInTransitException` | `409` | `ORDER_IN_TRANSIT` | Attempting to cancel an order that has already been shipped. |
+| `ProductUnavailableException` | `422` | `PRODUCT_UNAVAILABLE` | Attempting to purchase a product that is inactive or deleted. |
+| `UserDeleteBlockedException` | `409` | `DELETE_BLOCKED` | Attempting to delete a user that has active orders tied to it. |
+| `UnexpectedErrorException` | `500` | `SERVER_ERROR` | A generic fallback for unhandled domain errors. |
 
-### Domain-Specific Exceptions
-These are custom exceptions mapped to business rules within the application:
+### Domain Error JSON Format
 
-| HTTP Code | Error Code | Exception Class | When it happens |
-|---|---|---|---|
-| `400` | `INSUFFICIENT_BALANCE` | `InsufficientBalanceException` | Wallet has insufficient funds during purchase. |
-| `401` | `INVALID_CREDENTIALS` | `InvalidCredentialsException` | Login email/password mismatch. |
-| `403` | `ACCOUNT_DEACTIVATED` | `AccountDeactivatedException` | Attempting to access resource with a blocked account. |
-| `409` | `INVALID_STATUS_TRANSITION` | `InvalidStatusTransitionException` | Advancing an order status out of order or setting an invalid state. |
-| `409` | `ORDER_IN_TRANSIT` | `OrderInTransitException` | Attempting to cancel an order that has already been shipped. |
-| `409` | `USER_DELETE_BLOCKED` | `UserDeleteBlockedException` | Admin trying to delete a user with active or processing orders. |
-| `422` | `INSUFFICIENT_STOCK` | `InsufficientStockException` | Buying quantity exceeding available product stock. |
-| `422` | `PRODUCT_UNAVAILABLE` | `ProductUnavailableException` | Ordering an inactive or soft-deleted product. |
+When a domain exception is thrown, the API returns a structured JSON response:
+
+```json
+{
+    "error_code": "INSUFFICIENT_BALANCE",
+    "exception_type": "InsufficientBalanceException",
+    "message": "Your wallet does not have enough balance to complete this transaction."
+}
+```
+
+---
+
+## 6. Rate Limiting & Security Policies
+
+The Marketplace API is built with high security standards. Every response includes strict security headers and global rate limits to protect both customer data and system integrity.
+
+### API Rate Limiting
+
+The API applies a strict rate limit of **60 requests per minute** per IP Address or Authenticated User ID. 
+When the limit is reached, the API returns a `429 Too Many Requests` status code (`TOO_MANY_REQUESTS` global error code).
+
+Response headers included on every request to track your limit:
+- `X-RateLimit-Limit`: Maximum requests allowed per minute (60)
+- `X-RateLimit-Remaining`: Number of requests remaining in the current minute
+- `Retry-After`: (On a 429 response) Seconds to wait before making another request
+
+### HTTP Security Headers
+
+To protect clients and prevent web deception attacks (like clickjacking, MIME-sniffing, or stale cache sniffing), the following HTTP headers are injected into **every** API response:
+
+| Header | Value | Purpose |
+|---|---|---|
+| `X-Content-Type-Options` | `nosniff` | Prevents the browser from misinterpreting the content type. |
+| `X-Frame-Options` | `DENY` | Prevents clickjacking by blocking the API from being embedded in an iframe. |
+| `X-XSS-Protection` | `1; mode=block` | Enables strict cross-site scripting (XSS) filtering. |
+| `Referrer-Policy` | `no-referrer` | Ensures no referrer information is leaked to third parties. |
+| `Content-Security-Policy` | `default-src 'none'; script-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none';` | Advanced CSP restricting all active content execution. Explicitly setting `script-src 'none'` guarantees that even if a malicious SVG file is retrieved and rendered, it cannot execute embedded JavaScript. |
+| `Cache-Control` | `no-store, max-age=0, must-revalidate` | Dynamic caching policy ensuring sensitive financial data is never cached by proxies or browsers. |
 
