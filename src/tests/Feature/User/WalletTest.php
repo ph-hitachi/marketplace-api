@@ -105,7 +105,7 @@ class WalletTest extends TestCase
         ]);
     }
 
-    public function test_customer_cannot_topup_other_users_wallet_idor(): void
+    public function test_unauthorized_customer_topup_of_other_users_wallet(): void
     {
         $customer1 = User::factory()->create(['role' => 'customer']);
         $customer2 = User::factory()->create(['role' => 'customer']);

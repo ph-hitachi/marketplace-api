@@ -62,7 +62,7 @@ class AddressTest extends TestCase
         ]);
     }
 
-    public function test_customer_cannot_view_other_users_address_idor(): void
+    public function test_unauthorized_customer_view_of_other_users_address(): void
     {
         $customer1 = User::factory()->create(['role' => 'customer']);
         $customer2 = User::factory()->create(['role' => 'customer']);

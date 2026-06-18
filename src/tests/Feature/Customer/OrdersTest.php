@@ -179,7 +179,7 @@ class OrdersTest extends TestCase
             ->assertJsonValidationErrors(['items.0.quantity']);
     }
 
-    public function test_cannot_place_order_using_other_users_address_idor(): void
+    public function test_unauthorized_order_placement_using_other_users_address(): void
     {
         $otherUser = User::factory()->create(['role' => 'customer']);
         $otherAddress = Address::create([
@@ -205,7 +205,7 @@ class OrdersTest extends TestCase
             ->assertJsonValidationErrors(['address_id']);
     }
 
-    public function test_cannot_place_order_using_other_users_wallet_idor(): void
+    public function test_unauthorized_order_placement_using_other_users_wallet(): void
     {
         $otherUser = User::factory()->create(['role' => 'customer']);
         $otherWallet = $otherUser->wallets()->first();
