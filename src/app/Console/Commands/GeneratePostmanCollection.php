@@ -313,20 +313,67 @@ class GeneratePostmanCollection extends Command
             return $schema['enum'][0];
         }
 
-        return $this->getMockValueByType($type, $propName);
+        return $this->getMockValueByType($schema, $propName);
     }
 
-    private function getMockValueByType($type, $propName = null)
+    private function getMockValueByType($schema, $propName = null)
     {
-        switch ($type) {
+        $type = $schema['type'] ?? 'string';
+        if (is_array($type)) {
+            $type = $type[0] ?? 'string';
+        }
+        $format = $schema['format'] ?? null;
+
+        switch (strtolower((string)$type)) {
             case 'integer':
+            case 'int':
+            case 'int32':
+            case 'int64':
                 return $this->faker->numberBetween(1, 100);
             case 'number':
+            case 'float':
+            case 'double':
+            case 'decimal':
                 return $this->faker->randomFloat(2, 1, 100);
             case 'boolean':
+            case 'bool':
                 return true;
             case 'string':
+                if ($format === 'date') {
+                    return $this->faker->date('Y-m-d');
+                }
+                if ($format === 'date-time') {
+                    return $this->faker->dateTime()->format('c');
+                }
+                if ($format === 'password') {
+                    return $this->faker->password(8, 16, true, true, true);
+                }
+                if ($format === 'email') {
+                    return $this->faker->unique()->safeEmail;
+                }
+                // Handle common property formats or names dynamically from constraints
+                if ($propName !== null) {
+                    $propLower = strtolower($propName);
+                    if (strpos($propLower, 'email') !== false) {
+                        return $this->faker->unique()->safeEmail;
+                    }
+                    if (strpos($propLower, 'password') !== false) {
+                        return $this->faker->password(8, 16, true, true, true);
+                    }
+                    if (strpos($propLower, 'phone') !== false || strpos($propLower, 'mobile') !== false) {
+                        return $this->faker->phoneNumber;
+                    }
+                }
                 return $this->faker->word;
+            case 'date':
+                return $this->faker->date('Y-m-d');
+            case 'date-time':
+            case 'datetime':
+                return $this->faker->dateTime()->format('c');
+            case 'array':
+                return [];
+            case 'object':
+                return new \stdClass();
             case 'null':
                 return null;
             default:
