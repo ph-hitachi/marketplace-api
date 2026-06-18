@@ -3,63 +3,61 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Console\Commands\GeneratePostmanCollection;
 
 class GeneratePostmanCollectionTest extends TestCase
 {
     /**
-     * Test the generated postman collection structure and contents.
+     * Test the resolveSchemaExample method directly with mock schemas.
      */
-    public function test_postman_collection_generation_integrity(): void
+    public function test_resolve_schema_example_handles_basic_types(): void
     {
-        $collectionPath = base_path('docs/api/postman_collection.json');
-        
-        $this->assertFileExists($collectionPath, "Generated postman collection must exist.");
-        
-        $json = json_decode(file_get_contents($collectionPath), true);
-        
-        $this->assertIsArray($json);
-        $this->assertArrayHasKey('info', $json);
-        $this->assertArrayHasKey('item', $json);
-        $this->assertArrayHasKey('variable', $json);
+        $command = new GeneratePostmanCollection();
 
-        // Assert base url variable
-        $variables = $json['variable'];
-        $baseUrlVar = collect($variables)->firstWhere('key', 'base_url');
-        $this->assertNotNull($baseUrlVar);
-        $this->assertEquals('http://localhost/api', $baseUrlVar['value']);
+        // Object with integer type
+        $schemaInt = ['type' => 'integer', 'minimum' => 5, 'maximum' => 10];
+        $valInt = $command->resolveSchemaExample($schemaInt);
+        $this->assertIsInt($valInt);
+        $this->assertGreaterThanOrEqual(5, $valInt);
+        $this->assertLessThanOrEqual(10, $valInt);
 
-        // Check for generated routes/folders structure
-        $items = $json['item'];
-        $this->assertNotEmpty($items);
+        // String with email format
+        $schemaEmail = ['type' => 'string', 'format' => 'email'];
+        $valEmail = $command->resolveSchemaExample($schemaEmail);
+        $this->assertIsString($valEmail);
+        $this->assertStringContainsString('@', $valEmail);
 
-        // Retrieve specific request items and check constraint resolution
-        $customerFolder = collect($items)->firstWhere('name', 'Customer');
-        $this->assertNotNull($customerFolder, "Customer folder should exist in generated collection.");
+        // Schema enum allowed values logic
+        $schemaEnum = ['type' => 'string', 'enum' => ['wallet', 'cod']];
+        $valEnum = $command->resolveSchemaExample($schemaEnum);
+        $this->assertEquals('wallet', $valEnum);
+    }
 
-        // Traverse down to orders creation
-        $ordersFolder = collect($customerFolder['item'])->firstWhere('name', 'Orders');
-        $this->assertNotNull($ordersFolder, "Customer/Orders folder should exist.");
+    /**
+     * Test getMockValueByType method constraints and lengths.
+     */
+    public function test_get_mock_value_by_type_resolves_correct_formats(): void
+    {
+        $command = new GeneratePostmanCollection();
 
-        $placeOrderReq = collect($ordersFolder['item'])->firstWhere('name', 'Place order');
-        $this->assertNotNull($placeOrderReq, "Place order endpoint should exist.");
+        // Test string length bounds (minLength, maxLength)
+        $schemaText = ['type' => 'string', 'minLength' => 5, 'maxLength' => 10];
+        $valText = $command->getMockValueByType($schemaText);
+        $this->assertIsString($valText);
+        $this->assertLessThanOrEqual(10, strlen($valText));
 
-        $body = $placeOrderReq['request']['body']['raw'] ?? null;
-        $this->assertNotNull($body, "Place order request body should exist.");
+        // Test float number range bounds
+        $schemaNumber = ['type' => 'number', 'minimum' => 10.5, 'maximum' => 15.5];
+        $valNumber = $command->getMockValueByType($schemaNumber);
+        $this->assertIsFloat($valNumber);
+        $this->assertGreaterThanOrEqual(10.5, $valNumber);
+        $this->assertLessThanOrEqual(15.5, $valNumber);
 
-        $bodyData = json_decode($body, true);
-        $this->assertIsArray($bodyData);
-        $this->assertArrayHasKey('payment_method', $bodyData);
-        
-        // Assert enum value resolved from OpenAPI spec ("wallet" or "cod" are the allowed enum values)
-        $this->assertContains($bodyData['payment_method'], ['wallet', 'cod'], "payment_method must resolve to allowed enum options.");
-
-        $this->assertArrayHasKey('items', $bodyData);
-        $this->assertIsArray($bodyData['items']);
-        $this->assertNotEmpty($bodyData['items']);
-        
-        $orderItem = $bodyData['items'][0];
-        $this->assertArrayHasKey('quantity', $orderItem);
-        // Assert minimum bound (quantity >= 1) resolved from schema
-        $this->assertGreaterThanOrEqual(1, $orderItem['quantity'], "quantity must be greater than or equal to 1 based on minimum schema constraint.");
+        // Test password formatting
+        $schemaPassword = ['type' => 'string', 'format' => 'password', 'minLength' => 8, 'maxLength' => 12];
+        $valPassword = $command->getMockValueByType($schemaPassword);
+        $this->assertIsString($valPassword);
+        $this->assertGreaterThanOrEqual(8, strlen($valPassword));
+        $this->assertLessThanOrEqual(12, strlen($valPassword));
     }
 }

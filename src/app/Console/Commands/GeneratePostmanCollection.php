@@ -276,7 +276,7 @@ class GeneratePostmanCollection extends Command
         $this->info("And copied to: {$docsPath}");
     }
 
-    private function resolveSchemaExample($schema, $propName = null)
+    public function resolveSchemaExample($schema, $propName = null)
     {
         if (isset($schema['$ref'])) {
             $ref = $schema['$ref'];
@@ -314,7 +314,7 @@ class GeneratePostmanCollection extends Command
         return $this->getMockValueByType($schema, $propName);
     }
 
-    private function getMockValueByType($schema, $propName = null)
+    public function getMockValueByType($schema, $propName = null)
     {
         // 1. Resolve Enums (allowed values from schema)
         if (isset($schema['enum']) && is_array($schema['enum']) && !empty($schema['enum'])) {
