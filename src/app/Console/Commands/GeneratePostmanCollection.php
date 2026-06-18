@@ -125,14 +125,76 @@ class GeneratePostmanCollection extends Command
                 if ($description) {
                     $markdownDesc .= "{$description}\n\n";
                 }
-                if (!empty($queryParams)) {
-                    $markdownDesc .= "#### Query Parameters:\n";
-                    foreach ($queryParams as $qp) {
-                        $req = ($qp['required'] ?? false) ? 'Required' : 'Optional';
-                        $markdownDesc .= "- `{$qp['name']}` ({$req}): {$qp['description']}\n";
+                
+                if (!empty($pathParams)) {
+                    $markdownDesc .= "#### Path Variables\n\n";
+                    $markdownDesc .= "| Parameter | Type | Required | Description |\n";
+                    $markdownDesc .= "|---|---|---|---|\n";
+                    foreach ($pathParams as $name => $pp) {
+                        $pType = $pp['schema']['type'] ?? 'string';
+                        $markdownDesc .= "| `{$name}` | `{$pType}` | Yes | " . ($pp['description'] ?? '') . " |\n";
                     }
                     $markdownDesc .= "\n";
                 }
+
+                if (!empty($queryParams)) {
+                    $markdownDesc .= "#### Query Parameters\n\n";
+                    $markdownDesc .= "| Parameter | Type | Required | Description |\n";
+                    $markdownDesc .= "|---|---|---|---|\n";
+                    foreach ($queryParams as $qp) {
+                        $req = ($qp['required'] ?? false) ? 'Yes' : 'No';
+                        $pType = $qp['schema']['type'] ?? 'string';
+                        $markdownDesc .= "| `{$qp['name']}` | `{$pType}` | {$req} | " . ($qp['description'] ?? '') . " |\n";
+                    }
+                    $markdownDesc .= "\n";
+                }
+
+                // Parse and build Request Body parameters table
+                $reqBody = $operation['requestBody'] ?? null;
+                if ($reqBody) {
+                    $contentSchema = $reqBody['content']['application/json']['schema'] ?? null;
+                    if ($contentSchema) {
+                        // Resolve schema first in case it's a ref
+                        $resolvedSchema = $contentSchema;
+                        if (isset($contentSchema['$ref'])) {
+                            $ref = $contentSchema['$ref'];
+                            $parts = explode('/', $ref);
+                            $schemaName = end($parts);
+                            if (isset($this->schemas[$schemaName])) {
+                                $resolvedSchema = $this->schemas[$schemaName];
+                            }
+                        }
+
+                        $properties = $resolvedSchema['properties'] ?? [];
+                        if (!empty($properties)) {
+                            $requiredProps = $resolvedSchema['required'] ?? [];
+                            $markdownDesc .= "#### Request Body Parameters\n\n";
+                            $markdownDesc .= "| Parameter | Type | Required | Description |\n";
+                            $markdownDesc .= "|---|---|---|---|\n";
+                            foreach ($properties as $propName => $propSchema) {
+                                // Resolve properties recursively if ref
+                                if (isset($propSchema['$ref'])) {
+                                    $ref = $propSchema['$ref'];
+                                    $parts = explode('/', $ref);
+                                    $schemaName = end($parts);
+                                    if (isset($this->schemas[$schemaName])) {
+                                        $propSchema = $this->schemas[$schemaName];
+                                    }
+                                }
+
+                                $propType = $propSchema['type'] ?? 'string';
+                                if (is_array($propType)) {
+                                    $propType = implode('|', $propType);
+                                }
+                                $isReq = in_array($propName, $requiredProps) ? 'Yes' : 'No';
+                                $propDesc = $propSchema['description'] ?? '';
+                                $markdownDesc .= "| `{$propName}` | `{$propType}` | {$isReq} | {$propDesc} |\n";
+                            }
+                            $markdownDesc .= "\n";
+                        }
+                    }
+                }
+
                 if ($responsesMarkdown) {
                     $markdownDesc .= "### Responses\n\n{$responsesMarkdown}";
                 }
