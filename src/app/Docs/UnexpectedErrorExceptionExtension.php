@@ -26,6 +26,7 @@ class UnexpectedErrorExceptionExtension extends ExceptionToResponseExtension
         
         $statusCode = 422;
         $errorCode = 'DOMAIN_ERROR';
+        $message = 'This action cannot be completed.';
         
         try {
             $reflection = new \ReflectionClass($className);
@@ -34,6 +35,7 @@ class UnexpectedErrorExceptionExtension extends ExceptionToResponseExtension
                 if ($instance instanceof UnexpectedErrorException) {
                     $statusCode = $instance->getStatusCode();
                     $errorCode = $instance->getErrorCode();
+                    $message = $instance->getMessage() ?: $message;
                 }
             }
         } catch (\Throwable $e) {
@@ -57,7 +59,7 @@ class UnexpectedErrorExceptionExtension extends ExceptionToResponseExtension
                 'message',
                 (new OpenApiTypes\StringType)
                     ->setDescription('A human-readable error message.')
-                    ->example('This action cannot be completed.')
+                    ->example($message)
             )
             ->setRequired(['error_code', 'exception_type', 'message']);
 

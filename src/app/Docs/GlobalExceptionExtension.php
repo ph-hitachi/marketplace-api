@@ -23,13 +23,18 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
             return false;
         }
 
+        // Domain exceptions should be handled by UnexpectedErrorExceptionExtension
+        if ($type->isInstanceOf(\App\Exceptions\UnexpectedErrorException::class)) {
+            return false;
+        }
+
         return $type->isInstanceOf(AuthenticationException::class) ||
                $type->isInstanceOf(AuthorizationException::class) ||
                $type->isInstanceOf(AccessDeniedHttpException::class) ||
                $type->isInstanceOf(ThrottleRequestsException::class) ||
                $type->isInstanceOf(NotFoundHttpException::class) ||
                $type->isInstanceOf(ModelNotFoundException::class) ||
-               $type->isInstanceOf(\Exception::class);
+               $type->isInstanceOf(\Throwable::class);
     }
 
     public function toResponse(Type $type)
@@ -57,6 +62,10 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
             $statusCode = 404;
             $errorCode = 'NOT_FOUND';
             $message = 'Resource not found.';
+        } else {
+            // For general unhandled system exceptions
+            $errorCode = 'INTERNAL_ERROR';
+            $message = 'Server Error';
         }
 
         $responseBodyType = (new OpenApiTypes\ObjectType)

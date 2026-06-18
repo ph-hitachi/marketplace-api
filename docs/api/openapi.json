@@ -474,62 +474,65 @@
                     "204": {
                         "description": "No content"
                     },
-                    "500": {
-                        "description": "INTERNAL_ERROR Error\n\nINTERNAL_ERROR Error",
+                    "409": {
+                        "description": "User Delete Blocked Exception Error",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "UserDeleteBlockedException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The domain-specific error code.",
+                                            "example": "DELETE_BLOCKED"
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "LogicException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "UserDeleteBlockedException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "This action cannot be completed."
                                         }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL_ERROR Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "INTERNAL_ERROR"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "LogicException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
                                     ]
                                 }
                             }
@@ -942,87 +945,97 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "INTERNAL_ERROR Error\n\nINTERNAL_ERROR Error\n\nINTERNAL_ERROR Error",
+                    "401": {
+                        "description": "Invalid Credentials Exception Error",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "InvalidCredentialsException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The domain-specific error code.",
+                                            "example": "INVALID_CREDENTIALS"
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "AccountDeactivatedException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "InvalidCredentialsException"
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "ValidationException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "This action cannot be completed."
                                         }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Account Deactivated Exception Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The domain-specific error code.",
+                                            "example": "ACCOUNT_DEACTIVATED"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "AccountDeactivatedException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "This action cannot be completed."
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL_ERROR Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "INTERNAL_ERROR"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "ValidationException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
                                     ]
                                 }
                             }
@@ -2475,8 +2488,8 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "INTERNAL_ERROR Error\n\nINTERNAL_ERROR Error\n\nINTERNAL_ERROR Error\n\nINTERNAL_ERROR Error",
+                    "422": {
+                        "description": "Product Unavailable Exception Error\n\nInsufficient Stock Exception Error\n\nInsufficient Balance Exception Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2486,8 +2499,8 @@
                                             "properties": {
                                                 "error_code": {
                                                     "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
+                                                    "description": "The domain-specific error code.",
+                                                    "example": "PRODUCT_UNAVAILABLE"
                                                 },
                                                 "exception_type": {
                                                     "type": "string",
@@ -2497,7 +2510,7 @@
                                                 "message": {
                                                     "type": "string",
                                                     "description": "A human-readable error message.",
-                                                    "example": "Server Error"
+                                                    "example": "This action cannot be completed."
                                                 }
                                             },
                                             "required": [
@@ -2511,8 +2524,8 @@
                                             "properties": {
                                                 "error_code": {
                                                     "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
+                                                    "description": "The domain-specific error code.",
+                                                    "example": "INSUFFICIENT_STOCK"
                                                 },
                                                 "exception_type": {
                                                     "type": "string",
@@ -2522,7 +2535,7 @@
                                                 "message": {
                                                     "type": "string",
                                                     "description": "A human-readable error message.",
-                                                    "example": "Server Error"
+                                                    "example": "This action cannot be completed."
                                                 }
                                             },
                                             "required": [
@@ -2536,8 +2549,8 @@
                                             "properties": {
                                                 "error_code": {
                                                     "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
+                                                    "description": "The domain-specific error code.",
+                                                    "example": "INSUFFICIENT_BALANCE"
                                                 },
                                                 "exception_type": {
                                                     "type": "string",
@@ -2547,32 +2560,7 @@
                                                 "message": {
                                                     "type": "string",
                                                     "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "ValidationException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
+                                                    "example": "This action cannot be completed."
                                                 }
                                             },
                                             "required": [
@@ -2607,6 +2595,38 @@
                                             "type": "string",
                                             "description": "A human-readable error message.",
                                             "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL_ERROR Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "INTERNAL_ERROR"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "ValidationException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Server Error"
                                         }
                                     },
                                     "required": [
@@ -3600,62 +3620,33 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "INTERNAL_ERROR Error\n\nINTERNAL_ERROR Error",
+                    "409": {
+                        "description": "Invalid Status Transition Exception Error",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "InvalidStatusTransitionException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The domain-specific error code.",
+                                            "example": "INVALID_STATUS_TRANSITION"
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "error_code": {
-                                                    "type": "string",
-                                                    "description": "The global error code.",
-                                                    "example": "INTERNAL_ERROR"
-                                                },
-                                                "exception_type": {
-                                                    "type": "string",
-                                                    "description": "The exception class name.",
-                                                    "example": "ValidationException"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "description": "A human-readable error message.",
-                                                    "example": "Server Error"
-                                                }
-                                            },
-                                            "required": [
-                                                "error_code",
-                                                "exception_type",
-                                                "message"
-                                            ]
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "InvalidStatusTransitionException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "This action cannot be completed."
                                         }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
                                     ]
                                 }
                             }
@@ -3714,6 +3705,38 @@
                                             "type": "string",
                                             "description": "A human-readable error message.",
                                             "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "required": [
+                                        "error_code",
+                                        "exception_type",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL_ERROR Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error_code": {
+                                            "type": "string",
+                                            "description": "The global error code.",
+                                            "example": "INTERNAL_ERROR"
+                                        },
+                                        "exception_type": {
+                                            "type": "string",
+                                            "description": "The exception class name.",
+                                            "example": "ValidationException"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A human-readable error message.",
+                                            "example": "Server Error"
                                         }
                                     },
                                     "required": [
