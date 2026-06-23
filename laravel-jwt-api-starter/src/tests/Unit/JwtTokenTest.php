@@ -32,7 +32,7 @@ class JwtTokenTest extends TestCase
      */
     public function test_expired_token_is_rejected(): void
     {
-        $user = User::factory()->create(['role' => 'customer']);
+        $user = User::factory()->create(['role' => 'user']);
 
         // Generate a valid token without caching the user in the guard
         $token = JWTAuth::fromUser($user);
@@ -134,7 +134,7 @@ class JwtTokenTest extends TestCase
      */
     public function test_old_token_is_blacklisted_after_refresh(): void
     {
-        $user  = User::factory()->create(['role' => 'customer']);
+        $user  = User::factory()->create(['role' => 'user']);
         $token = auth('api')->login($user);
 
         // Exchange the token — library marks the old token as blacklisted
@@ -161,7 +161,7 @@ class JwtTokenTest extends TestCase
      */
     public function test_new_token_from_refresh_is_valid(): void
     {
-        $user  = User::factory()->create(['role' => 'customer']);
+        $user  = User::factory()->create(['role' => 'user']);
         $token = auth('api')->login($user);
 
         $refreshResponse = $this->withHeader('Authorization', "Bearer {$token}")
@@ -201,7 +201,7 @@ class JwtTokenTest extends TestCase
      */
     public function test_blacklisted_token_cannot_access_protected_routes(): void
     {
-        $user  = User::factory()->create(['role' => 'customer']);
+        $user  = User::factory()->create(['role' => 'user']);
         $token = auth('api')->login($user);
 
         // Confirm token works before logout
@@ -290,7 +290,7 @@ class JwtTokenTest extends TestCase
      */
     public function test_same_token_is_valid_across_multiple_requests(): void
     {
-        $user  = User::factory()->create(['role' => 'customer']);
+        $user  = User::factory()->create(['role' => 'user']);
         $token = auth('api')->login($user);
 
         // First request
@@ -349,8 +349,8 @@ class JwtTokenTest extends TestCase
      */
     public function test_token_is_bound_to_issuing_user(): void
     {
-        $userA = User::factory()->create(['role' => 'customer']);
-        $userB = User::factory()->create(['role' => 'customer']);
+        $userA = User::factory()->create(['role' => 'user']);
+        $userB = User::factory()->create(['role' => 'user']);
 
         $tokenA = auth('api')->login($userA);
 

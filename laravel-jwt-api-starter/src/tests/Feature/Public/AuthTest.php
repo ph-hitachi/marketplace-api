@@ -10,14 +10,13 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_customer_registration_success(): void
+    public function test_user_registration_success(): void
     {
         $response = $this->postJson('/api/auth/register', [
-            'name'                  => 'Customer Test',
-            'email'                 => 'customertest@marketplace.com',
+            'name'                  => 'User Test',
+            'email'                 => 'usertest@example.com',
             'password'              => 'Password123!',
             'password_confirmation' => 'Password123!',
-            'role'                  => 'customer',
         ]);
 
         $response->assertStatus(201)
@@ -32,29 +31,8 @@ class AuthTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', [
-            'email' => 'customertest@marketplace.com',
-            'role'  => 'customer',
-        ]);
-    }
-
-    public function test_seller_registration_success(): void
-    {
-        $response = $this->postJson('/api/auth/register', [
-            'name'                  => 'Seller Test',
-            'email'                 => 'sellertest@marketplace.com',
-            'password'              => 'Password123!',
-            'password_confirmation' => 'Password123!',
-            'role'                  => 'seller',
-        ]);
-
-        $response->assertStatus(201);
-
-        $user = User::where('email', 'sellertest@marketplace.com')->first();
-        $this->assertNotNull($user);
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'sellertest@marketplace.com',
-            'role'  => 'seller',
+            'email' => 'usertest@example.com',
+            'role'  => 'user',
         ]);
     }
 
@@ -63,7 +41,7 @@ class AuthTest extends TestCase
         // Missing fields
         $response = $this->postJson('/api/auth/register', []);
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'email', 'password', 'role']);
+            ->assertJsonValidationErrors(['name', 'email', 'password']);
 
         // Password mismatch and short
         $response = $this->postJson('/api/auth/register', [
@@ -71,7 +49,6 @@ class AuthTest extends TestCase
             'email'                 => 'test@example.com',
             'password'              => 'pwd',
             'password_confirmation' => 'diff',
-            'role'                  => 'customer',
         ]);
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['password']);
@@ -88,7 +65,6 @@ class AuthTest extends TestCase
             'email'                 => 'duplicate@example.com',
             'password'              => 'Password123!',
             'password_confirmation' => 'Password123!',
-            'role'                  => 'customer',
         ]);
 
         $response->assertStatus(422)
@@ -100,7 +76,7 @@ class AuthTest extends TestCase
         $user = User::factory()->create([
             'email'    => 'login@example.com',
             'password' => bcrypt('Secret123!'),
-            'role'     => 'customer',
+            'role'     => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
@@ -125,7 +101,7 @@ class AuthTest extends TestCase
         $user = User::factory()->create([
             'email'     => 'inactive@example.com',
             'password'  => bcrypt('Secret123!'),
-            'role'      => 'customer',
+            'role'      => 'user',
             'is_active' => false,
         ]);
 
@@ -179,7 +155,7 @@ class AuthTest extends TestCase
 
     public function test_me_profile_success(): void
     {
-        $user  = User::factory()->create(['role' => 'customer']);
+        $user  = User::factory()->create(['role' => 'user']);
         $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
@@ -187,19 +163,5 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('user.email', $user->email);
-    }
-
-    public function test_cannot_register_admin_role(): void
-    {
-        $response = $this->postJson('/api/auth/register', [
-            'name'                  => 'Admin Hack',
-            'email'                 => 'adminhack@marketplace.com',
-            'password'              => 'Password123!',
-            'password_confirmation' => 'Password123!',
-            'role'                  => 'admin', // Forbidden role for registration
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['role']);
     }
 }

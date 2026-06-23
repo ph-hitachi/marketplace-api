@@ -26,7 +26,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
     // ── Profile (Shared Customer/Seller/Admin) ─────────────────────────
-    Route::middleware('role:customer,seller,admin')->prefix('user')->group(function () {
+    Route::middleware('role:user,admin')->prefix('user')->group(function () {
         Route::get('/me',                       [UserProfileController::class, 'me']);
         Route::put('/profile',                  [UserProfileController::class, 'update']);
     });

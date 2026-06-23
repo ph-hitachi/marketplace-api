@@ -19,21 +19,12 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // ── Seller ────────────────────────────────────────────────────────
+        // ── Regular User ──────────────────────────────────────────────────
         User::create([
-            'name'      => 'Seller User',
-            'email'     => 'seller@example.com',
-            'password'  => Hash::make('Seller1234!'),
-            'role'      => 'seller',
-            'is_active' => true,
-        ]);
-
-        // ── Customer ──────────────────────────────────────────────────────
-        User::create([
-            'name'      => 'Customer User',
-            'email'     => 'customer@example.com',
-            'password'  => Hash::make('Customer1234!'),
-            'role'      => 'customer',
+            'name'      => 'Standard User',
+            'email'     => 'user@example.com',
+            'password'  => Hash::make('User1234!'),
+            'role'      => 'user',
             'is_active' => true,
         ]);
     }

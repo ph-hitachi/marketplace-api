@@ -55,14 +55,9 @@ class User extends Authenticatable implements JWTSubject
 
     // ── Helpers ─────────────────────────────────────────────────
 
-    public function isSeller(): bool
+    public function isUser(): bool
     {
-        return $this->role === 'seller';
-    }
-
-    public function isCustomer(): bool
-    {
-        return $this->role === 'customer';
+        return $this->role === 'user';
     }
 
     public function isAdmin(): bool
