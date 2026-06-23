@@ -75,6 +75,17 @@ class GenerateOverview extends Command
         $content .= "\n### CORS Configuration\n\n";
         $content .= $this->getCorsConfigurationDetails();
 
+        $content .= "\n### JWT Security Mechanisms\n\n";
+        $content .= "JSON Web Tokens (JWTs) are a secure way to authenticate users in stateless environments. Here's how the security is maintained:\n\n";
+        $content .= "- **Token Expiration**: JWT tokens have an expiration time (expiry). After a token expires, it's no longer valid for authentication. This ensures that if a token is intercepted, it can only be used for a limited time.\n\n";
+        $content .= "- **Token Refresh**: When an access token expires, the user can use the refresh token to obtain a new access token without having to re-enter their credentials. The refresh token is typically long-lived and is used to generate new access tokens.\n\n";
+        $content .= "- **Token Blacklisting**: While expired tokens can't be used for authentication, they can be blacklisted to ensure that even if an attacker gets hold of a valid token, it won't work after being blacklisted. Laravel has a built-in blacklist mechanism for this purpose.\n\n";
+        $content .= "- **Statelessness**: JWTs are self-contained and do not require server-side storage. This makes JWT-based authentication suitable for scalable and distributed systems.\n\n";
+        $content .= "### Handling Expired Tokens and Refreshing\n\n";
+        $content .= "When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.\n\n";
+        $content .= "### Blacklisting Tokens\n\n";
+        $content .= "If a token is compromised or a user logs out, their tokens can be blacklisted. Blacklisting means that even if an expired token is used for refresh, the new access token won't be generated. Laravel's built-in mechanism takes care of blacklisting tokens to enhance security.\n\n";
+
         File::ensureDirectoryExists(dirname($overviewPath));
         File::put($overviewPath, $content);
         $this->info("overview.md successfully generated at: {$overviewPath}");

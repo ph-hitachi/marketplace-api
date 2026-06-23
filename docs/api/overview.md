@@ -277,3 +277,24 @@ The current CORS configuration is dynamically parsed below:
 | **Allowed Headers** | `*` | HTTP headers that can be used during the actual request. |
 | **Supports Credentials** | `false` | Indicates whether the request can be made using credentials (cookies, HTTP auth). |
 | **Max Age** | `0` | Seconds the results of a preflight request can be cached. |
+
+### JWT Security Mechanisms
+
+JSON Web Tokens (JWTs) are a secure way to authenticate users in stateless environments. Here's how the security is maintained:
+
+- **Token Expiration**: JWT tokens have an expiration time (expiry). After a token expires, it's no longer valid for authentication. This ensures that if a token is intercepted, it can only be used for a limited time.
+
+- **Token Refresh**: When an access token expires, the user can use the refresh token to obtain a new access token without having to re-enter their credentials. The refresh token is typically long-lived and is used to generate new access tokens.
+
+- **Token Blacklisting**: While expired tokens can't be used for authentication, they can be blacklisted to ensure that even if an attacker gets hold of a valid token, it won't work after being blacklisted. Laravel has a built-in blacklist mechanism for this purpose.
+
+- **Statelessness**: JWTs are self-contained and do not require server-side storage. This makes JWT-based authentication suitable for scalable and distributed systems.
+
+### Handling Expired Tokens and Refreshing
+
+When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.
+
+### Blacklisting Tokens
+
+If a token is compromised or a user logs out, their tokens can be blacklisted. Blacklisting means that even if an expired token is used for refresh, the new access token won't be generated. Laravel's built-in mechanism takes care of blacklisting tokens to enhance security.
+
