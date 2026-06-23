@@ -292,7 +292,7 @@ JSON Web Tokens (JWTs) are a secure way to authenticate users in stateless envir
 
 ### Handling Expired Tokens and Refreshing
 
-When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.
+When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/auth/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.
 
 ### Blacklisting Tokens
 

@@ -82,7 +82,7 @@ class GenerateOverview extends Command
         $content .= "- **Token Blacklisting**: While expired tokens can't be used for authentication, they can be blacklisted to ensure that even if an attacker gets hold of a valid token, it won't work after being blacklisted. Laravel has a built-in blacklist mechanism for this purpose.\n\n";
         $content .= "- **Statelessness**: JWTs are self-contained and do not require server-side storage. This makes JWT-based authentication suitable for scalable and distributed systems.\n\n";
         $content .= "### Handling Expired Tokens and Refreshing\n\n";
-        $content .= "When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.\n\n";
+        $content .= "When an access token expires, the user can use the refresh token to request a new access token. This is done by making a request to the `/api/auth/refresh` endpoint, providing the expired token in the authorization header. The API then responds with a new access token, extending the user's session.\n\n";
         $content .= "### Blacklisting Tokens\n\n";
         $content .= "If a token is compromised or a user logs out, their tokens can be blacklisted. Blacklisting means that even if an expired token is used for refresh, the new access token won't be generated. Laravel's built-in mechanism takes care of blacklisting tokens to enhance security.\n\n";
 
