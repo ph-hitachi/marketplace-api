@@ -4,73 +4,107 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Support\Cache;
+use App\Http\Requests\Admin\UpdateRoleRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
- 
-/**
- * @tags Admin/Users
- */
+use Dedoc\Scramble\Attributes\Group;
+
+#[Group('Admin/Users', weight: 3)]
 class UserController extends Controller
 {
     /**
-     * List registered users.
+     * List users.
+     *
+     * List all registered users with pagination.
+     *
+     * @param Request $request
+     *
+     * @response AnonymousResourceCollection<LengthAwarePaginator<UserResource>>
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $users = User::latest()
             ->cached(300)
             ->paginate(20);
- 
-        return response()->json($users)
-            ->header('X-Cache-Status', Cache::status());
+
+        return UserResource::collection($users);
     }
- 
+
     /**
-     * View specific user.
+     * View user.
+     *
+     * Retrieve detailed profile information of a specific user.
+     *
+     * @param User $user
+     *
+     * @response UserResource
      */
-    public function show(User $user): JsonResponse
+    public function show(User $user): UserResource
     {
         $userData = User::where('id', $user->id)
             ->cached(300)
             ->firstOrFail();
- 
-        return response()->json(['user' => $userData])
-            ->header('X-Cache-Status', Cache::status());
+
+        return new UserResource($userData);
     }
- 
+
     /**
-     * Reactivate user.
+     * Activate user.
+     *
+     * Reactivate a deactivated user account, allowing them to login and access the platform.
+     *
+     * @param User $user
      */
     public function activate(User $user): Response
     {
         $user->update(['is_active' => true]);
- 
+
         return response()->noContent();
     }
- 
+
     /**
      * Deactivate user.
+     *
+     * Deactivate a user account, revoking their active token and session immediately.
+     *
+     * @param User $user
      */
     public function deactivate(User $user): Response
     {
-        // JWT is stateless — there are no stored tokens to revoke.
-        // The is_active flag is checked on every request by the
-        // EnsureUserIsActive middleware, so the user is effectively
-        // locked out immediately.
         $user->update(['is_active' => false]);
- 
+
         return response()->noContent();
     }
- 
+
     /**
-     * Delete user account.
+     * Delete user.
+     *
+     * Permanently delete a user account from the system database.
+     *
+     * @param User $user
      */
     public function destroy(User $user): Response
     {
         $user->delete();
- 
+
+        return response()->noContent();
+    }
+
+    /**
+     * Update user role.
+     *
+     * Assign a new system role (user, admin) to a user account.
+     *
+     * @param UpdateRoleRequest $request
+     * @param User $user
+     */
+    public function updateRole(UpdateRoleRequest $request, User $user): Response
+    {
+        $user->update(['role' => $request->validated('role')]);
+
         return response()->noContent();
     }
 }

@@ -4,35 +4,33 @@ Welcome to the Marketplace API documentation.
 
 ## 1. Endpoints Summary
 
-### Admin/Users
-
-#### User
+### Authentication
 
 | Method | Endpoint | Success Status | Description |
 |---|---|---|---|
-| GET | `/api/admin/users` | `200 OK` | List registered users |
-| GET | `/api/admin/users/{user}` | `200 OK` | View specific user |
-| DELETE | `/api/admin/users/{user}` | `204 No Content` | Delete user account |
-| PATCH | `/api/admin/users/{user}/activate` | `204 No Content` | Reactivate user |
-| PATCH | `/api/admin/users/{user}/deactivate` | `204 No Content` | Deactivate user |
-
-### Auth
-
-| Method | Endpoint | Success Status | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | `201 Created` | Register a new customer or seller account |
-| POST | `/api/auth/login` | `200 OK` | Authenticate a user and receive a token |
-| POST | `/api/auth/logout` | `200 OK` | Log out and revoke token |
-| POST | `/api/auth/refresh` | `200 OK` | Exchange token |
+| POST | `/api/auth/login` | `200 OK` | Authenticate a user using their email and password credentials to receive a stateless JWT access token. |
+| POST | `/api/auth/logout` | `204 No Content` | Revoke the user's current JWT access token and log them out of the application. |
+| POST | `/api/auth/refresh` | `200 OK` | Refresh the user's current authentication token, invalidating the old one and returning a new JWT. |
+| POST | `/api/auth/register` | `201 Created` | Register a new user account with a name, email, password, and default role. |
 
 ### User/Profile
 
-#### Profile
+| Method | Endpoint | Success Status | Description |
+|---|---|---|---|
+| GET | `/api/user/me` | `200 OK` | Retrieve the authenticated user's profile details. |
+| PUT | `/api/user/password` | `200 OK` | Change the authenticated user's password after validating the current password. |
+| PUT | `/api/user/profile` | `200 OK` | Update the authenticated user's profile information (name and email). |
+
+### Admin/Users
 
 | Method | Endpoint | Success Status | Description |
 |---|---|---|---|
-| GET | `/api/user/me` | `200 OK` | Retrieve authenticated user profile |
-| PUT | `/api/user/profile` | `200 OK` | Update profile details |
+| GET | `/api/admin/users` | `200 OK` | List all registered users with pagination. |
+| GET | `/api/admin/users/{user}` | `200 OK` | Retrieve detailed profile information of a specific user. |
+| DELETE | `/api/admin/users/{user}` | `204 No Content` | Permanently delete a user account from the system database. |
+| PATCH | `/api/admin/users/{user}/activate` | `204 No Content` | Reactivate a deactivated user account, allowing them to login and access the platform. |
+| PATCH | `/api/admin/users/{user}/deactivate` | `204 No Content` | Deactivate a user account, revoking their active token and session immediately. |
+| PATCH | `/api/admin/users/{user}/role` | `204 No Content` | Assign a new system role (user, admin) to a user account. |
 
 ---
 
@@ -105,6 +103,7 @@ In addition to the standard HTTP errors, the API throws custom business logic ex
 | Exception Class | HTTP Status | Error Code (`error_code`) | Typical Cause |
 |---|---|---|---|
 | `AccountDeactivatedException` | `403` | `ACCOUNT_DEACTIVATED` | Attempting to login or perform actions with a deactivated account. |
+| `InvalidCredentialsException` | `401` | `INVALID_CREDENTIALS` | Providing an incorrect password during login. |
 
 ### Domain Error JSON Format
 

@@ -11,19 +11,28 @@ class CacheBuilder extends EloquentBuilder
 
     protected bool $shouldCache = false;
     protected ?int $cacheTtl = null;
+    protected ?string $cacheKey = null;
     protected array $cacheTags = [];
 
     /**
-     * Mark this query for cache intercept.
+     * Intercept and cache the Eloquent query execution.
      *
-     * @param int|null $ttl Cache lifetime in seconds (defaults to DEFAULT_CACHE_TTL)
-     * @param array $tags Extra tags to group this query under (useful for custom groupings)
+     * Appending this method to an Eloquent query builder chain instructs the builder
+     * to intercept the query execution (such as get(), first(), or paginate()) and
+     * retrieve the results from the cache store. If a cache miss occurs, the query
+     * is executed against the database and the result is stored in the cache.
+     *
+     * @param int|null $ttl Optional cache time-to-live (TTL) in seconds. Defaults to DEFAULT_CACHE_TTL (24 hours) if null.
+     * @param string|null $key Optional custom unique cache key string. If null, a deterministic hash is auto-generated based on the raw compiled SQL query. For pagination, the current page index is appended dynamically.
+     * @param array|null $tags Optional array of cache tags to associate with the cached query. The model's fully qualified class name is automatically included by default.
+     * @return $this The query builder instance for method chaining.
      */
-    public function cached(?int $ttl = null, array $tags = []): self
+    public function cached(?int $ttl = null, ?string $key = null, ?array $tags = null): self
     {
         $this->shouldCache = true;
         $this->cacheTtl = $ttl;
-        $this->cacheTags = $tags;
+        $this->cacheKey = $key;
+        $this->cacheTags = $tags ?: [];
 
         return $this;
     }
@@ -72,9 +81,14 @@ class CacheBuilder extends EloquentBuilder
         $pageNumber = $page ?: Paginator::resolveCurrentPage($pageName);
         $perPage = $perPage ?: $this->model->getPerPage();
 
-        // Apply limit/offset to a clone of the builder to ensure it is in the generated SQL key
-        $paginatedBuilder = $this->clone()->forPage($pageNumber, $perPage);
-        $cacheKey = md5($paginatedBuilder->toRawSql());
+        // Calculate cache key
+        if ($this->cacheKey) {
+            $cacheKey = $this->cacheKey . ':page:' . $pageNumber;
+        } else {
+            // Apply limit/offset to a clone of the builder to ensure it is in the generated SQL key
+            $paginatedBuilder = $this->clone()->forPage($pageNumber, $perPage);
+            $cacheKey = md5($paginatedBuilder->toRawSql());
+        }
 
         $ttl = $this->cacheTtl ?? self::DEFAULT_CACHE_TTL;
         $cacheTags = $this->generateCacheTags();
@@ -94,7 +108,7 @@ class CacheBuilder extends EloquentBuilder
      */
     protected function generateCacheKey(): string
     {
-        return md5($this->toRawSql());
+        return $this->cacheKey ?: md5($this->toRawSql());
     }
 
     /**

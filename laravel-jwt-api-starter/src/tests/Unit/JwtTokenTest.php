@@ -106,7 +106,6 @@ class JwtTokenTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'message',
                 'authorization' => [
                     'access_token',
                     'token_type',
@@ -212,7 +211,7 @@ class JwtTokenTest extends TestCase
         // Logout → blacklists the token
         $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/logout')
-            ->assertStatus(200);
+            ->assertStatus(204);
 
         // Same token must now be rejected
         $response = $this->withHeader('Authorization', "Bearer {$token}")
@@ -267,15 +266,15 @@ class JwtTokenTest extends TestCase
 
         $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/logout')
-            ->assertStatus(200);
+            ->assertStatus(204);
 
         // Second logout with the now-blacklisted token — must not crash
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/logout');
 
-        // Either 200 (idempotent) or 401 (blacklisted) are acceptable;
+        // Either 240/204 (idempotent) or 401 (blacklisted) are acceptable;
         // what matters is it is NOT a 500 server error.
-        $this->assertContains($response->status(), [200, 401]);
+        $this->assertContains($response->status(), [204, 401]);
     }
 
     // ─────────────────────────────────────────────────────────────────────

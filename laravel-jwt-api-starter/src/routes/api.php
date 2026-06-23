@@ -29,6 +29,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::middleware('role:user,admin')->prefix('user')->group(function () {
         Route::get('/me',                       [UserProfileController::class, 'me']);
         Route::put('/profile',                  [UserProfileController::class, 'update']);
+        Route::put('/password',                 [UserProfileController::class, 'updatePassword']);
     });
 
     // ── Admin ─────────────────────────────────────────────────────────────
@@ -39,6 +40,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
         Route::get('/users/{user}',             [AdminUserController::class, 'show']);
         Route::patch('/users/{user}/activate',  [AdminUserController::class, 'activate']);
         Route::patch('/users/{user}/deactivate',[AdminUserController::class, 'deactivate']);
+        Route::patch('/users/{user}/role',      [AdminUserController::class, 'updateRole']);
         Route::delete('/users/{user}',          [AdminUserController::class, 'destroy']);
     });
 });

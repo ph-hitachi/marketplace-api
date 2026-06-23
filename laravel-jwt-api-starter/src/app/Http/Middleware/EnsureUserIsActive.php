@@ -16,11 +16,14 @@ class EnsureUserIsActive
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
 
-        if ($user && ! $user->is_active) {
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = auth('api');
+        $user = $guard->user();
+
+        if ($user && !$user->is_active) {
             // Invalidate token
-            auth('api')->logout();
+            $guard->logout();
 
             throw new AccountDeactivatedException();
         }

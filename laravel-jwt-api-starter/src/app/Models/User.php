@@ -14,6 +14,9 @@ use App\Support\Cacheable;
 
 #[Fillable(['name', 'email', 'password', 'role', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
+/**
+ * @mixin \App\Support\CacheBuilder
+ */
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
@@ -48,35 +51,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'is_active'         => 'boolean',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
-    }
-
-    // ── Helpers ─────────────────────────────────────────────────
-
-    public function isUser(): bool
-    {
-        return $this->role === 'user';
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    public function toArray()
-    {
-        $array = parent::toArray();
-
-        $user = auth()->user();
-        
-        if (!$user || ($user->id !== $this->id && $user->role !== 'admin')) {
-            if (array_key_exists('email', $array)) {
-                $array['email'] = null;
-            }
-        }
-
-        return $array;
     }
 }

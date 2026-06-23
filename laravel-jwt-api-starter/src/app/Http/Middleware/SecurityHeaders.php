@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Cache;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,9 @@ class SecurityHeaders
         if (!$request->is('api/*')) {
             return $response;
         }
+
+        // Append Cache Status header dynamically
+        $response->headers->set('X-Cache-Status', Cache::status());
 
         // Prevent browsers from misinterpreting the content type (MIME-sniffing)
         $response->headers->set('X-Content-Type-Options', 'nosniff');

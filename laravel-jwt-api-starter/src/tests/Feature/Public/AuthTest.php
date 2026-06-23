@@ -21,7 +21,6 @@ class AuthTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'message',
                 'user' => ['id', 'name', 'email', 'role'],
                 'authorization' => [
                     'access_token',
@@ -86,7 +85,6 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'message',
                 'user',
                 'authorization' => [
                     'access_token',
@@ -143,7 +141,7 @@ class AuthTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer {$token}")
             ->postJson('/api/auth/logout');
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertFalse(auth('api')->check());
     }
 

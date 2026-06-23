@@ -6,99 +6,119 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Exception;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use App\Exceptions\AccountDeactivatedException;
+use App\Exceptions\InvalidCredentialsException;
+use Dedoc\Scramble\Attributes\Group;
 
-/**
- * @tags Auth
- */
+#[Group('Authentication', weight: 1)]
 class AuthController extends Controller
 {
     /**
-     * Register a new customer or seller account.
+     * Register user.
+     *
+     * Register a new user account with a name, email, password, and default role.
+     *
+     * @param RegisterRequest $request
      */
     public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-            'role' => $data['role'],
-        ]);
+        $user = User::create($data);
 
-        $token = Auth::guard('api')->login($user);
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('api');
+        $token = $guard->login($user);
 
-        return $this->respondWithToken($token, 'Registration successful.', $user, 201);
+        return response()->json([
+            'user' => new UserResource($user),
+            'authorization' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => $guard->factory()->getTTL() * 60,
+            ],
+        ], Response::HTTP_CREATED);
     }
 
     /**
-     * Authenticate a user and receive a token.
+     * Authenticate user.
+     *
+     * Authenticate a user using their email and password credentials to receive a stateless JWT access token.
+     *
+     * @param LoginRequest $request
+     *
+     * @response array{user: UserResource, authorization: array{access_token: string, token_type: string, expires_in: int}}
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
-        if (! $token = Auth::guard('api')->attempt($credentials)) {
-            return response()->json([
-                'error_code'     => 'INVALID_CREDENTIALS',
-                'exception_type' => 'InvalidCredentialsException',
-                'message'        => 'The email or password you entered is incorrect.',
-            ], 401);
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('api');
+
+        if (!$token = $guard->attempt($credentials)) {
+            throw new InvalidCredentialsException();
         }
 
         /** @var User $user */
-        $user = Auth::guard('api')->user();
+        $user = $guard->user();
 
         if (!$user->is_active) {
-            Auth::guard('api')->logout();
+            $guard->logout();
             throw new AccountDeactivatedException();
         }
 
-        return $this->respondWithToken($token, 'Login successful.', $user);
+        return $this->respondWithToken($token, $user);
     }
 
     /**
-     * Log out and revoke token.
+     * Logout user.
+     *
+     * Revoke the user's current JWT access token and log them out of the application.
      */
-    public function logout(): JsonResponse
+    public function logout(): Response
     {
         Auth::guard('api')->logout();
 
-        return response()->json(['message' => 'Logged out successfully.']);
+        return response()->noContent();
     }
 
     /**
-     * Exchange token.
+     * Refresh token.
+     *
+     * Refresh the user's current authentication token, invalidating the old one and returning a new JWT.
+     *
+     * @response array{user: UserResource, authorization: array{access_token: string, token_type: string, expires_in: int}}
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(Auth::guard('api')->refresh(), 'Token refreshed successfully.');
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('api');
+        $token = $guard->refresh();
+        $user = $guard->user();
+
+        return $this->respondWithToken($token, $user);
     }
 
     /**
      * Get the token array structure.
      */
-    protected function respondWithToken(string $token, string $message, ?User $user = null, int $status = 200): JsonResponse
+    protected function respondWithToken(string $token, User $user): JsonResponse
     {
-        $data = [
-            'message' => $message,
-        ];
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('api');
 
-        if ($user) {
-            $data['user'] = $user;
-        }
-
-        $data['authorization'] = [
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
-        ];
-
-        return response()->json($data, $status);
+        return response()->json([
+            'user' => new UserResource($user),
+            'authorization' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => $guard->factory()->getTTL() * 60,
+            ],
+        ]);
     }
 }

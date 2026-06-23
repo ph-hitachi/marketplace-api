@@ -4,47 +4,69 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateProfileRequest;
-use Illuminate\Http\JsonResponse;
+use App\Http\Requests\User\UpdatePasswordRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Dedoc\Scramble\Attributes\Group;
 
-/**
- * @tags User/Profile
- */
+#[Group('User/Profile', weight: 2)]
 class ProfileController extends Controller
 {
     /**
-     * Retrieve authenticated user profile.
+     * Get profile.
+     *
+     * Retrieve the authenticated user's profile details.
+     *
+     * @response UserResource
      */
-    public function me(): JsonResponse
+    public function me(): UserResource
     {
         $user = Auth::guard('api')->user();
 
-        return response()->json(['user' => $user]);
+        return new UserResource($user);
     }
 
     /**
-     * Update profile details.
+     * Update profile.
+     *
+     * Update the authenticated user's profile information (name and email).
+     *
+     * @param UpdateProfileRequest $request
+     *
+     * @see \App\Policies\UserPolicy::update()
+     * @response UserResource
      */
-    public function update(UpdateProfileRequest $request): JsonResponse
+    public function update(UpdateProfileRequest $request): UserResource
     {
         $user = $request->user();
 
         $this->authorize('update', $user);
 
-        $data = $request->validated();
+        $user->update($request->validated());
 
-        $user->name = $data['name'];
-        $user->email = $data['email'];
+        return new UserResource($user);
+    }
 
-        if (!empty($data['password'])) {
-            $user->password = $data['password'];
-        }
+    /**
+     * Update password.
+     *
+     * Change the authenticated user's password after validating the current password.
+     *
+     * @param UpdatePasswordRequest $request
+     *
+     * @see \App\Policies\UserPolicy::update()
+     * @response UserResource
+     */
+    public function updatePassword(UpdatePasswordRequest $request): UserResource
+    {
+        $user = $request->user();
 
-        $user->save();
+        $this->authorize('update', $user);
 
-        return response()->json([
-            'message' => 'Profile updated successfully.',
-            'user'    => $user,
+        $user->update([
+            'password' => $request->validated('password')
         ]);
+
+        return new UserResource($user);
     }
 }

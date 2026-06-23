@@ -30,7 +30,13 @@ class UsersTest extends TestCase
             ->getJson('/api/admin/users');
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['current_page', 'data']);
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'name', 'email', 'role', 'is_active']
+                ],
+                'links',
+                'meta' => ['current_page']
+            ]);
     }
 
     public function test_admin_can_view_user_details(): void
@@ -83,5 +89,16 @@ class UsersTest extends TestCase
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $this->user->id]);
+    }
+
+    public function test_admin_can_update_user_role(): void
+    {
+        $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+            ->patchJson("/api/admin/users/{$this->user->id}/role", [
+                'role' => 'admin',
+            ]);
+
+        $response->assertStatus(204);
+        $this->assertEquals('admin', $this->user->fresh()->role);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 class GenerateOverview extends Command
 {
@@ -90,6 +91,9 @@ class GenerateOverview extends Command
         File::put($overviewPath, $content);
         $this->info("overview.md successfully generated at: {$overviewPath}");
 
+        // Update in-memory configuration to ensure the subsequent export command uses the fresh description
+        config(['scramble.info.description' => $content]);
+
         // Sync changes back to Scramble files
         if (!$this->option('no-api-export')) {
             $this->info('Re-exporting OpenAPI spec to include new overview description...');
@@ -145,7 +149,7 @@ class GenerateOverview extends Command
         foreach ($openapi['paths'] as $path => $methods) {
             foreach ($methods as $method => $operation) {
                 $methodUpper = strtoupper($method);
-                $description = $operation['summary'] ?? ($operation['description'] ?? 'No description provided.');
+                $description = $operation['description'] ?? ($operation['summary'] ?? 'No description provided.');
 
                 $successStatus = '200 OK';
                 if (!empty($operation['responses'])) {
@@ -172,19 +176,51 @@ class GenerateOverview extends Command
                 }
                 $formattedPath = preg_replace('#/{2,}#', '/', $formattedPath);
 
-                $grouped[$category][$subcategory][] = "| {$methodUpper} | `{$formattedPath}` | `{$successStatus}` | {$description} |";
+                $grouped[$category][$subcategory][] = [
+                    'path' => $formattedPath,
+                    'method' => $methodUpper,
+                    'row' => "| {$methodUpper} | `{$formattedPath}` | `{$successStatus}` | {$description} |",
+                ];
             }
         }
 
-        ksort($grouped);
+        // Sort categories by group weight dynamically
+        uksort($grouped, function($a, $b) {
+            $wa = $this->getTagWeightByName($a);
+            $wb = $this->getTagWeightByName($b);
+            if ($wa === $wb) {
+                return strcmp($a, $b);
+            }
+            return $wa <=> $wb;
+        });
 
         foreach ($grouped as $category => $subcategories) {
             $markdown .= "### {$category}\n\n";
-            ksort($subcategories);
-            foreach ($subcategories as $subcategory => $rows) {
+            
+            // Sort subcategories alphabetically
+            uksort($subcategories, function($a, $b) {
+                return strcmp($a, $b);
+            });
+
+            foreach ($subcategories as $subcategory => $items) {
                 if ($subcategory !== 'General') {
                     $markdown .= "#### {$subcategory}\n\n";
                 }
+
+                // Sort endpoints alphabetically by path, then by method weight order
+                usort($items, function($a, $b) {
+                    $cmp = strcmp($a['path'], $b['path']);
+                    if ($cmp === 0) {
+                        $methodOrder = ['GET' => 0, 'POST' => 1, 'PUT' => 2, 'PATCH' => 3, 'DELETE' => 4];
+                        $wa = $methodOrder[strtoupper($a['method'])] ?? 99;
+                        $wb = $methodOrder[strtoupper($b['method'])] ?? 99;
+                        return $wa <=> $wb;
+                    }
+                    return $cmp;
+                });
+
+                $rows = array_column($items, 'row');
+
                 $markdown .= "| Method | Endpoint | Success Status | Description |\n";
                 $markdown .= "|---|---|---|---|\n";
                 $markdown .= implode("\n", $rows) . "\n\n";
@@ -192,6 +228,57 @@ class GenerateOverview extends Command
         }
 
         return $markdown;
+    }
+
+    private function findRoute(string $openapiPath, string $method): ?\Illuminate\Routing\Route
+    {
+        $cleanOpenapiPath = trim($openapiPath, '/');
+        $method = strtoupper($method);
+
+        foreach (Route::getRoutes() as $route) {
+            if (!in_array($method, $route->methods())) {
+                continue;
+            }
+
+            $routeUri = trim($route->uri(), '/');
+            if (str_starts_with($routeUri, 'api/')) {
+                $routeUri = substr($routeUri, 4);
+            }
+
+            if ($routeUri === $cleanOpenapiPath) {
+                return $route;
+            }
+        }
+
+        return null;
+    }
+
+    private function getTagWeightByName(string $tagName): int
+    {
+        foreach (Route::getRoutes() as $route) {
+            $action = $route->getAction('controller');
+            if (is_string($action) && str_contains($action, '@')) {
+                [$controllerClass, $methodName] = explode('@', $action);
+                try {
+                    $reflection = new \ReflectionClass($controllerClass);
+                    $attributes = $reflection->getAttributes(\Dedoc\Scramble\Attributes\Group::class);
+                    foreach ($attributes as $attribute) {
+                        $arguments = $attribute->getArguments();
+                        $name = $arguments[0] ?? $arguments['name'] ?? null;
+                        if ($name === $tagName) {
+                            if (isset($arguments['weight'])) {
+                                return (int) $arguments['weight'];
+                            }
+                            if (isset($arguments[1])) {
+                                return (int) $arguments[1];
+                            }
+                        }
+                    }
+                } catch (\Throwable $e) {
+                }
+            }
+        }
+        return 999;
     }
 
     private function getGlobalErrorsTable()

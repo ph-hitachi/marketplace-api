@@ -5,6 +5,9 @@ namespace App\Support;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin \App\Support\CacheBuilder
+ */
 trait Cacheable
 {
     /**
