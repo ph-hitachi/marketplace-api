@@ -1,0 +1,21 @@
+// Marketplace API — Database Schema
+// Render at: https://dbdiagram.io
+// Copy & paste the entire content below into the editor
+
+Table users {
+  id                 bigint        [pk, increment, not null]
+  name               varchar(255)  [not null]
+  email              varchar(255)  [unique, not null]
+  email_verified_at  timestamp     [null]
+  password           varchar(255)  [not null]
+  role               enum          [not null, default: "customer", note: "customer | seller | admin"]
+  is_active          boolean       [not null, default: true]
+  remember_token     varchar(255)  [null]
+  created_at         timestamp     [null]
+  updated_at         timestamp     [null]
+
+  indexes {
+    email [unique]
+  }
+}
+

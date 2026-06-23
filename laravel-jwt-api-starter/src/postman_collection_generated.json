@@ -1,0 +1,491 @@
+{
+    "info": {
+        "name": "Marketplace API (Auto-Generated)",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Admin",
+            "item": [
+                {
+                    "name": "Users",
+                    "item": [
+                        {
+                            "name": "List registered users",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/admin\/users",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "admin",
+                                        "users"
+                                    ]
+                                },
+                                "description": "### List registered users\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n\"ex\"\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "View specific user",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/admin\/users\/:user",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "admin",
+                                        "users",
+                                        ":user"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "user",
+                                            "value": "1",
+                                            "description": "The user ID"
+                                        }
+                                    ]
+                                },
+                                "description": "### View specific user\n\n#### Path Variables\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `user` | `integer` | Yes | The user ID | - |\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"user\": \"perferendis\"\n}\n```\n\n#### Response: `404`\nRequesting a database record or resource ID that does not exist.\n\n```json\n{\n    \"error_code\": \"NOT_FOUND\",\n    \"exception_type\": \"ModelNotFoundException\",\n    \"message\": \"The requested resource was not found.\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete user account",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/admin\/users\/:user",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "admin",
+                                        "users",
+                                        ":user"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "user",
+                                            "value": "1",
+                                            "description": "The user ID"
+                                        }
+                                    ]
+                                },
+                                "description": "### Delete user account\n\n#### Path Variables\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `user` | `integer` | Yes | The user ID | - |\n\n### Responses\n\n#### Response: `204`\nNo content\n\n#### Response: `500`\nAn unexpected server error occurred during processing.\n\n```json\n{\n    \"error_code\": \"SERVER_ERROR\",\n    \"exception_type\": \"ServerErrorException\",\n    \"message\": \"Sorry, something went wrong on the server. Please try again later.\"\n}\n```\n\n#### Response: `404`\nRequesting a database record or resource ID that does not exist.\n\n```json\n{\n    \"error_code\": \"NOT_FOUND\",\n    \"exception_type\": \"ModelNotFoundException\",\n    \"message\": \"The requested resource was not found.\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Reactivate user",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/admin\/users\/:user\/activate",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "admin",
+                                        "users",
+                                        ":user",
+                                        "activate"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "user",
+                                            "value": "1",
+                                            "description": "The user ID"
+                                        }
+                                    ]
+                                },
+                                "description": "### Reactivate user\n\n#### Path Variables\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `user` | `integer` | Yes | The user ID | - |\n\n### Responses\n\n#### Response: `204`\nNo content\n\n#### Response: `404`\nRequesting a database record or resource ID that does not exist.\n\n```json\n{\n    \"error_code\": \"NOT_FOUND\",\n    \"exception_type\": \"ModelNotFoundException\",\n    \"message\": \"The requested resource was not found.\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Deactivate user",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/admin\/users\/:user\/deactivate",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "admin",
+                                        "users",
+                                        ":user",
+                                        "deactivate"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "user",
+                                            "value": "1",
+                                            "description": "The user ID"
+                                        }
+                                    ]
+                                },
+                                "description": "### Deactivate user\n\n#### Path Variables\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `user` | `integer` | Yes | The user ID | - |\n\n### Responses\n\n#### Response: `204`\nNo content\n\n#### Response: `404`\nRequesting a database record or resource ID that does not exist.\n\n```json\n{\n    \"error_code\": \"NOT_FOUND\",\n    \"exception_type\": \"ModelNotFoundException\",\n    \"message\": \"The requested resource was not found.\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register a new customer or seller account",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}\/auth\/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "### Register a new customer or seller account\n\n#### Request Body Parameters\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `name` | `string` | Yes | User's full name. | Max Length: `255` |\n| `email` | `string` | Yes | Unique email address. | Max Length: `255` |\n| `password` | `string` | Yes | Password (must be confirmed). | - |\n| `password_confirmation` | `string` | Yes | Password confirmation (must match password). | - |\n| `role` | `string` | Yes | Role, must be 'customer' or 'seller'. | Enum: `customer`, `seller` |\n\n### Responses\n\n#### Response: `201`\n\n\n```json\n{\n    \"message\": \"impedit\",\n    \"user\": {\n        \"id\": 92,\n        \"name\": \"voluptas nam doloremque\",\n        \"email\": null,\n        \"email_verified_at\": \"1974-01-26T04:38:54+00:00\",\n        \"role\": \"saepe\",\n        \"is_active\": true,\n        \"created_at\": \"1982-12-04T08:44:16+00:00\",\n        \"updated_at\": \"1995-05-03T21:43:52+00:00\"\n    },\n    \"authorization\": {\n        \"access_token\": [],\n        \"token_type\": \"vitae\",\n        \"expires_in\": \"aut\"\n    }\n}\n```\n\n#### Response: `422`\nValidation error\n\n```json\n{\n    \"error_code\": \"VALIDATION_ERROR\",\n    \"message\": \"The given data was invalid.\",\n    \"errors\": []\n}\n```\n\n",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"repudiandae totam voluptatum\",\n    \"email\": \"margarete91@example.org\",\n    \"password\": \"_fH&cR>*\",\n    \"password_confirmation\": \"0*58dD}Zz?Z\",\n    \"role\": \"customer\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Authenticate a user and receive a token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}\/auth\/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "### Authenticate a user and receive a token\n\n#### Request Body Parameters\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `email` | `string` | Yes | Authenticating user's email address. | - |\n| `password` | `string` | Yes | Authenticating user's password. | - |\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"message\": \"veniam\",\n    \"user\": [],\n    \"authorization\": {\n        \"access_token\": true,\n        \"token_type\": \"tempora\",\n        \"expires_in\": \"corporis\"\n    }\n}\n```\n\n#### Response: `401`\n\n\n```json\n{\n    \"error_code\": \"corporis\",\n    \"exception_type\": \"omnis\",\n    \"message\": \"sint\"\n}\n```\n\n#### Response: `403`\nAttempting to login or perform actions with a deactivated account.\n\n```json\n{\n    \"error_code\": \"ACCOUNT_DEACTIVATED\",\n    \"exception_type\": \"AccountDeactivatedException\",\n    \"message\": \"Your account has been deactivated. Please contact support.\"\n}\n```\n\n#### Response: `422`\nValidation error\n\n```json\n{\n    \"error_code\": \"VALIDATION_ERROR\",\n    \"message\": \"The given data was invalid.\",\n    \"errors\": []\n}\n```\n\n",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"lzieme@example.com\",\n    \"password\": \"m-rQ0D)ZNKx\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Log out and revoke token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}\/auth\/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        },
+                        "description": "### Log out and revoke token\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"message\": \"quia\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Exchange token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}\/auth\/refresh",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "refresh"
+                            ]
+                        },
+                        "description": "### Exchange token\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"message\": \"dolorum\",\n    \"user\": null,\n    \"authorization\": {\n        \"access_token\": \"molestias\",\n        \"token_type\": \"enim\",\n        \"expires_in\": \"voluptas\"\n    }\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "User",
+            "item": [
+                {
+                    "name": "Profile",
+                    "item": [
+                        {
+                            "name": "Retrieve authenticated user profile",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/user\/me",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "user",
+                                        "me"
+                                    ]
+                                },
+                                "description": "### Retrieve authenticated user profile\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"user\": []\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update profile details",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application\/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}\/user\/profile",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "user",
+                                        "profile"
+                                    ]
+                                },
+                                "description": "### Update profile details\n\n#### Request Body Parameters\n\n| Parameter | Type | Required | Description | Constraints |\n|---|---|---|---|---|\n| `name` | `string` | Yes | Updated full name of the user. | Max Length: `255` |\n| `email` | `string` | Yes | Updated email address. Must be unique. | Max Length: `255` |\n| `password` | `string \/ null` | No | Optional new password (must be confirmed). | - |\n| `password_confirmation` | `string \/ null` | No | Password confirmation (required if password is provided, must match password). | - |\n\n### Responses\n\n#### Response: `200`\n\n\n```json\n{\n    \"message\": \"ab\",\n    \"user\": {\n        \"id\": 74,\n        \"name\": \"et consequuntur et\",\n        \"email\": null,\n        \"email_verified_at\": \"2000-04-08T14:18:20+00:00\",\n        \"role\": \"sint\",\n        \"is_active\": true,\n        \"created_at\": \"2010-10-04T04:55:15+00:00\",\n        \"updated_at\": \"2016-04-07T21:49:57+00:00\"\n    }\n}\n```\n\n#### Response: `403`\nAttempting to access a route or perform an action without the required user role or permissions.\n\n```json\n{\n    \"error_code\": \"FORBIDDEN\",\n    \"exception_type\": \"AuthorizationException\",\n    \"message\": \"You do not have permission to perform this action.\"\n}\n```\n\n#### Response: `401`\nRequesting protected routes without a valid JWT token, or token is expired\/invalid.\n\n```json\n{\n    \"error_code\": \"UNAUTHENTICATED\",\n    \"exception_type\": \"AuthenticationException\",\n    \"message\": \"You are not authenticated. Please provide a valid token.\"\n}\n```\n\n#### Response: `422`\nValidation error\n\n```json\n{\n    \"error_code\": \"VALIDATION_ERROR\",\n    \"message\": \"The given data was invalid.\",\n    \"errors\": []\n}\n```\n\n",
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{token}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"quo id praesentium\",\n    \"email\": \"akeeling@example.org\",\n    \"password\": \"L{nC\\\/{WEnC3([\",\n    \"password_confirmation\": \"~-HG'@oKK(\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http:\/\/localhost\/api",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

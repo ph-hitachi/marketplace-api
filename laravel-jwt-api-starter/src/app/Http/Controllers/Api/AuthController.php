@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Exceptions\AccountDeactivatedException;
+
+/**
+ * @tags Auth
+ */
+class AuthController extends Controller
+{
+    /**
+     * Register a new customer or seller account.
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'role' => $data['role'],
+        ]);
+
+        $token = Auth::guard('api')->login($user);
+
+        return $this->respondWithToken($token, 'Registration successful.', $user, 201);
+    }
+
+    /**
+     * Authenticate a user and receive a token.
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (! $token = Auth::guard('api')->attempt($credentials)) {
+            return response()->json([
+                'error_code'     => 'INVALID_CREDENTIALS',
+                'exception_type' => 'InvalidCredentialsException',
+                'message'        => 'The email or password you entered is incorrect.',
+            ], 401);
+        }
+
+        /** @var User $user */
+        $user = Auth::guard('api')->user();
+
+        if (!$user->is_active) {
+            Auth::guard('api')->logout();
+            throw new AccountDeactivatedException();
+        }
+
+        return $this->respondWithToken($token, 'Login successful.', $user);
+    }
+
+    /**
+     * Log out and revoke token.
+     */
+    public function logout(): JsonResponse
+    {
+        Auth::guard('api')->logout();
+
+        return response()->json(['message' => 'Logged out successfully.']);
+    }
+
+    /**
+     * Exchange token.
+     */
+    public function refresh(): JsonResponse
+    {
+        return $this->respondWithToken(Auth::guard('api')->refresh(), 'Token refreshed successfully.');
+    }
+
+    /**
+     * Get the token array structure.
+     */
+    protected function respondWithToken(string $token, string $message, ?User $user = null, int $status = 200): JsonResponse
+    {
+        $data = [
+            'message' => $message,
+        ];
+
+        if ($user) {
+            $data['user'] = $user;
+        }
+
+        $data['authorization'] = [
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ];
+
+        return response()->json($data, $status);
+    }
+}
