@@ -271,12 +271,12 @@ The current CORS configuration is dynamically parsed below:
 
 | CORS Directive | Configured Value | Description |
 |---|---|---|
-| **Allowed Paths** | `api/*, sanctum/csrf-cookie` | Paths for which cross-origin requests are enabled. |
-| **Allowed Origins** | `*` | Allowed origins (domains) that can access the API. |
-| **Allowed Methods** | `*` | HTTP methods permitted when accessing the resource. |
-| **Allowed Headers** | `*` | HTTP headers that can be used during the actual request. |
-| **Supports Credentials** | `false` | Indicates whether the request can be made using credentials (cookies, HTTP auth). |
-| **Max Age** | `0` | Seconds the results of a preflight request can be cached. |
+| `Allowed Paths` | `api/*, sanctum/csrf-cookie` | Paths for which cross-origin requests are enabled. |
+| `Allowed Origins` | `*` | Allowed origins (domains) that can access the API. |
+| `Allowed Methods` | `*` | HTTP methods permitted when accessing the resource. |
+| `Allowed Headers` | `*` | HTTP headers that can be used during the actual request. |
+| `Supports Credentials` | `false` | Indicates whether the request can be made using credentials (cookies, HTTP auth). |
+| `Max Age` | `0` | Seconds the results of a preflight request can be cached. |
 
 ### JWT Security Mechanisms
 

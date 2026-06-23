@@ -480,12 +480,12 @@ class GenerateOverview extends Command
         $markdown .= "The current CORS configuration is dynamically parsed below:\n\n";
         $markdown .= "| CORS Directive | Configured Value | Description |\n";
         $markdown .= "|---|---|---|\n";
-        $markdown .= "| **Allowed Paths** | `{$paths}` | Paths for which cross-origin requests are enabled. |\n";
-        $markdown .= "| **Allowed Origins** | `{$origins}` | Allowed origins (domains) that can access the API. |\n";
-        $markdown .= "| **Allowed Methods** | `{$methods}` | HTTP methods permitted when accessing the resource. |\n";
-        $markdown .= "| **Allowed Headers** | `{$headers}` | HTTP headers that can be used during the actual request. |\n";
-        $markdown .= "| **Supports Credentials** | `{$credentials}` | Indicates whether the request can be made using credentials (cookies, HTTP auth). |\n";
-        $markdown .= "| **Max Age** | `{$maxAge}` | Seconds the results of a preflight request can be cached. |\n";
+        $markdown .= "| `Allowed Paths` | `{$paths}` | Paths for which cross-origin requests are enabled. |\n";
+        $markdown .= "| `Allowed Origins` | `{$origins}` | Allowed origins (domains) that can access the API. |\n";
+        $markdown .= "| `Allowed Methods` | `{$methods}` | HTTP methods permitted when accessing the resource. |\n";
+        $markdown .= "| `Allowed Headers` | `{$headers}` | HTTP headers that can be used during the actual request. |\n";
+        $markdown .= "| `Supports Credentials` | `{$credentials}` | Indicates whether the request can be made using credentials (cookies, HTTP auth). |\n";
+        $markdown .= "| `Max Age` | `{$maxAge}` | Seconds the results of a preflight request can be cached. |\n";
 
         return $markdown;
     }
