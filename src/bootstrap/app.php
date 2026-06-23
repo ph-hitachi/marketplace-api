@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Handle CORS requests
+        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+
         // Apply security headers to every response
         $middleware->append(SecurityHeaders::class);
 
@@ -28,5 +31,5 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Exception handling is registered via App\Providers\ExceptionServiceProvider
+        // Exception handling is registered via App\Providers\ApiExceptionServiceProvider
     })->create();

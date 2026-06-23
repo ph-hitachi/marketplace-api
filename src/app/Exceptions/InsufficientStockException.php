@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when a requested product quantity exceeds available stock.
- *
- * HTTP 422 — rendered as:
- * { "error_code": "INSUFFICIENT_STOCK", "message": "Insufficient stock for product \"X\". Available: N." }
+ * Placing an order for a quantity that exceeds available inventory.
+ * @message Insufficient stock for product "X". Available: N.
  */
-class InsufficientStockException extends UnexpectedErrorException
+class InsufficientStockException extends ServerErrorException
 {
     public function __construct(string $productName, int $available)
     {

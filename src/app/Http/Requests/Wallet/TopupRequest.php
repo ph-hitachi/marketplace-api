@@ -11,9 +11,12 @@ class TopupRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Amount to top up the wallet (minimum 1, maximum 50000).
+             */
             'amount' => ['required', 'numeric', 'min:1', 'max:50000'],
         ];
     }

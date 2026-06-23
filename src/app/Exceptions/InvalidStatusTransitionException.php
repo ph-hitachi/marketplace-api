@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when a seller attempts an illegal order status transition.
- *
- * HTTP 422 — rendered as:
- * { "error_code": "INVALID_STATUS_TRANSITION", "message": "Invalid status transition from X to Y." }
+ * Attempting to move an order to an illogical state (e.g., pending to delivered).
+ * @message Invalid status transition from "X" to "Y".
  */
-class InvalidStatusTransitionException extends UnexpectedErrorException
+class InvalidStatusTransitionException extends ServerErrorException
 {
     public function __construct(string $from, string $to)
     {

@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when login authentication fails due to invalid credentials.
- *
- * HTTP 401 — rendered as:
- * { "error_code": "UNAUTHENTICATED", "message": "Invalid credentials." }
+ * Providing an incorrect password during login.
+ * @message The email or password you entered is incorrect.
  */
-class InvalidCredentialsException extends UnexpectedErrorException
+class InvalidCredentialsException extends ServerErrorException
 {
     public function __construct()
     {

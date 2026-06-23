@@ -14,6 +14,8 @@ use App\Models\Wallet;
 use App\Services\ProductStockService;
 use App\Services\OrderPaymentService;
 use App\Http\Requests\Order\PlaceOrderRequest;
+use App\Support\Cache;
+use App\Support\CacheKey;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -57,12 +59,14 @@ class OrderService
                 $batchRef
             );
 
-            return $this->handlePayment(
+            $result = $this->handlePayment(
                 $orders,
                 $data['payment_method'] ?? 'wallet',
                 isset($data['wallet_id']) ? (int) $data['wallet_id'] : null,
                 $batchRef
             );
+
+            return $result;
         });
     }
 

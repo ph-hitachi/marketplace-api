@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 class WalletController extends Controller
 {
     /**
-     * List wallets.
+     * List user wallets.
      */
     public function index(Request $request): JsonResponse
     {
@@ -25,7 +25,7 @@ class WalletController extends Controller
     }
 
     /**
-     * Create wallet.
+     * Create new wallet.
      */
     public function store(StoreWalletRequest $request): JsonResponse
     {
@@ -46,7 +46,7 @@ class WalletController extends Controller
     }
 
     /**
-     * View wallet.
+     * View specific wallet details.
      */
     public function show(Request $request, Wallet $wallet): JsonResponse
     {
@@ -64,7 +64,7 @@ class WalletController extends Controller
     }
 
     /**
-     * Topup wallet.
+     * Add funds.
      */
     public function topup(TopupRequest $request, Wallet $wallet): JsonResponse
     {
@@ -86,7 +86,7 @@ class WalletController extends Controller
     }
 
     /**
-     * Set default wallet.
+     * Set default payment wallet.
      */
     public function setDefault(Request $request, Wallet $wallet): JsonResponse
     {

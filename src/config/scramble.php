@@ -147,7 +147,7 @@ return [
 
     'extensions' => [
         \App\Docs\ValidationExceptionExtension::class,
-        \App\Docs\UnexpectedErrorExceptionExtension::class,
+        \App\Docs\ServerErrorExceptionExtension::class,
         \App\Docs\GlobalExceptionExtension::class,
     ],
 

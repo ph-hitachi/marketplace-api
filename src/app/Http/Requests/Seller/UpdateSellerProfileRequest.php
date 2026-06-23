@@ -18,15 +18,22 @@ class UpdateSellerProfileRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Name of the shop. Must be unique.
+             */
             'shop_name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('shops', 'shop_name')->ignore($this->user()->shop?->id),
             ],
+
+            /**
+             * Optional shop description.
+             */
             'shop_description' => ['nullable', 'string', 'max:1000'],
         ];
     }

@@ -13,7 +13,7 @@ class GenerateOverviewDocs extends Command
      *
      * @var string
      */
-    protected $signature = 'overview:generate';
+    protected $signature = 'overview:generate-ai';
 
     /**
      * The console command description.

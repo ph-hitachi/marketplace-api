@@ -9,7 +9,7 @@ use App\Exceptions\InvalidCredentialsException;
 use App\Exceptions\InvalidStatusTransitionException;
 use App\Exceptions\OrderInTransitException;
 use App\Exceptions\ProductUnavailableException;
-use App\Exceptions\UnexpectedErrorException;
+use App\Exceptions\ServerErrorException;
 use App\Exceptions\UserDeleteBlockedException;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -124,15 +124,15 @@ class ExceptionsTest extends TestCase
     public function test_unexpected_error_exception_renders_correct_json_format()
     {
         Route::get('/api/test-exception-unexpected-error', function () {
-            throw new UnexpectedErrorException('Custom unexpected error');
+            throw new ServerErrorException('Custom unexpected error');
         });
 
         $response = $this->getJson('/api/test-exception-unexpected-error');
 
         $response->assertStatus(500)
                  ->assertJson([
-                     'error_code'     => 'SERVER_ERROR',
-                     'exception_type' => 'UnexpectedErrorException',
+                     'error_code'     => 'INTERNAL_ERROR',
+                     'exception_type' => 'ServerErrorException',
                      'message'        => 'Custom unexpected error',
                  ]);
     }
@@ -263,6 +263,22 @@ class ExceptionsTest extends TestCase
                      'exception_type' => 'TooManyRequestsHttpException',
                      'message'        => 'Too many requests. Please slow down and try again in a moment.',
                  ]);
+     }
+
+    public function test_bad_request_http_exception_renders_correct_json_format()
+    {
+        Route::get('/api/test-exception-bad-request', function () {
+            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException('Malformed request syntax.');
+        });
+
+        $response = $this->getJson('/api/test-exception-bad-request');
+
+        $response->assertStatus(400)
+                 ->assertJson([
+                     'error_code'     => 'BAD_REQUEST',
+                     'exception_type' => 'BadRequestHttpException',
+                     'message'        => 'Malformed request syntax.',
+                 ]);
     }
 
     public function test_fallback_500_error_renders_unexpected_error_exception_format()
@@ -275,9 +291,25 @@ class ExceptionsTest extends TestCase
 
         $response->assertStatus(500)
                  ->assertJson([
-                     'error_code'     => 'SERVER_ERROR',
-                     'exception_type' => 'UnexpectedErrorException',
+                     'error_code'     => 'INTERNAL_ERROR',
+                     'exception_type' => 'ServerErrorException',
                      'message'        => 'Sorry, something went wrong on the server. Please try again later.',
+                 ]);
+    }
+
+    public function test_jwt_exception_renders_correct_json_format()
+    {
+        Route::get('/api/test-exception-jwt', function () {
+            throw new \PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException('The token could not be parsed.');
+        });
+
+        $response = $this->getJson('/api/test-exception-jwt');
+
+        $response->assertStatus(400)
+                 ->assertJson([
+                     'error_code'     => 'TOKEN_COULD_NOT_PARSE',
+                     'exception_type' => 'JWTException',
+                     'message'        => 'The token could not be parsed.',
                  ]);
     }
 }

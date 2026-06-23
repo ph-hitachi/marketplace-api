@@ -11,10 +11,17 @@ class LoginRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Authenticating user's email address.
+             */
             'email'    => ['required', 'string', 'email'],
+
+            /**
+             * Authenticating user's password.
+             */
             'password' => ['required', 'string'],
         ];
     }

@@ -9,14 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 // Import Exceptions
-use App\Exceptions\UnexpectedErrorException;
-use App\Exceptions\OAuthException;
+use App\Exceptions\ServerErrorException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
@@ -24,7 +24,7 @@ use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 
-class ExceptionServiceProvider extends ServiceProvider
+class ApiExceptionServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application exception renderers.
@@ -41,7 +41,7 @@ class ExceptionServiceProvider extends ServiceProvider
         );
 
         // Domain-specific exception handling
-        $handler->renderable(function (UnexpectedErrorException $e, Request $request) {
+        $handler->renderable(function (ServerErrorException $e, Request $request) {
             return response()->json([
                 'error_code'     => $e->getErrorCode(),
                 'exception_type' => class_basename($e),
@@ -77,7 +77,7 @@ class ExceptionServiceProvider extends ServiceProvider
                         'error_code'     => 'TOKEN_COULD_NOT_PARSE',
                         'exception_type' => class_basename($e),
                         'message'        => 'The token could not be parsed.',
-                    ], 500);
+                    ], 400);
                 }
             }
 
@@ -132,6 +132,15 @@ class ExceptionServiceProvider extends ServiceProvider
             ], Response::HTTP_METHOD_NOT_ALLOWED);
         });
 
+        // 400 Bad Request
+        $handler->renderable(function (BadRequestHttpException $e, Request $request) {
+            return response()->json([
+                'error_code'     => 'BAD_REQUEST',
+                'exception_type' => class_basename($e),
+                'message'        => $e->getMessage() ?: 'The request is invalid or malformed.',
+            ], Response::HTTP_BAD_REQUEST);
+        });
+
         // 422 Validation Error
         $handler->renderable(function (ValidationException $e, Request $request) {
             return response()->json([
@@ -181,12 +190,12 @@ class ExceptionServiceProvider extends ServiceProvider
                 'error_code'     => 'TOKEN_COULD_NOT_PARSE',
                 'exception_type' => class_basename($e),
                 'message'        => 'The token could not be parsed.',
-            ], 500);
+            ], 400);
         });
 
         // 500 Fallback (Uncaught Exception)
         $handler->renderable(function (\Throwable $e, Request $request) {
-            if ($e instanceof UnexpectedErrorException ||
+            if ($e instanceof ServerErrorException ||
                 $e instanceof AuthenticationException ||
                 $e instanceof AuthorizationException ||
                 $e instanceof AccessDeniedHttpException ||
@@ -194,12 +203,13 @@ class ExceptionServiceProvider extends ServiceProvider
                 $e instanceof NotFoundHttpException ||
                 $e instanceof MethodNotAllowedHttpException ||
                 $e instanceof TooManyRequestsHttpException ||
+                $e instanceof BadRequestHttpException ||
                 $e instanceof JWTException) {
                 return null;
             }
 
             if ($request->is('api/*')) {
-                $unexpected = new UnexpectedErrorException('Sorry, something went wrong on the server. Please try again later.');
+                $unexpected = new ServerErrorException('Sorry, something went wrong on the server. Please try again later.');
                 return response()->json([
                     'error_code'     => $unexpected->getErrorCode(),
                     'exception_type' => class_basename($unexpected),

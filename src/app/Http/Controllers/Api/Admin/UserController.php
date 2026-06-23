@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Exceptions\UserDeleteBlockedException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Cache;
 use Illuminate\Http\JsonResponse;
-use App\Exceptions\UserDeleteBlockedException;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * @tags Admin/Users
@@ -13,29 +16,37 @@ use App\Exceptions\UserDeleteBlockedException;
 class UserController extends Controller
 {
     /**
-     * List users.
+     * List registered users.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $users = User::with('shop')->latest()->paginate(20);
+        $users = User::with('shop')
+            ->latest()
+            ->cached(300)
+            ->paginate(20);
 
-        return response()->json($users);
+        return response()->json($users)
+            ->header('X-Cache-Status', Cache::status());
     }
 
     /**
-     * View single user.
+     * View specific user.
      */
     public function show(User $user): JsonResponse
     {
-        $user->load(['shop', 'addresses']);
+        $userData = User::where('id', $user->id)
+            ->with(['shop', 'addresses'])
+            ->cached(300)
+            ->firstOrFail();
 
-        return response()->json(['user' => $user]);
+        return response()->json(['user' => $userData])
+            ->header('X-Cache-Status', Cache::status());
     }
 
     /**
-     * Activate user.
+     * Reactivate user.
      */
-    public function activate(User $user): \Illuminate\Http\Response
+    public function activate(User $user): Response
     {
         $user->update(['is_active' => true]);
 
@@ -44,23 +55,22 @@ class UserController extends Controller
 
     /**
      * Deactivate user.
-     *
-     * JWT is stateless — there are no stored tokens to revoke.
-     * The is_active flag is checked on every request by the
-     * EnsureUserIsActive middleware, so the user is effectively
-     * locked out immediately.
      */
-    public function deactivate(User $user): \Illuminate\Http\Response
+    public function deactivate(User $user): Response
     {
+        // JWT is stateless — there are no stored tokens to revoke.
+        // The is_active flag is checked on every request by the
+        // EnsureUserIsActive middleware, so the user is effectively
+        // locked out immediately.
         $user->update(['is_active' => false]);
 
         return response()->noContent();
     }
 
     /**
-     * Delete user.
+     * Delete user account.
      */
-    public function destroy(User $user): \Illuminate\Http\Response
+    public function destroy(User $user): Response
     {
         $hasOrders = $user->customerOrders()
             ->where('status', '!=', 'cancelled')

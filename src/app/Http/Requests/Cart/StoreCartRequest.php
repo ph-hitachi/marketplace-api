@@ -20,9 +20,12 @@ class StoreCartRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Product ID to add to the cart. Must exist in the products table.
+             */
             'product_id' => 'required|integer|exists:products,id',
         ];
     }

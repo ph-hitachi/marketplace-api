@@ -43,7 +43,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
 
     // ── Wallets & Profile (Shared Customer/Seller) ─────────────────────────
     Route::middleware('role:customer,seller')->prefix('user')->group(function () {
-        Route::get('/me',                       [AuthController::class, 'me']);
+        Route::get('/me',                       [UserProfileController::class, 'me']);
         Route::get('/wallets',                  [WalletController::class, 'index']);
         Route::post('/wallets',                 [WalletController::class, 'store']);
         Route::get('/wallets/{wallet}',         [WalletController::class, 'show']);

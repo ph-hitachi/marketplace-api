@@ -12,9 +12,12 @@ class UpdateOrderStatusRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * New order status (must be one of: pending, shipped, delivered, cancelled, confirmed).
+             */
             'status' => [
                 'required',
                 Rule::in(['pending', 'shipped', 'delivered', 'cancelled', 'confirmed']),

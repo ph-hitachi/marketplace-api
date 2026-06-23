@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Services\OrderService;
 use App\Services\ProductStockService;
 use App\Services\OrderPaymentService;
+use App\Support\Cache;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,23 +26,20 @@ class OrderController extends Controller
     {
     }
 
-    /**
-     * List all orders assigned to this seller.
-     * 
-     * @response \Illuminate\Http\Resources\Json\AnonymousResourceCollection<\App\Http\Resources\OrderResource>
-     */
     public function index(Request $request): JsonResponse
     {
         $orders = Order::where('shop_id', $request->user()->shop->id)
             ->with(['customer:id,name', 'address'])
             ->latest()
+            ->cached(300)
             ->paginate(15);
 
-        return response()->json($orders);
+        return response()->json($orders)
+            ->header('X-Cache-Status', Cache::status());
     }
 
     /**
-     * Show a single order assigned to this seller.
+     * View specific seller order.
      * 
      * @response array{order: \App\Http\Resources\OrderResource}
      */
@@ -49,13 +47,17 @@ class OrderController extends Controller
     {
         $this->authorize('viewAsSeller', $order);
 
-        $order->load(['items.product', 'customer:id,name', 'address']);
+        $orderData = Order::where('id', $order->id)
+            ->with(['items.product', 'customer:id,name', 'address'])
+            ->cached(300)
+            ->firstOrFail();
 
-        return response()->json(['order' => $order]);
+        return response()->json(['order' => $orderData])
+            ->header('X-Cache-Status', Cache::status());
     }
 
     /**
-     * Advance an order's status (pending→shipped→delivered).
+     * Advance status.
      *
      * @throws InvalidStatusTransitionException
      * @response array{message: string, order: \App\Http\Resources\OrderResource}
@@ -97,7 +99,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Cancel a pending order — restores stock and refunds wallet.
+     * Cancel order.
      * 
      * @response array{message: string, order: \App\Http\Resources\OrderResource}
      */
@@ -105,12 +107,11 @@ class OrderController extends Controller
     {
         $this->authorize('cancelAsSeller', $order);
 
-        $data = $request->validated();
-        $user = $request->user();
-        $cancelReason = (int) $data['cancel_reason'];
-        $cancelReasonNotes = $data['cancel_reason_notes'] ?? null;
 
-        DB::transaction(function () use ($order, $user, $cancelReason, $cancelReasonNotes, $stockService, $paymentService): void {
+        DB::transaction(function () use ($request, $order, $stockService, $paymentService): void {
+
+            $user = $request->user();
+
             if ($user->role === 'seller' && $order->status === 'delivered') {
                 throw new InvalidStatusTransitionException($order->status, 'cancelled');
             }
@@ -119,27 +120,23 @@ class OrderController extends Controller
                 throw new OrderInTransitException('Order is already shipped and cannot be cancelled.');
             }
 
-            if ($order->status === 'confirmed' || $order->status === 'cancelled') {
+            if (in_array($order->status, ['confirmed', 'cancelled'])) {
                 throw new InvalidStatusTransitionException($order->status, 'cancelled');
             }
 
-            $order->status = 'cancelled';
-            $order->cancel_at = now();
-
-            if ($cancelReason !== null) {
-                $order->cancel_reason = $cancelReason;
-            }
-
-            if ($cancelReasonNotes !== null) {
-                $order->cancel_reason_notes = $cancelReasonNotes;
-            }
-
-            $order->save();
+            $order->update([
+                'status' => 'cancelled',
+                'cancel_at' => now(),
+                'cancel_reason' => $request->cancel_reason,
+                'cancel_reason_notes' => $request->cancel_reason_notes,
+            ]);
 
             foreach ($order->items as $item) {
-                if ($item->product) {
-                    $stockService->restore($item->product, $item->quantity);
+                if (!$item->product) {
+                    continue;
                 }
+
+                $stockService->restore($item->product, $item->quantity);
             }
 
             $paymentService->refund($order);

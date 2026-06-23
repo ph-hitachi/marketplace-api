@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
-     * List own products.
+     * List seller shop products.
      */
     public function index(Request $request): JsonResponse
     {
@@ -29,7 +29,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Create product.
+     * Add new product.
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
@@ -42,7 +42,7 @@ class ProductController extends Controller
     }
 
     /**
-     * View own product.
+     * View specific product.
      */
     public function show(Request $request, Product $product): JsonResponse
     {
@@ -52,7 +52,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Update product.
+     * Update product details.
      */
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
@@ -64,7 +64,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Delete product.
+     * Soft-delete product.
      */
     public function destroy(Request $request, Product $product): \Illuminate\Http\Response
     {
@@ -76,7 +76,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Activate product.
+     * Mark active.
      */
     public function activate(Request $request, Product $product): \Illuminate\Http\Response
     {
@@ -88,7 +88,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Deactivate product.
+     * Mark inactive.
      */
     public function deactivate(Request $request, Product $product): \Illuminate\Http\Response
     {

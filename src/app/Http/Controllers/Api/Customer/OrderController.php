@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Services\OrderService;
 use App\Services\ProductStockService;
 use App\Services\OrderPaymentService;
+use App\Support\Cache;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,7 +51,7 @@ class OrderController extends Controller
     }
 
     /**
-     * List order history.
+     * List orders.
      * 
      * @response \Illuminate\Http\Resources\Json\AnonymousResourceCollection<\App\Http\Resources\OrderResource>
      */
@@ -59,67 +60,69 @@ class OrderController extends Controller
         $orders = Order::where('customer_id', $request->user()->id)
             ->with(['items.product', 'shop', 'address'])
             ->orderByDesc('created_at')
+            ->cached(300)
             ->paginate(15);
 
-        return response()->json($orders);
-    }
+        return response()->json($orders)
+            ->header('X-Cache-Status', Cache::status());
+     }
+ 
+     /**
+      * View order details.
+      * 
+      * @response array{order: \App\Http\Resources\OrderResource}
+      */
+     public function show(Request $request, Order $order): JsonResponse
+     {
+         $this->authorize('viewAsCustomer', $order);
+ 
+         $orderData = Order::where('id', $order->id)
+             ->with(['items.product', 'shop', 'address'])
+             ->cached(300)
+             ->firstOrFail();
+
+         return response()->json(['order' => $orderData])
+             ->header('X-Cache-Status', Cache::status());
+     }
 
     /**
-     * View order.
-     * 
-     * @response array{order: \App\Http\Resources\OrderResource}
-     */
-    public function show(Request $request, Order $order): JsonResponse
-    {
-        $this->authorize('viewAsCustomer', $order);
-
-        $order->load(['items.product', 'shop', 'address']);
-
-        return response()->json(['order' => $order]);
-    }
-
-    /**
-     * Cancel order
+     * Cancel order.
      */
     public function cancel(CancelOrderRequest $request, Order $order, ProductStockService $stockService, OrderPaymentService $paymentService): JsonResponse
     {
         $this->authorize('cancel', $order);
 
-        $data = $request->validated();
-        $user = $request->user();
-        $cancelReason = (int) $data['cancel_reason'];
-        $cancelReasonNotes = $data['cancel_reason_notes'] ?? null;
+        DB::transaction(function () use ($request, $order, $stockService, $paymentService): void {
 
-        DB::transaction(function () use ($order, $user, $cancelReason, $cancelReasonNotes, $stockService, $paymentService): void {
+            $user = $request->user();
             if ($order->status === 'shipped') {
                 throw new OrderInTransitException('Order is already shipped and cannot be cancelled.');
             }
 
-            if (
-                ($user->role === 'seller' && $order->status === 'delivered') ||
-                $order->status === 'confirmed' ||
-                $order->status === 'cancelled'
-            ) {
+            if ($user->role === 'seller' && $order->status === 'delivered') {
                 throw new InvalidStatusTransitionException($order->status, 'cancelled');
             }
 
-            $order->status = 'cancelled';
-            $order->cancel_at = now();
-
-            if ($cancelReason !== null) {
-                $order->cancel_reason = $cancelReason;
+            if (in_array($order->status, ['confirmed', 'cancelled'])) {
+                throw new InvalidStatusTransitionException($order->status, 'cancelled');
             }
 
-            if ($cancelReasonNotes !== null) {
-                $order->cancel_reason_notes = $cancelReasonNotes;
-            }
-
-            $order->save();
+            $order->update([
+                'cancel_reason'       => $request->cancel_reason,
+                'cancel_reason_notes' => $request->cancel_reason_notes,
+                'cancel_at'           => now(),
+                'status'              => 'cancelled',
+            ]);
 
             foreach ($order->items as $item) {
-                if ($item->product) {
-                    $stockService->restore($item->product, $item->quantity);
+                if (!$item->product) {
+                    continue;
                 }
+
+                $stockService->restore(
+                    $item->product,
+                    $item->quantity
+                );
             }
 
             $paymentService->refund($order);
@@ -129,7 +132,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Confirm delivery of an order
+     * Confirm receipt to release funds.
      */
     public function confirm(Request $request, Order $order, OrderPaymentService $paymentService): JsonResponse
     {

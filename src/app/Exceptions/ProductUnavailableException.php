@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when a requested product is not found or not available for ordering.
- *
- * HTTP 422 — rendered as:
- * { "error_code": "PRODUCT_UNAVAILABLE", "message": "Product ID X is not available." }
+ * Attempting to purchase a product that is inactive or deleted.
+ * @message Product ID X is not available.
  */
-class ProductUnavailableException extends UnexpectedErrorException
+class ProductUnavailableException extends ServerErrorException
 {
     public function __construct(int $productId)
     {

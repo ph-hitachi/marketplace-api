@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
-class OrderInTransitException extends UnexpectedErrorException
+/**
+ * Attempting to cancel an order that has already been shipped.
+ * @message Cannot cancel the order while it is shipped.
+ */
+class OrderInTransitException extends ServerErrorException
 {
     public function __construct(string $message = 'Cannot cancel the order while it is shipped.')
     {

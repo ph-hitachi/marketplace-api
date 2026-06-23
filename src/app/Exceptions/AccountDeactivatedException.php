@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown by EnsureUserIsActive middleware when a deactivated user makes a request.
- *
- * HTTP 403 — rendered as:
- * { "error_code": "ACCOUNT_DEACTIVATED", "message": "Your account has been deactivated. Please contact support." }
+ * Attempting to login or perform actions with a deactivated account.
+ * @message Your account has been deactivated. Please contact support.
  */
-class AccountDeactivatedException extends UnexpectedErrorException
+class AccountDeactivatedException extends ServerErrorException
 {
     public function __construct()
     {

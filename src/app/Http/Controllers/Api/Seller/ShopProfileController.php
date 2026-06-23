@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 class ShopProfileController extends Controller
 {
     /**
-     * Update seller profile.
+     * Update shop profile.
      */
     public function update(UpdateSellerProfileRequest $request): JsonResponse
     {

@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use App\Enums\CancelReason;
 
+use App\Support\Cacheable;
+
 /**
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items
  */
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, Cacheable;
 
     protected $fillable = [
         'customer_id',

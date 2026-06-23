@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class AddressController extends Controller
 {
     /**
-     * List addresses.
+     * List saved addresses.
      */
     public function index(Request $request): JsonResponse
     {
@@ -25,7 +25,7 @@ class AddressController extends Controller
     }
 
     /**
-     * Create address.
+     * Add a new address.
      */
     public function store(StoreAddressRequest $request): JsonResponse
     {
@@ -44,7 +44,7 @@ class AddressController extends Controller
     }
 
     /**
-     * View address.
+     * View a delivery address.
      */
     public function show(Request $request, Address $address): JsonResponse
     {

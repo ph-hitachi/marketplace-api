@@ -13,6 +13,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class GlobalExceptionExtension extends ExceptionToResponseExtension
@@ -23,8 +24,9 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
             return false;
         }
 
-        // Domain exceptions should be handled by UnexpectedErrorExceptionExtension
-        if ($type->isInstanceOf(\App\Exceptions\UnexpectedErrorException::class)) {
+        // Domain exceptions and ValidationException should be excluded
+        if ($type->isInstanceOf(\App\Exceptions\ServerErrorException::class) ||
+            $type->isInstanceOf(\Illuminate\Validation\ValidationException::class)) {
             return false;
         }
 
@@ -34,6 +36,7 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
                $type->isInstanceOf(ThrottleRequestsException::class) ||
                $type->isInstanceOf(NotFoundHttpException::class) ||
                $type->isInstanceOf(ModelNotFoundException::class) ||
+               $type->isInstanceOf(BadRequestHttpException::class) ||
                $type->isInstanceOf(\Throwable::class);
     }
 
@@ -45,27 +48,50 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
         $statusCode = 500;
         $errorCode = 'INTERNAL_ERROR';
         $message = 'Server Error';
+        $description = 'Unhandled server errors.';
+        $exceptionTypeExample = $baseName;
 
         if ($type->isInstanceOf(AuthenticationException::class)) {
             $statusCode = 401;
             $errorCode = 'UNAUTHENTICATED';
-            $message = 'Unauthenticated.';
-        } elseif ($type->isInstanceOf(AuthorizationException::class) || $type->isInstanceOf(AccessDeniedHttpException::class)) {
+            $message = 'You are not authenticated. Please provide a valid token.';
+            $description = 'Requesting protected routes without a valid JWT token, or token is expired/invalid.';
+        } elseif ($type->isInstanceOf(AccessDeniedHttpException::class)) {
             $statusCode = 403;
             $errorCode = 'FORBIDDEN';
-            $message = 'This action is unauthorized.';
+            $message = 'You do not have permission to access this resource.';
+            $description = 'Attempting to access a route or perform an action without the required user role or permissions.';
+        } elseif ($type->isInstanceOf(AuthorizationException::class)) {
+            $statusCode = 403;
+            $errorCode = 'FORBIDDEN';
+            $message = 'You do not have permission to perform this action.';
+            $description = 'Attempting to access a route or perform an action without the required user role or permissions.';
         } elseif ($type->isInstanceOf(ThrottleRequestsException::class)) {
             $statusCode = 429;
             $errorCode = 'TOO_MANY_REQUESTS';
-            $message = 'Too Many Attempts.';
-        } elseif ($type->isInstanceOf(NotFoundHttpException::class) || $type->isInstanceOf(ModelNotFoundException::class)) {
+            $message = 'Too many requests. Please slow down and try again in a moment.';
+            $description = 'Making too many requests in a short period of time, exceeding the rate limits.';
+        } elseif ($type->isInstanceOf(NotFoundHttpException::class)) {
             $statusCode = 404;
             $errorCode = 'NOT_FOUND';
-            $message = 'Resource not found.';
+            $message = 'The requested endpoint does not exist.';
+            $description = 'Requesting an endpoint or URL path that does not exist.';
+        } elseif ($type->isInstanceOf(ModelNotFoundException::class)) {
+            $statusCode = 404;
+            $errorCode = 'NOT_FOUND';
+            $message = 'The requested resource was not found.';
+            $description = 'Requesting a database record or resource ID that does not exist.';
+        } elseif ($type->isInstanceOf(BadRequestHttpException::class)) {
+            $statusCode = 400;
+            $errorCode = 'BAD_REQUEST';
+            $message = 'The request is invalid or malformed.';
+            $description = 'The request could not be understood or was malformed due to invalid syntax.';
         } else {
             // For general unhandled system exceptions
-            $errorCode = 'INTERNAL_ERROR';
-            $message = 'Server Error';
+            $errorCode = 'SERVER_ERROR';
+            $exceptionTypeExample = 'ServerErrorException';
+            $message = 'Sorry, something went wrong on the server. Please try again later.';
+            $description = 'An unexpected server error occurred during processing.';
         }
 
         $responseBodyType = (new OpenApiTypes\ObjectType)
@@ -79,7 +105,7 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
                 'exception_type',
                 (new OpenApiTypes\StringType)
                     ->setDescription('The exception class name.')
-                    ->example($baseName)
+                    ->example($exceptionTypeExample)
             )
             ->addProperty(
                 'message',
@@ -90,7 +116,7 @@ class GlobalExceptionExtension extends ExceptionToResponseExtension
             ->setRequired(['error_code', 'exception_type', 'message']);
 
         return Response::make($statusCode)
-            ->setDescription($message)
+            ->setDescription($description)
             ->setContent(
                 'application/json',
                 Schema::fromType($responseBodyType),

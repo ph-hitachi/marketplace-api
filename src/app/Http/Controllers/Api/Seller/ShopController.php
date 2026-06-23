@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shop;
+use App\Support\Cache;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 /**
  * @tags Shops
@@ -14,23 +14,32 @@ use Illuminate\Support\Facades\Gate;
 class ShopController extends Controller
 {
     /**
-     * Display a listing of shops.
+     * List all available shops.
      */
     public function index(Request $request): JsonResponse
     {
-        $shops = Shop::latest()->paginate(15);
-        return response()->json($shops);
+        $shops = Shop::latest()
+            ->cached(900)
+            ->paginate(15);
+
+        return response()->json($shops)
+            ->header('X-Cache-Status', Cache::status());
     }
 
     /**
-     * Display the specified shop.
+     * Retrieve a specific shop profile and active products.
      */
     public function show(Shop $shop): JsonResponse
     {
+        $shopData = Shop::where('id', $shop->id)
+            ->with(['products' => fn($q) => $q->where('is_active', true)])
+            ->cached(900)
+            ->firstOrFail();
+
         return response()->json([
-            'name'        => $shop->shop_name,
-            'description' => $shop->shop_description,
-            'products'    => $shop->products()->where('is_active', true)->get(),
-        ]);
+            'name'        => $shopData['shop_name'],
+            'description' => $shopData['shop_description'],
+            'products'    => $shopData['products'],
+        ])->header('X-Cache-Status', Cache::status());
     }
 }

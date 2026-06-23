@@ -17,9 +17,12 @@ class StoreWalletRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Label/name for the wallet (e.g., 'My Wallet').
+             */
             'label' => ['required', 'string', 'max:100'],
         ];
     }

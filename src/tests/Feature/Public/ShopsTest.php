@@ -63,10 +63,24 @@ class ShopsTest extends TestCase
         $response = $this->getJson("/api/shops/{$shop->id}");
 
         $response->assertStatus(200)
+            ->assertHeader('X-Cache-Status', 'MISS')
             ->assertJsonPath('name', 'Custom Shop')
             ->assertJsonPath('description', 'A wonderful marketplace.')
             ->assertJsonStructure(['products'])
             ->assertJsonFragment(['name' => 'Active Item'])
             ->assertJsonMissing(['name' => 'Inactive Item']);
+
+        // Request again — should HIT the cache and serve correct products (no incomplete PHP class bug)
+        $responseHit = $this->getJson("/api/shops/{$shop->id}");
+
+        $responseHit->assertStatus(200)
+            ->assertHeader('X-Cache-Status', 'HIT')
+            ->assertJsonPath('name', 'Custom Shop')
+            ->assertJsonPath('description', 'A wonderful marketplace.')
+            ->assertJsonStructure(['products'])
+            ->assertJsonFragment(['name' => 'Active Item'])
+            ->assertJsonMissing(['name' => 'Inactive Item']);
+
+        $this->assertStringNotContainsString('__PHP_Incomplete_Class_Name', $responseHit->getContent());
     }
 }

@@ -38,19 +38,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \Dedoc\Scramble\Scramble::afterOpenApiGenerated(function (\Dedoc\Scramble\Support\Generator\OpenApi $openApi) {
-            foreach ($openApi->components->schemas as $key => $schema) {
-                if (str_ends_with($key, 'Request')) {
-                    $newTitle = 'Requests.' . $key;
-                } elseif (str_ends_with($key, 'Resource') || str_ends_with($key, 'Collection')) {
-                    $newTitle = 'Resources.' . $key;
-                } else {
-                    $newTitle = 'Models.' . $key;
-                }
-                
-                // Only modify the title to properly group them in Stoplight Elements
-                // without breaking the $ref connections
-                $schema->setTitle($newTitle);
-            }
+            $openApi->secure(
+                \Dedoc\Scramble\Support\Generator\SecurityScheme::http('bearer')
+            );
         });
+
+        // Custom observers removed in favor of built-in bootCacheable trait events
     }
 }

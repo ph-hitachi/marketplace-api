@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 class CartController extends Controller
 {
     /**
-     * List cart items.
+     * List saved items in the cart.
      */
     public function index(Request $request): JsonResponse
     {
@@ -30,7 +30,7 @@ class CartController extends Controller
     }
 
     /**
-     * Add to cart.
+     * Add an item to the cart.
      */
     public function store(StoreCartRequest $request): JsonResponse
     {
@@ -50,7 +50,7 @@ class CartController extends Controller
     }
 
     /**
-     * Remove from cart.
+     * Remove an item from the cart.
      */
     public function destroy(Cart $cart, Request $request): JsonResponse
     {

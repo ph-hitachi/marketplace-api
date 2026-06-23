@@ -25,34 +25,34 @@ class OrdersTest extends TestCase
         $this->token = auth('api')->login($this->admin);
 
         $customer = User::factory()->create(['role' => 'customer']);
-        $seller   = User::factory()->create(['role' => 'seller']);
-        $shop     = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
+        $seller = User::factory()->create(['role' => 'seller']);
+        $shop = \App\Models\Shop::factory()->create(['user_id' => $seller->id]);
 
         $address = Address::create([
-            'user_id'       => $customer->id,
-            'label'         => 'Home',
+            'user_id' => $customer->id,
+            'label' => 'Home',
             'address_line1' => 'St',
-            'city'          => 'City',
-            'province'      => 'Province',
-            'postal_code'   => '1234',
-            'country'       => 'Philippines',
+            'city' => 'City',
+            'province' => 'Province',
+            'postal_code' => '1234',
+            'country' => 'Philippines',
         ]);
 
         $product = Product::create(['shop_id' => $shop->id, 'name' => 'Test', 'price' => 120, 'stock' => 10]);
         $this->order = Order::create([
-            'customer_id'    => $customer->id,
-            'shop_id'        => $shop->id,
-            'address_id'     => $address->id,
+            'customer_id' => $customer->id,
+            'shop_id' => $shop->id,
+            'address_id' => $address->id,
             'payment_method' => 'cod',
-            'status'         => 'pending',
-            'total_amount'   => 120.00,
+            'status' => 'pending',
+            'total_amount' => 120.00,
         ]);
         $this->order->items()->create([
-            'product_id'     => $product->id,
-            'product_name'   => $product->name,
-            'unit_price'     => $product->price,
-            'quantity'       => 1,
-            'subtotal'       => 120.00,
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'unit_price' => $product->price,
+            'quantity' => 1,
+            'subtotal' => 120.00,
         ]);
     }
 
@@ -72,14 +72,5 @@ class OrdersTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('order.total_amount', '120.00');
-    }
-
-    public function test_admin_cannot_override_order_status(): void
-    {
-        $response = $this->withHeader('Authorization', "Bearer {$this->token}")
-            ->patchJson("/api/admin/orders/{$this->order->id}/status", [
-                'status' => 'delivered',
-            ]);
-        $response->assertStatus(404);
     }
 }

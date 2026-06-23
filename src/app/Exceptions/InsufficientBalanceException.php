@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when a user's wallet balance is insufficient to cover an order.
- *
- * HTTP 422 — rendered as:
- * { "error_code": "INSUFFICIENT_BALANCE", "message": "..." }
+ * Placing an order when the wallet balance is too low.
+ * @message Insufficient wallet balance.
  */
-class InsufficientBalanceException extends UnexpectedErrorException
+class InsufficientBalanceException extends ServerErrorException
 {
     public function __construct(string $message = 'Insufficient wallet balance.')
     {

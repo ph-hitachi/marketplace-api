@@ -3,12 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Thrown when an admin tries to delete a user who has active or non-cancelled orders.
- *
- * HTTP 422 — rendered as:
- * { "error_code": "DELETE_BLOCKED", "message": "Cannot delete user with active or non-cancelled orders." }
+ * Attempting to delete a user that has active orders tied to it.
+ * @message Cannot delete user with active or non-cancelled orders.
  */
-class UserDeleteBlockedException extends UnexpectedErrorException
+class UserDeleteBlockedException extends ServerErrorException
 {
     public function __construct()
     {

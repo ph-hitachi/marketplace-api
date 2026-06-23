@@ -19,7 +19,7 @@ use App\Exceptions\AccountDeactivatedException;
 class AuthController extends Controller
 {
     /**
-     * Register user.
+     * Register a new customer or seller account.
      */
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -45,7 +45,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Login user.
+     * Authenticate a user and receive a token.
      */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -67,7 +67,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout user.
+     * Log out and revoke token.
      */
     public function logout(): JsonResponse
     {
@@ -77,21 +77,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh token.
+     * Exchange token.
      */
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(Auth::guard('api')->refresh(), 'Token refreshed successfully.');
-    }
-
-    /**
-     * View profile.
-     */
-    public function me(): JsonResponse
-    {
-        $user = Auth::guard('api')->user()->load('shop');
-
-        return response()->json(['user' => $user]);
     }
 
     /**

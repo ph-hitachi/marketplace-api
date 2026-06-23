@@ -66,6 +66,14 @@ class GeneratePostmanCollection extends Command
 
                 $methodUpper = strtoupper($method);
                 $summary = $operation['summary'] ?? '';
+                if (strpos($summary, "\n") !== false) {
+                    $summary = explode("\n", $summary)[0];
+                }
+                if (strpos($summary, "\r") !== false) {
+                    $summary = explode("\r", $summary)[0];
+                }
+                $summary = trim($summary);
+
                 $description = $operation['description'] ?? '';
                 $tags = $operation['tags'] ?? ['Other'];
                 $firstTag = $tags[0];
@@ -113,7 +121,7 @@ class GeneratePostmanCollection extends Command
                 foreach ($responses as $statusCode => $res) {
                     $resSchema = $res['content']['application/json']['schema'] ?? null;
                     $resDescription = $res['description'] ?? '';
-                    $responsesMarkdown .= "#### Response: `{$statusCode}` - {$resDescription}\n";
+                    $responsesMarkdown .= "#### Response: `{$statusCode}`\n{$resDescription}\n\n";
                     if ($resSchema) {
                         $example = $this->resolveSchemaExample($resSchema);
                         $responsesMarkdown .= "```json\n" . json_encode($example, JSON_PRETTY_PRINT) . "\n```\n\n";

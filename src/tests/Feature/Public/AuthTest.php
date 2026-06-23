@@ -182,8 +182,8 @@ class AuthTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'error_code' => 'INVALID_CREDENTIALS',
-                'message'    => 'The email or password you entered is incorrect.',
+                 'error_code' => 'INVALID_CREDENTIALS',
+                 'message'    => 'The email or password you entered is incorrect.',
             ]);
     }
 

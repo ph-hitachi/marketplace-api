@@ -19,10 +19,17 @@ class CancelOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+        public function rules(): array
     {
         return [
+            /**
+             * Integer corresponding to CancelReason enum values.
+             */
             'cancel_reason'       => ['required', 'integer', \Illuminate\Validation\Rule::enum(\App\Enums\CancelReason::class)],
+
+            /**
+             * Required if cancel_reason is 5 (Other). Additional cancel details.
+             */
             'cancel_reason_notes' => ['required_if:cancel_reason,5', 'nullable', 'string', 'max:255'],
         ];
     }
