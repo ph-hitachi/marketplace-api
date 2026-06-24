@@ -371,15 +371,10 @@ class GeneratePostmanCollection extends Command
 
         $collection['item'] = $formattedItems;
 
-        // Save generated collection
-        $outputPath = base_path('postman_collection_generated.json');
-        file_put_contents($outputPath, json_encode($collection, JSON_PRETTY_PRINT));
-        $this->info("Postman collection successfully generated at: {$outputPath}");
-
-        // Also save to docs/api/postman_collection.json
+        // Save generated collection directly to docs folder
         $docsPath = base_path('docs/api/postman_collection.json');
         file_put_contents($docsPath, json_encode($collection, JSON_PRETTY_PRINT));
-        $this->info("And copied to: {$docsPath}");
+        $this->info("Postman collection successfully generated at: {$docsPath}");
     }
 
     public function resolveSchemaExample($schema, $propName = null)
