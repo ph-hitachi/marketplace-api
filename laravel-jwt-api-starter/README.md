@@ -46,20 +46,21 @@ Run standard Artisan commands directly in the running `app` container:
 
 ## 📄 API & Database Documentation Tools
 
-This starter includes dynamic generators for API documentation, Postman collections, and database schema layouts.
+This starter includes dynamic generators for API documentation, Postman collections, and database schema layouts, consolidated under a single command.
+
+### 🔄 How to Regenerate All Documentation
+To regenerate the OpenAPI spec, Postman collection, markdown overview, and DBML schema at once, run:
+```bash
+docker compose exec app php artisan docs:generate
+```
+
+---
 
 ### 1. Interactive API Docs (OpenAPI / Stoplight Elements)
 The API documentation is built using OpenAPI and rendered beautifully via **Stoplight Elements**.
 - **Interactive UI**: Open [docs/api/index.html](docs/api/index.html) in your local browser to view the interactive API sandbox.
 - **Specification File**: The raw OpenAPI schema is located at [docs/api/openapi.json](docs/api/openapi.json).
 - **Markdown Overview**: A detailed text list of all endpoints, parameters, responses, and errors is available at [docs/api/overview.md](docs/api/overview.md).
-
-#### 🔄 How to Regenerate API Docs:
-Run the dynamic overview and OpenAPI regeneration command:
-```bash
-docker compose exec app php artisan overview:generate
-```
-*This command executes Scramble to update `openapi.json`, regenerates the Postman collection, sorts tags/paths by display weights defined in controllers, and rebuilds `overview.md`.*
 
 ---
 
@@ -69,12 +70,6 @@ An automated Postman collection is exported to facilitate immediate API testing 
 - **Environment Support**: Pre-populated with default variables `{{base_url}}` (defaults to `http://localhost/api`) and `{{token}}` for seamless authentication routing.
 - **Dynamic Post Bodies**: Auto-fills post body parameters with simulated mock data based on input schemas.
 
-#### 🔄 How to Regenerate Postman Collection:
-You can regenerate the collection manually from the OpenAPI schema:
-```bash
-docker compose exec app php artisan postman:generate
-```
-
 ---
 
 ### 3. Database Schema Diagram (DBML)
@@ -82,10 +77,5 @@ DBML (Database Markup Language) is a simple syntax used to define and visualize 
 - **DBML Schema File**: Located at [docs/database.dbml](docs/database.dbml).
 - **Visualization**: Copy and paste the contents of `database.dbml` into [dbdiagram.io](https://dbdiagram.io) to view an interactive Entity Relationship (ER) Diagram.
 
-#### 🔄 How to Regenerate DBML:
-Whenever you add or modify migrations, run this command to parse the tables and foreign keys into DBML format:
-```bash
-docker compose exec app php artisan dbml:generate
-```
 
 

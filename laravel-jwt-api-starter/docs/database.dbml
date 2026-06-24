@@ -8,7 +8,7 @@ Table users {
   email              varchar(255)  [unique, not null]
   email_verified_at  timestamp     [null]
   password           varchar(255)  [not null]
-  role               enum          [not null, default: "customer", note: "customer | seller | admin"]
+  role               enum          [not null, default: "user", note: "user | admin"]
   is_active          boolean       [not null, default: true]
   remember_token     varchar(255)  [null]
   created_at         timestamp     [null]
