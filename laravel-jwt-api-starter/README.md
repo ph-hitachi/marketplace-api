@@ -50,9 +50,9 @@ This starter includes dynamic generators for API documentation, Postman collecti
 
 ### 1. Interactive API Docs (OpenAPI / Stoplight Elements)
 The API documentation is built using OpenAPI and rendered beautifully via **Stoplight Elements**.
-- **Interactive UI**: Open [docs/api/index.html](file:///c:/Users/JessD/Desktop/Gcash/laravel-jwt-api-starter/docs/api/index.html) in your local browser to view the interactive API sandbox.
-- **Specification File**: The raw OpenAPI schema is located at [docs/api/openapi.json](file:///c:/Users/JessD/Desktop/Gcash/laravel-jwt-api-starter/docs/api/openapi.json).
-- **Markdown Overview**: A detailed text list of all endpoints, parameters, responses, and errors is available at [docs/api/overview.md](file:///c:/Users/JessD/Desktop/Gcash/laravel-jwt-api-starter/docs/api/overview.md).
+- **Interactive UI**: Open [docs/api/index.html](docs/api/index.html) in your local browser to view the interactive API sandbox.
+- **Specification File**: The raw OpenAPI schema is located at [docs/api/openapi.json](docs/api/openapi.json).
+- **Markdown Overview**: A detailed text list of all endpoints, parameters, responses, and errors is available at [docs/api/overview.md](docs/api/overview.md).
 
 #### 🔄 How to Regenerate API Docs:
 Run the dynamic overview and OpenAPI regeneration command:
@@ -65,7 +65,7 @@ docker compose exec app php artisan overview:generate
 
 ### 2. Postman Collection
 An automated Postman collection is exported to facilitate immediate API testing and import.
-- **Collection File**: Import the pre-configured [docs/api/postman_collection.json](file:///c:/Users/JessD/Desktop/Gcash/laravel-jwt-api-starter/docs/api/postman_collection.json) directly into Postman.
+- **Collection File**: Import the pre-configured [docs/api/postman_collection.json](docs/api/postman_collection.json) directly into Postman.
 - **Environment Support**: Pre-populated with default variables `{{base_url}}` (defaults to `http://localhost/api`) and `{{token}}` for seamless authentication routing.
 - **Dynamic Post Bodies**: Auto-fills post body parameters with simulated mock data based on input schemas.
 
@@ -79,7 +79,7 @@ docker compose exec app php artisan postman:generate
 
 ### 3. Database Schema Diagram (DBML)
 DBML (Database Markup Language) is a simple syntax used to define and visualize database schemas.
-- **DBML Schema File**: Located at [docs/database.dbml](file:///c:/Users/JessD/Desktop/Gcash/laravel-jwt-api-starter/docs/database.dbml).
+- **DBML Schema File**: Located at [docs/database.dbml](docs/database.dbml).
 - **Visualization**: Copy and paste the contents of `database.dbml` into [dbdiagram.io](https://dbdiagram.io) to view an interactive Entity Relationship (ER) Diagram.
 
 #### 🔄 How to Regenerate DBML:
