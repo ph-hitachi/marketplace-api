@@ -28,8 +28,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->when($allowed, $this->email),
+            'email_verified_at' => $this->when($allowed, $this->email_verified_at),
             'role' => $this->role,
             'is_active' => $this->is_active,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
